@@ -20,4 +20,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Sainath.E-Commerce.BooksForSale.Models\Sainath.E-Commerce.BooksForSale.Models.csproj" />
+  </ItemGroup>
+
 </Project>
