@@ -5,6 +5,14 @@ VisualStudioVersion = 17.4.33122.133
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sainath.E-Commerce.BooksForSale.Web", "Sainath.E-Commerce.BooksForSale.Web\Sainath.E-Commerce.BooksForSale.Web.csproj", "{0DAD86CF-A618-4B38-8DEB-B170DCD5BC20}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sainath.E-Commerce.BooksForSale.WebApi", "Sainath.E-Commerce.BooksForSale.WebApi\Sainath.E-Commerce.BooksForSale.WebApi.csproj", "{5A0C191F-F82D-4BA0-BB33-82E47319FCAA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sainath.E-Commerce.BooksForSale.BusinessDomain", "Sainath.E-Commerce.BooksForSale.BusinessDomain\Sainath.E-Commerce.BooksForSale.BusinessDomain.csproj", "{71A2D10E-1AC3-477C-8AA9-164E643DC2A9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sainath.E-Commerce.BooksForSale.DataAccess", "Sainath.E-Commerce.BooksForSale.DataAccess\Sainath.E-Commerce.BooksForSale.DataAccess.csproj", "{AC8A128A-A878-47F5-85B1-CD8991449828}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sainath.E-Commerce.BooksForSale.Models", "Sainath.E-Commerce.BooksForSale.Models\Sainath.E-Commerce.BooksForSale.Models.csproj", "{07057300-5D1B-4E73-8358-3E8BA9147909}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +23,22 @@ Global
 		{0DAD86CF-A618-4B38-8DEB-B170DCD5BC20}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0DAD86CF-A618-4B38-8DEB-B170DCD5BC20}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0DAD86CF-A618-4B38-8DEB-B170DCD5BC20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A0C191F-F82D-4BA0-BB33-82E47319FCAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A0C191F-F82D-4BA0-BB33-82E47319FCAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A0C191F-F82D-4BA0-BB33-82E47319FCAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A0C191F-F82D-4BA0-BB33-82E47319FCAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71A2D10E-1AC3-477C-8AA9-164E643DC2A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71A2D10E-1AC3-477C-8AA9-164E643DC2A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71A2D10E-1AC3-477C-8AA9-164E643DC2A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71A2D10E-1AC3-477C-8AA9-164E643DC2A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC8A128A-A878-47F5-85B1-CD8991449828}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC8A128A-A878-47F5-85B1-CD8991449828}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC8A128A-A878-47F5-85B1-CD8991449828}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC8A128A-A878-47F5-85B1-CD8991449828}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07057300-5D1B-4E73-8358-3E8BA9147909}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07057300-5D1B-4E73-8358-3E8BA9147909}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07057300-5D1B-4E73-8358-3E8BA9147909}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07057300-5D1B-4E73-8358-3E8BA9147909}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
