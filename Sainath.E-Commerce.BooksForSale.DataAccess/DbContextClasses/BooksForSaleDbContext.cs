@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Sainath.E_Commerce.BooksForSale.Models.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,7 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DbContextClasses
         public BooksForSaleDbContext(DbContextOptions<BooksForSaleDbContext> options) : base(options)
         {
         }
+
+        public DbSet<Category> Categories { get; set; }
     }
 }
