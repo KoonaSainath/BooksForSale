@@ -1,8 +1,14 @@
+using Microsoft.EntityFrameworkCore;
+using Sainath.E_Commerce.BooksForSale.DataAccess.DbContextClasses;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddDbContext<BooksForSaleDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("BooksForSaleConnectionString"));
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
