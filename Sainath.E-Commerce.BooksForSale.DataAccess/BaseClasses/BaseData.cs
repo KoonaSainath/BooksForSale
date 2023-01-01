@@ -14,5 +14,8 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.BaseClasses
         {
             this.unitOfWork = unitOfWork;
         }
+        public BaseData()
+        {
+        }
     }
 }

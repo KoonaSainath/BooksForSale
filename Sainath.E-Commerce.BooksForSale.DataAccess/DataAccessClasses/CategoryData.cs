@@ -12,9 +12,6 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses
 {
     public class CategoryData : BaseData
     {
-        public CategoryData(IUnitOfWork unitOfWork) : base(unitOfWork)
-        {
-        }
         public IEnumerable<Category> GetAllCategories()
         {
             return unitOfWork.CategoryRepository.GetAllRecords();
