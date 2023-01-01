@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Sainath.E_Commerce.BooksForSale.DataAccess.DbContextClasses;
+using Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories;
+using Sainath.E_Commerce.BooksForSale.DataAccess.Repositories;
+
 string connectionStringKey = "BooksForSaleConnectionString";
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +12,7 @@ builder.Services.AddDbContext<BooksForSaleDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString(connectionStringKey));
 });
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
