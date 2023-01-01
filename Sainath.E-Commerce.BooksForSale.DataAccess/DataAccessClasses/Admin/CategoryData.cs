@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses
+namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Admin
 {
     public class CategoryData : BaseData
     {
