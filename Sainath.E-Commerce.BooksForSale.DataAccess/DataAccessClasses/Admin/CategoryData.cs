@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses
+namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Admin
 {
     public class CategoryData : BaseData
     {
@@ -19,6 +19,7 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses
         public void InsertCategory(Category category)
         {
             unitOfWork.CategoryRepository.InsertRecord(category);
+            unitOfWork.Save();
         }
         public Category GetCategory(int id)
         {
@@ -31,10 +32,18 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses
         public void RemoveCategory(Category category)
         {
             unitOfWork.CategoryRepository.RemoveRecord(category);
+            unitOfWork.Save();
         }
         public void RemoveCategories(IEnumerable<Category> categories)
         {
             unitOfWork.CategoryRepository.RemoveRecords(categories);
+            unitOfWork.Save();
+        }
+        public Category UpdateCategory(Category category)
+        {
+            unitOfWork.CategoryRepository.UpdateCategory(category);
+            unitOfWork.Save();
+            return category;
         }
     }
 }

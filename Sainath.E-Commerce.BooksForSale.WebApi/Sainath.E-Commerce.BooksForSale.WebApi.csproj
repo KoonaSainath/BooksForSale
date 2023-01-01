@@ -11,4 +11,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Sainath.E-Commerce.BooksForSale.BusinessDomain\Sainath.E-Commerce.BooksForSale.BusinessDomain.csproj" />
+  </ItemGroup>
+
 </Project>

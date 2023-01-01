@@ -1,4 +1,4 @@
-﻿using Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses;
+﻿using Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Admin;
 using Sainath.E_Commerce.BooksForSale.Models.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sainath.E_Commerce.BooksForSale.BusinessDomain.BusinessDomainClasses
+namespace Sainath.E_Commerce.BooksForSale.BusinessDomain.BusinessDomainClasses.Admin
 {
     public class CategoryDomain
     {
@@ -18,11 +18,13 @@ namespace Sainath.E_Commerce.BooksForSale.BusinessDomain.BusinessDomainClasses
         }
         public IEnumerable<Category> GetAllCategories()
         {
-            return categoryData.GetAllCategories();
+            IEnumerable<Category> categories = categoryData.GetAllCategories();
+            return categories;
         }
-        public void InsertCategory(Category category)
+        public Category InsertCategory(Category category)
         {
             categoryData.InsertCategory(category);
+            return category;
         }
         public Category GetCategory(int id)
         {
@@ -41,6 +43,11 @@ namespace Sainath.E_Commerce.BooksForSale.BusinessDomain.BusinessDomainClasses
         public void RemoveCategories(IEnumerable<Category> categories)
         {
             categoryData.RemoveCategories(categories);
+        }
+        public Category UpdateCategory(Category category)
+        {
+            Category updatedCategory = categoryData.UpdateCategory(category);
+            return updatedCategory;        
         }
     }
 }
