@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -22,10 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Sainath.E-Commerce.BooksForSale.Models\Sainath.E-Commerce.BooksForSale.Models.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Repositories\" />
   </ItemGroup>
 
 </Project>

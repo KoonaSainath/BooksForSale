@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories
 {
-    public interface IRepository<T>
+    public interface IRepository<T> where T : class
     {
         IEnumerable<T> GetAllRecords();
         T GetRecord(int id);
