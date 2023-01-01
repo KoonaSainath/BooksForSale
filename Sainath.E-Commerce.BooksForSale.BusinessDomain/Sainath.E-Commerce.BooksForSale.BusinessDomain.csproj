@@ -7,4 +7,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Sainath.E-Commerce.BooksForSale.DataAccess\Sainath.E-Commerce.BooksForSale.DataAccess.csproj" />
+  </ItemGroup>
+
 </Project>
