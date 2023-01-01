@@ -21,9 +21,10 @@ namespace Sainath.E_Commerce.BooksForSale.BusinessDomain.BusinessDomainClasses.A
             IEnumerable<Category> categories = categoryData.GetAllCategories();
             return categories;
         }
-        public void InsertCategory(Category category)
+        public Category InsertCategory(Category category)
         {
             categoryData.InsertCategory(category);
+            return category;
         }
         public Category GetCategory(int id)
         {
@@ -42,6 +43,11 @@ namespace Sainath.E_Commerce.BooksForSale.BusinessDomain.BusinessDomainClasses.A
         public void RemoveCategories(IEnumerable<Category> categories)
         {
             categoryData.RemoveCategories(categories);
+        }
+        public Category UpdateCategory(Category category)
+        {
+            Category updatedCategory = categoryData.UpdateCategory(category);
+            return updatedCategory;        
         }
     }
 }
