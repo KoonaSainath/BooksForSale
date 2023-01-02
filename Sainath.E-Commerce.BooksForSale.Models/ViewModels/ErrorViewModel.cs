@@ -1,4 +1,4 @@
-namespace Sainath.E_Commerce.BooksForSale.Web.Models
+namespace Sainath.E_Commerce.BooksForSale.Models.ViewModels
 {
     public class ErrorViewModel
     {

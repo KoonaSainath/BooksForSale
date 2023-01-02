@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Sainath.E_Commerce.BooksForSale.Web.Models;
+using Sainath.E_Commerce.BooksForSale.Models.ViewModels;
 using System.Diagnostics;
 
 namespace Sainath.E_Commerce.BooksForSale.Web.Controllers
