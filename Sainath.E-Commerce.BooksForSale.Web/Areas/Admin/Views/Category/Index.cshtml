@@ -1,5 +1,36 @@
-﻿@{
+﻿@model IEnumerable<Category>
+@{
     ViewData["Title"] = "Categories";
 }
 
-<h1>@ViewData["Title"]</h1>
+<div class="container">
+    <div class="row mt-4">
+        <div class="col-6">
+            <p class="display-6">List of categories</p>
+        </div>
+        <div class="col-6 text-end">
+            <a class="btn btn-info"><i class="bi bi-plus-circle"></i> Create a new category</a>
+        </div>
+    </div>
+    <table class="table table-bordered table-striped mt-3">
+        <thead>
+            <tr>
+                <th>Category name</th>
+                <th>Display order</th>
+                <th>Created date & time</th>
+                <th>Updated date & time</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(Category category in Model)
+            {
+                <tr>
+                    <td>@category.CategoryName</td>
+                    <td>@category.DisplayOrder</td>
+                    <td>@category.CreatedDateTime</td>
+                    <td>@category.UpdatedDateTime</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
