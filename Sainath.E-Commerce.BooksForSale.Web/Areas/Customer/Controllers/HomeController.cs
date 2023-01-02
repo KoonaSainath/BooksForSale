@@ -2,8 +2,9 @@
 using Sainath.E_Commerce.BooksForSale.Models.ViewModels;
 using System.Diagnostics;
 
-namespace Sainath.E_Commerce.BooksForSale.Web.Controllers
+namespace Sainath.E_Commerce.BooksForSale.Web.Customer
 {
+    [Area("Customer")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
