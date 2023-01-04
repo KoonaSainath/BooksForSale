@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Sainath.E_Commerce.BooksForSale.BusinessDomain.BusinessDomainClasses.Admin;
+using Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories;
 using Sainath.E_Commerce.BooksForSale.Models.ViewModels;
 using System.Linq.Expressions;
 
@@ -11,7 +12,7 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Admin
     public class CategoryController : ControllerBase
     {
         private CategoryDomain categoryDomain;
-        public CategoryController()
+        public CategoryController(IUnitOfWork unitOfWork)
         {
             categoryDomain = new CategoryDomain();
         }
