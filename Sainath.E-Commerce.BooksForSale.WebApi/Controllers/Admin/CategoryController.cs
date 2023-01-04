@@ -14,7 +14,7 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Admin
         private CategoryDomain categoryDomain;
         public CategoryController(IUnitOfWork unitOfWork)
         {
-            categoryDomain = new CategoryDomain();
+            categoryDomain = new CategoryDomain(unitOfWork);
         }
         [HttpGet]
         [Route(template: "GET/GetAllCategories", Name = "GetAllCategories")]
