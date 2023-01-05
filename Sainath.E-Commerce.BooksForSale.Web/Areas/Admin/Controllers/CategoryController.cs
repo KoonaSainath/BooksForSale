@@ -27,5 +27,10 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
             IEnumerable<Category> categories = categoriesTask.Result;
             return View(categories);
         }
+        [HttpGet]
+        public async Task<IActionResult> CreateCategory()
+        {
+            return View();
+        }
     }
 }

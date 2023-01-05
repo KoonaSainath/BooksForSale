@@ -21,6 +21,7 @@ namespace Sainath.E_Commerce.BooksForSale.Models.ViewModels
         public string CategoryName { get; set; }
         [Required(ErrorMessage = "Please enter display order.")]
         [Range(minimum: 1, maximum: 100, ErrorMessage = "Display order must be between 1 and 100, both included.")]
+        [Display(Name = "Display order")]
         public int DisplayOrder { get; set; }
         public DateTime CreatedDateTime { get; set; } = DateTime.Now;
         public DateTime UpdatedDateTime { get; set; } = DateTime.Now;
