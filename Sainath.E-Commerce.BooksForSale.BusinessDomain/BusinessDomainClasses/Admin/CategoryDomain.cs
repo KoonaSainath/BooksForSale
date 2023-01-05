@@ -1,4 +1,5 @@
 ﻿using Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Admin;
+using Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories;
 using Sainath.E_Commerce.BooksForSale.Models.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -12,9 +13,9 @@ namespace Sainath.E_Commerce.BooksForSale.BusinessDomain.BusinessDomainClasses.A
     public class CategoryDomain
     {
         private CategoryData categoryData;
-        public CategoryDomain()
+        public CategoryDomain(IUnitOfWork unitOfWork)
         {
-            categoryData = new CategoryData();
+            categoryData = new CategoryData(unitOfWork);
         }
         public IEnumerable<Category> GetAllCategories()
         {
