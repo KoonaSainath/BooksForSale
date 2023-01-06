@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Localization;
 using Sainath.E_Commerce.BooksForSale.Models.ViewModels;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
+using System.Linq.Expressions;
 using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 
@@ -51,6 +52,29 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
                 }
             }
             return View();
+        }
+        [HttpGet]
+        public async Task<IActionResult> UpdateCategory(int? categoryId)
+        {
+            if(categoryId != 0 && categoryId != null)
+            {
+                HttpClient httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Accept.Clear();
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+                string requestUrl = $"api/Category/GET/GetCategoryById/{categoryId}";
+                HttpResponseMessage response = await httpClient.GetAsync(requestUrl);
+                if (response.IsSuccessStatusCode)
+                {
+                    Task<Category> categoryTask = response.Content.ReadFromJsonAsync<Category>();
+                    Category category = categoryTask.Result;
+                    if(category != null)
+                    {
+                        return View(category);
+                    }
+                }
+            }
+            return NotFound();
         }
     }
 }
