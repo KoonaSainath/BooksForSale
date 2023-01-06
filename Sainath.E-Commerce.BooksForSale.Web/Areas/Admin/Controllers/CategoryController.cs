@@ -76,5 +76,24 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
             }
             return NotFound();
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateCategory(Category category)
+        {
+            if (ModelState.IsValid)
+            {
+                HttpClient httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Accept.Clear();
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+                string requestUrl = "api/Category/PUT/UpdateCategory";
+                HttpResponseMessage response = await httpClient.PutAsJsonAsync<Category>(requestUrl, category);
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("Index", "Category");
+                }
+            }
+            return View();
+        }
     }
 }
