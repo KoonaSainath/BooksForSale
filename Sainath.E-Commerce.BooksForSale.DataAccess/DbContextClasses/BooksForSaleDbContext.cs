@@ -15,5 +15,6 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DbContextClasses
         }
 
         public DbSet<Category> Categories { get; set; }
+        public DbSet<CoverType> CoverTypes { get; set; }
     }
 }
