@@ -44,14 +44,14 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Admin
             Category category = categoryDomain.GetCategory(expression);
             return Ok(category);
         }
-        [HttpDelete]
+        [HttpPost]
         [Route(template: "DELETE/RemoveCategory", Name = "RemoveCategory")]
         public IActionResult RemoveCategory(Category category)
         {
             categoryDomain.RemoveCategory(category);
             return Ok("Category deleted successfully!");
         }
-        [HttpDelete]
+        [HttpPost]
         [Route(template: "DELETE/RemoveCategories", Name = "RemoveCategories")]
         public IActionResult RemoveCategories(IEnumerable<Category> categories)
         {

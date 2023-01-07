@@ -95,5 +95,42 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
             }
             return View();
         }
+        [HttpGet]
+        public async Task<IActionResult> RemoveCategory(int? categoryId)
+        {
+            if(categoryId != null && categoryId > 0)
+            {
+                HttpClient httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Accept.Clear();
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+                string requestUrl = $"api/Category/GET/GetCategoryById/{categoryId}";
+                Category category = await httpClient.GetFromJsonAsync<Category>(requestUrl);
+                if(category != null)
+                {
+                    return View(category);
+                }
+            }
+            return NotFound();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveCategory(Category category)
+        {
+            if (ModelState.IsValid)
+            {
+                HttpClient httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Accept.Clear();
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+                string requestUrl = "api/Category/DELETE/RemoveCategory";
+                HttpResponseMessage response = await httpClient.PostAsJsonAsync<Category>(requestUrl, category);
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("Index", "Category");
+                }
+            }
+            return View();
+        }
     }
 }
