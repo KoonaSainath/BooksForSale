@@ -87,6 +87,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
                 string requestUrl = "api/Category/PUT/UpdateCategory";
+                category.UpdatedDateTime = DateTime.Now;
                 HttpResponseMessage response = await httpClient.PutAsJsonAsync<Category>(requestUrl, category);
                 if (response.IsSuccessStatusCode)
                 {
