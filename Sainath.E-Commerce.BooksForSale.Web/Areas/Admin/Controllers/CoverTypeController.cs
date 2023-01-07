@@ -24,5 +24,31 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
             IEnumerable<CoverType> coverTypes = await httpClient.GetFromJsonAsync<IEnumerable<CoverType>>(requestUrl);
             return View(coverTypes);
         }
+        [HttpGet]
+        public async Task<IActionResult> InsertCoverType()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> InsertCoverType(CoverType coverType)
+        {
+            if (ModelState.IsValid)
+            {
+                HttpClient httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Accept.Clear();
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+                string requestUrl = "api/CoverType/POST/InsertCoverType";
+                HttpResponseMessage response = await httpClient.PostAsJsonAsync<CoverType>(requestUrl, coverType);
+                Task<CoverType> insertedCoverTypeTask = response.Content.ReadFromJsonAsync<CoverType>();
+                CoverType insertedCoverType = insertedCoverTypeTask.Result;
+                if(insertedCoverType != null && response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("Index", "CoverType");
+                }
+            }
+            return View();
+        }
     }
 }
