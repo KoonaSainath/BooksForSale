@@ -11,7 +11,7 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Admin
     [Route("api/[controller]")]
     public class CategoryController : ControllerBase
     {
-        private CategoryDomain categoryDomain;
+        private readonly CategoryDomain categoryDomain;
         public CategoryController(IUnitOfWork unitOfWork)
         {
             categoryDomain = new CategoryDomain(unitOfWork);

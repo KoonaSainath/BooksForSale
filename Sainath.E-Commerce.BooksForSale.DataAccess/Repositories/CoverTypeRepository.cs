@@ -1,5 +1,6 @@
 ﻿using Sainath.E_Commerce.BooksForSale.DataAccess.DbContextClasses;
 using Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories;
+using Sainath.E_Commerce.BooksForSale.Models.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,20 +9,16 @@ using System.Threading.Tasks;
 
 namespace Sainath.E_Commerce.BooksForSale.DataAccess.Repositories
 {
-    public class UnitOfWork : IUnitOfWork
+    public class CoverTypeRepository : Repository<CoverType>, ICoverTypeRepository
     {
-        public ICategoryRepository CategoryRepository { get; private set; }
-        public ICoverTypeRepository CoverTypeRepository { get; private set; }
         private readonly BooksForSaleDbContext dbContext;
-        public UnitOfWork(BooksForSaleDbContext dbContext)
+        public CoverTypeRepository(BooksForSaleDbContext dbContext) : base(dbContext)
         {
             this.dbContext = dbContext;
-            CategoryRepository = new CategoryRepository(dbContext);
-            CoverTypeRepository = new CoverTypeRepository(dbContext);
         }
-        public void Save()
+        public void UpdateCoverType(CoverType coverType)
         {
-            dbContext.SaveChanges();
+            dbContext.Update(coverType);
         }
     }
 }

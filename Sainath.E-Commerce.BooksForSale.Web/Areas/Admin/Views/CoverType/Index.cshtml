@@ -1,0 +1,35 @@
+﻿@model IEnumerable<CoverType>
+
+@{
+    ViewData["Title"] = "Cover types";
+}
+
+<div class="container">
+    <div class="row mt-4">
+        <div class="col-6">
+            <p class="display-6">List of cover types</p>
+        </div>
+        <div class="col-6 text-end">
+            <a class="btn btn-info" asp-area="Admin" asp-controller="CoverType" asp-action="InsertCoverType"><i class="bi bi-plus-circle"></i> Create a new cover type</a>
+        </div>
+    </div>
+    <table class="table table-bordered table-striped mt-3">
+        <thead>
+            <tr>
+                <th>Cover type name</th>
+                <th>Created date & time</th>
+                <th>Updated date & time</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(CoverType coverType in Model)
+            {
+                <tr>
+                    <td>@coverType.CoverTypeName</td>
+                    <td>@coverType.CreatedDateTime</td>
+                    <td>@coverType.UpdatedDateTime</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
