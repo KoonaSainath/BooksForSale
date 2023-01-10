@@ -31,7 +31,7 @@
                     <td>@coverType.UpdatedDateTime</td>
                     <td>
                         <a class="btn btn-info" asp-area="Admin" asp-controller="CoverType" asp-action="UpdateCoverType" asp-route-coverTypeId="@coverType.CoverTypeId"><i class="bi bi-pencil-square"></i></a>
-                        <a class="btn btn-danger asp-area="Admin" asp-controller="CoverType" asp-action="RemoveCoverType"><i class="bi bi-trash3-fill"></i></a>
+                        <a class="btn btn-danger asp-area="Admin" asp-controller="CoverType" asp-action="RemoveCoverType" asp-route-coverTypeId="@coverType.CoverTypeId"><i class="bi bi-trash3-fill"></i></a>
                     </td>
                 </tr>
             }
