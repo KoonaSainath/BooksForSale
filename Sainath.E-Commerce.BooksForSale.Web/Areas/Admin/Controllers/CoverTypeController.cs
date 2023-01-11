@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Sainath.E_Commerce.BooksForSale.Models.ViewModels;
+using Sainath.E_Commerce.BooksForSale.Utility.Constants;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
 using System.Net.Http.Headers;
 
@@ -46,6 +47,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
                 CoverType insertedCoverType = insertedCoverTypeTask.Result;
                 if(insertedCoverType != null && response.IsSuccessStatusCode)
                 {
+                    ShowNotification("Cover type is created successfully!");
                     return RedirectToAction("Index", "CoverType");
                 }
             }
@@ -82,6 +84,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
                 CoverType updatedCoverType = response.Content.ReadFromJsonAsync<CoverType>().Result;
                 if(response.IsSuccessStatusCode && updatedCoverType != null)
                 {
+                    ShowNotification("Cover type is updated successfully!");
                     return RedirectToAction("Index", "CoverType");
                 }
             }
@@ -116,10 +119,15 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
                 HttpResponseMessage response = await httpClient.PostAsJsonAsync<CoverType>(requestUrl, coverType);
                 if (response.IsSuccessStatusCode)
                 {
+                    ShowNotification("Cover type is deleted successfully!");
                     return RedirectToAction("Index", "CoverType");
                 }
             }
             return View();
+        }
+        private void ShowNotification(string message)
+        {
+            TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] = message;
         }
     }
 }

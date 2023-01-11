@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Sainath.E-Commerce.BooksForSale.DataAccess\Sainath.E-Commerce.BooksForSale.DataAccess.csproj" />
+    <ProjectReference Include="..\Sainath.E-Commerce.BooksForSale.Utility\Sainath.E-Commerce.BooksForSale.Utility.csproj" />
   </ItemGroup>
 
 </Project>
