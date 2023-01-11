@@ -1,0 +1,8 @@
+﻿@if(TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] != null)
+{
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script>
+        toastr.success('@TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY]');
+    </script>
+}

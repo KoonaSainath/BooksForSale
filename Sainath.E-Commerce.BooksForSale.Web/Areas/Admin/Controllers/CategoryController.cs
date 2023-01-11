@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Localization;
 using Sainath.E_Commerce.BooksForSale.Models.ViewModels;
+using Sainath.E_Commerce.BooksForSale.Utility.Constants;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
 using System.Linq.Expressions;
 using System.Net.Http.Headers;
@@ -48,6 +49,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
                 HttpResponseMessage response = await httpClient.PostAsJsonAsync<Category>(requestUrl, category);
                 if (response.IsSuccessStatusCode)
                 {
+                    ShowNotification("Category is created successfully!");
                     return RedirectToAction("Index", "Category");
                 }
             }
@@ -91,6 +93,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
                 HttpResponseMessage response = await httpClient.PutAsJsonAsync<Category>(requestUrl, category);
                 if (response.IsSuccessStatusCode)
                 {
+                    ShowNotification("Category is updated successfully!");
                     return RedirectToAction("Index", "Category");
                 }
             }
@@ -128,10 +131,15 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
                 HttpResponseMessage response = await httpClient.PostAsJsonAsync<Category>(requestUrl, category);
                 if (response.IsSuccessStatusCode)
                 {
+                    ShowNotification("Category is deleted successfully!");
                     return RedirectToAction("Index", "Category");
                 }
             }
             return View();
+        }
+        private void ShowNotification(string message)
+        {
+            TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] = message;
         }
     }
 }
