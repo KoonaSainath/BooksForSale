@@ -37,7 +37,7 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.Repositories
         public T GetRecord(Expression<Func<T, bool>> expression)
         {
             IQueryable<T> query = dbSet;
-            T record = query.FirstOrDefault();
+            T record = query.Where(expression).FirstOrDefault();
             return record;
         }
         public void RemoveRecord(T record)

@@ -9,7 +9,11 @@
     <link rel="stylesheet" href="~/Sainath.E_Commerce.BooksForSale.Web.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/bootswatch_theme.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
-    <link rel="icon" href="~/images/book.jpg" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+    <link href="
+https://cdn.jsdelivr.net/npm/sweetalert2@11.7.0/dist/sweetalert2.min.css
+" rel="stylesheet" />
+    <link rel="icon" href="~/images/book.jpg"/>
 </head>
 <body>
     <header>
@@ -32,7 +36,8 @@
                             <div class="dropdown-menu">
                                 <a class="dropdown-item" asp-area="Admin" asp-controller="Category" asp-action="Index">Categories</a>
                                 <a class="dropdown-item" asp-area="Admin" asp-controller="CoverType" asp-action="Index">Cover types</a>
-                                @*<div class="dropdown-divider"></div>*@
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" asp-area="Admin" asp-controller="Book" asp-action="Index">Books</a>
                             </div>
                         </li>
                     </ul>
@@ -42,6 +47,7 @@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+            <partial name="_NotificationPartial"></partial>
             @RenderBody()
         </main>
     </div>
@@ -54,6 +60,9 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="
+https://cdn.jsdelivr.net/npm/sweetalert2@11.7.0/dist/sweetalert2.all.min.js
+"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
