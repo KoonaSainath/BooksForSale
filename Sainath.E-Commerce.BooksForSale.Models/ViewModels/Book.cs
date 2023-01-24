@@ -68,6 +68,13 @@ namespace Sainath.E_Commerce.BooksForSale.Models.ViewModels
 
         [Required(ErrorMessage = "Please upload an image of the book")]
         [Display(Name = "Upload an image of the book")]
+        [NotMapped]
         public IFormFile ImageFile { get; set; }
+
+        [Required]
+        public DateTime CreatedDateTime { get; set; } = DateTime.Now;
+
+        [Required]
+        public DateTime UpdatedDateTime { get; set; } = DateTime.Now;
     }
 }
