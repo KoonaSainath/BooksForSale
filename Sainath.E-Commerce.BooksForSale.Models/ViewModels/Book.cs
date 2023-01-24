@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -50,7 +51,6 @@ namespace Sainath.E_Commerce.BooksForSale.Models.ViewModels
         [Display(Name = "Price of each book if 100 or more number of books are ordered")]
         public double Price100 { get; set; }
 
-        [Display(Name = "Upload an image of the book")]
         public string ImageUrl { get; set; }
 
         [Required(ErrorMessage = "Please select a category")]
@@ -65,5 +65,9 @@ namespace Sainath.E_Commerce.BooksForSale.Models.ViewModels
         public int CoverTypeId { get; set; }
         [ForeignKey("CoverTypeId")]
         public CoverType CoverType { get; set; }
+
+        [Required(ErrorMessage = "Please upload an image of the book")]
+        [Display(Name = "Upload an image of the book")]
+        public IFormFile ImageFile { get; set; }
     }
 }
