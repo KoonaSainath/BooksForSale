@@ -63,13 +63,13 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult UpsertBook(Book book)
+        public IActionResult UpsertBook(BookVM bookVm)
         {
             if (ModelState.IsValid)
             {
                 return RedirectToAction("Index", "Book");
             }
-            return View(book);
+            return View(bookVm);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +12,9 @@ namespace Sainath.E_Commerce.BooksForSale.Models.ViewModels
     public class BookVM
     {
         public Book Book { get; set; }
-        public IEnumerable<SelectListItem> Categories { get; set; }
-        public IEnumerable<SelectListItem> CoverTypes { get; set; }
+        [ValidateNever]
+        public IEnumerable<SelectListItem>? Categories { get; set; }
+        [ValidateNever]
+        public IEnumerable<SelectListItem>? CoverTypes { get; set; }
     }
 }
