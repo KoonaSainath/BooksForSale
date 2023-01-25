@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Sainath.E_Commerce.BooksForSale.Models.ViewModels;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
 using System.Net.Http.Headers;
@@ -21,17 +22,44 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> UpsertBook(int bookId = 0)
         {
-            Book book = new Book();
-            if(bookId != 0)
+            BookVM bookVm = new BookVM();
+            bookVm.Book = new Book();
+
+            // fill bookVm.Categories with list of all categories 
+
+            HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Accept.Clear();
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.BaseAddress = new Uri(booksForSaleConfiguration.BaseAddressForWebApi);
+            string requestUrl = $"api/Category/GET/GetAllCategories";
+            IEnumerable<Category> categories = await httpClient.GetFromJsonAsync<IEnumerable<Category>>(requestUrl);
+            IEnumerable<SelectListItem> categoriesSelectList = from c in categories
+                                                               select new SelectListItem
+                                                               {
+                                                                   Text = c.CategoryName,
+                                                                   Value = c.CategoryId.ToString()
+                                                               };
+
+            // fill bookVm.CoverTypes with list of all covertypes
+            requestUrl = $"api/CoverType/GET/GetAllCoverTypes";
+            IEnumerable<CoverType> coverTypes = await httpClient.GetFromJsonAsync<IEnumerable<CoverType>>(requestUrl);
+            IEnumerable<SelectListItem> coverTypesSelectList = coverTypes.Select(c => new SelectListItem()
             {
-                HttpClient httpClient = new HttpClient();
-                httpClient.DefaultRequestHeaders.Accept.Clear();
-                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                httpClient.BaseAddress = new Uri(booksForSaleConfiguration.BaseAddressForWebApi);
-                string requestUrl = $"api/Book/GET/GetBook/{bookId}";
-                book = await httpClient.GetFromJsonAsync<Book>(requestUrl);
+                Text = c.CoverTypeName,
+                Value = c.CoverTypeId.ToString()
+            }) ;
+
+            bookVm.Categories = categoriesSelectList;
+            bookVm.CoverTypes = coverTypesSelectList;
+
+            //In case of update, bookId will be an existing book's id
+            if (bookId != 0)
+            {
+                requestUrl = $"api/Book/GET/GetBook/{bookId}";
+                Book book = await httpClient.GetFromJsonAsync<Book>(requestUrl);
+                bookVm.Book = book;
             }
-            return View(book);
+            return View(bookVm);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
