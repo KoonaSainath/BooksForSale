@@ -71,10 +71,6 @@ namespace Sainath.E_Commerce.BooksForSale.Models.ViewModels
         [ValidateNever]
         public CoverType CoverType { get; set; }
 
-        [NotMapped]
-        [ValidateNever]
-        public IFormFile? ImageFile { get; set; }
-
         [Required]
         public DateTime CreatedDateTime { get; set; } = DateTime.Now;
 

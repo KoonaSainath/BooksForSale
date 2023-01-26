@@ -63,7 +63,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult UpsertBook(BookVM bookVm)
+        public IActionResult UpsertBook(BookVM bookVm, IFormFile imageFile)
         {
             if (ModelState.IsValid)
             {
