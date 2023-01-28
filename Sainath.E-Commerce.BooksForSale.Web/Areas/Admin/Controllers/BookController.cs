@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Sainath.E_Commerce.BooksForSale.Models.ViewModels;
+using Sainath.E_Commerce.BooksForSale.Utility.Constants;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
 using System.Net.Http.Headers;
 
@@ -10,9 +11,11 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
     public class BookController : Controller
     {
         private readonly IBooksForSaleConfiguration booksForSaleConfiguration;
-        public BookController(IBooksForSaleConfiguration booksForSaleConfiguration)
+        private readonly IWebHostEnvironment webHostEnvironment;
+        public BookController(IBooksForSaleConfiguration booksForSaleConfiguration, IWebHostEnvironment webHostEnvironment)
         {
             this.booksForSaleConfiguration = booksForSaleConfiguration;
+            this.webHostEnvironment = webHostEnvironment;
         }
         [HttpGet]
         public IActionResult Index()
@@ -63,11 +66,44 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult UpsertBook(BookVM bookVm, IFormFile imageFile)
+        public async Task<IActionResult> UpsertBook(BookVM bookVm, IFormFile imageFile)
         {
             if (ModelState.IsValid)
             {
-                return RedirectToAction("Index", "Book");
+                Book book = bookVm.Book;
+                //create
+                if(book.BookId == 0)
+                {
+                    string fileName = imageFile.FileName;
+                    string imageExtension = Path.GetExtension(fileName);
+                    string wwwRootPath = webHostEnvironment.WebRootPath;
+                    string storagePath = @"images\ImagesOfBooks";
+                    string uniqueFileName = Guid.NewGuid().ToString() + imageExtension;
+                    string imageUrlForDb = Path.Combine(storagePath, uniqueFileName);
+                    string finalPath = Path.Combine(wwwRootPath, imageUrlForDb);
+                    using (FileStream fileStream = new FileStream(finalPath, FileMode.Create))
+                    {
+                        imageFile.CopyTo(fileStream);
+                    }
+                    book.ImageUrl = imageUrlForDb;
+
+                    HttpClient httpClient = new HttpClient();
+                    httpClient.DefaultRequestHeaders.Accept.Clear();
+                    httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    httpClient.BaseAddress = new Uri(booksForSaleConfiguration.BaseAddressForWebApi);
+                    string requestUrl = "api/Book/POST/InsertBook";
+                    HttpResponseMessage response = await httpClient.PostAsJsonAsync<Book>(requestUrl, book);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] = "Book created successfully";
+                        return RedirectToAction("Index", "Book");
+                    }
+                }
+                //update
+                else
+                {
+
+                }
             }
             return View(bookVm);
         }
