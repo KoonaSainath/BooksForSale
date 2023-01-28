@@ -116,7 +116,8 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
             httpClient.DefaultRequestHeaders.Accept.Clear();
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             httpClient.BaseAddress = new Uri(booksForSaleConfiguration.BaseAddressForWebApi);
-            string requestUrl = "api/Book/GET/GetAllBooks";
+            string includeProperties = "Category,CoverType";
+            string requestUrl = $"api/Book/GET/GetAllBooks/{includeProperties}";
             List<Book> books = await httpClient.GetFromJsonAsync<List<Book>>(requestUrl);
             return Json(new { data = books });
         }

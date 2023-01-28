@@ -36,7 +36,9 @@ function loadBooksDataTable() {
         "columns": [
             { "data": "title" },
             { "data": "author" },
-            { "data": "price" }
+            { "data": "price" },
+            { "data": "category.categoryName" },
+            { "data": "coverType.coverTypeName" }
         ]
     });
 }

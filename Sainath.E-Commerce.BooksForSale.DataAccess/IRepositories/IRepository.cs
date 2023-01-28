@@ -9,7 +9,7 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories
 {
     public interface IRepository<T> where T : class
     {
-        IEnumerable<T> GetAllRecords();
+        IEnumerable<T> GetAllRecords(string includeProperties = null);
         T GetRecord(int id);
         T GetRecord(Expression<Func<T, bool>> expression);
         void InsertRecord(T record);
