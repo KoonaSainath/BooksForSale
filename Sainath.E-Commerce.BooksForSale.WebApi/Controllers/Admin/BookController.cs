@@ -16,10 +16,10 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Admin
             bookDomain = new BookDomain(unitOfWork);
         }
         [HttpGet]
-        [Route(template: "GET/GetAllBooks", Name = "GetAllBooks")]
-        public IActionResult GetAllBooks()
+        [Route(template: "GET/GetAllBooks/{includeProperties}", Name = "GetAllBooks")]
+        public IActionResult GetAllBooks(string includeProperties)
         {
-            IEnumerable<Book> allBooks = bookDomain.GetAllBooks();
+            IEnumerable<Book> allBooks = bookDomain.GetAllBooks(includeProperties);
             return Ok(allBooks);
         }
         [HttpGet]

@@ -17,9 +17,9 @@ namespace Sainath.E_Commerce.BooksForSale.BusinessDomain.BusinessDomainClasses.A
         {
             bookData = new BookData(unitOfWork);
         }
-        public IEnumerable<Book> GetAllBooks()
+        public IEnumerable<Book> GetAllBooks(string includeProperties)
         {
-            IEnumerable<Book> allBooks = bookData.GetAllBooks();
+            IEnumerable<Book> allBooks = bookData.GetAllBooks(includeProperties);
             return allBooks;
         }
         public Book GetBook(int id)

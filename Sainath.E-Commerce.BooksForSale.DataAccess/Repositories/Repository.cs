@@ -20,9 +20,19 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.Repositories
             this.dbContext = dbContext;
             dbSet = dbContext.Set<T>();
         }
-        public IEnumerable<T> GetAllRecords()
+        public IEnumerable<T> GetAllRecords(string includeProperties = null)
         {
             IQueryable<T> query = dbSet;
+
+            if(includeProperties != null)
+            {
+                string[] includePropertiesList = includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                foreach (string property in includePropertiesList)
+                {
+                    query = query.Include(property.Trim());
+                }
+            }
+            
             return query.ToList();
         }
         public void InsertRecord(T record)

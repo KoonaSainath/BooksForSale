@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -35,40 +36,40 @@ namespace Sainath.E_Commerce.BooksForSale.Models.ViewModels
         [Required(ErrorMessage = "Please enter list price of the book")]
         [Range(minimum: 1, maximum: 10000, ErrorMessage = "List price has to be between 1 and 10,000 included")]
         [Display(Name = "List price")]
-        public double ListPrice { get; set; }
+        public double? ListPrice { get; set; }
 
         [Required(ErrorMessage = "Please enter price of the book")]
         [Range(minimum: 1, maximum: 10000, ErrorMessage = "Price has to be between 1 and 10,000 included")]
-        public double Price { get; set; }
+        public double? Price { get; set; }
 
         [Required(ErrorMessage = "Please enter price of each book if 50 or more number of books are ordered")]
         [Range(minimum: 1, maximum: 10000, ErrorMessage = "Price has to be between 1 and 10,000 included")]
         [Display(Name = "Price of each book if 50 or more number of books are ordered")]
-        public double Price50 { get; set; }
+        public double? Price50 { get; set; }
 
         [Required(ErrorMessage = "Please enter price of each book if 100 or more number of books are ordered")]
         [Range(minimum: 1, maximum: 10000, ErrorMessage = "Price has to be between 1 and 10,000 included")]
         [Display(Name = "Price of each book if 100 or more number of books are ordered")]
-        public double Price100 { get; set; }
+        public double? Price100 { get; set; }
 
+        [ValidateNever]
         [Display(Name = "Upload an image of the book")]
         public string ImageUrl { get; set; }
 
         [Required(ErrorMessage = "Please select a category")]
         [Display(Name = "Book category")]
-        public int CategoryId { get; set; }
+        public int? CategoryId { get; set; }
 
         [ForeignKey("CategoryId")]
+        [ValidateNever]
         public Category Category { get; set; }
 
         [Required(ErrorMessage = "Please select a cover type")]
         [Display(Name = "Book cover type")]
-        public int CoverTypeId { get; set; }
+        public int? CoverTypeId { get; set; }
         [ForeignKey("CoverTypeId")]
+        [ValidateNever]
         public CoverType CoverType { get; set; }
-
-        [NotMapped]
-        public IFormFile ImageFile { get; set; }
 
         [Required]
         public DateTime CreatedDateTime { get; set; } = DateTime.Now;

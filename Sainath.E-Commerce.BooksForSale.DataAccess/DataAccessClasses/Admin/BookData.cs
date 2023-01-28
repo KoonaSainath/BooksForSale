@@ -17,9 +17,9 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Admin
 
         }
 
-        public IEnumerable<Book> GetAllBooks()
+        public IEnumerable<Book> GetAllBooks(string includeProperties)
         {
-            IQueryable<Book> booksQuery = unitOfWork.BookRepository.GetAllRecords().AsQueryable<Book>();
+            IQueryable<Book> booksQuery = unitOfWork.BookRepository.GetAllRecords(includeProperties).AsQueryable<Book>();
             return booksQuery.ToList();
         }
 
