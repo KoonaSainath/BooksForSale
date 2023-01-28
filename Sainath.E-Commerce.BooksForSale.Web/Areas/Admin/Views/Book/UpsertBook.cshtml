@@ -73,7 +73,7 @@
             <div class="mt-3 col-12">
                 @if (Model.Book.BookId == 0)
                 {
-                    <button type="submit" class="btn btn-info mx-3" id="btnCreateBook">Create book</button>
+                    <button type="submit" class="btn btn-info mx-3" id="btnCreateBook" onclick="return validateFile()">Create book</button>
                 }
                 else
                 {

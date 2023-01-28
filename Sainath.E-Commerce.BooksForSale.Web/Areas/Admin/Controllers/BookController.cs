@@ -118,7 +118,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
             httpClient.BaseAddress = new Uri(booksForSaleConfiguration.BaseAddressForWebApi);
             string requestUrl = "api/Book/GET/GetAllBooks";
             List<Book> books = await httpClient.GetFromJsonAsync<List<Book>>(requestUrl);
-            return Json(new { api_message = "SUCCESS", books_data = books });
+            return Json(new { data = books });
         }
     }
 }

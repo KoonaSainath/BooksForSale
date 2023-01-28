@@ -1,7 +1,13 @@
-﻿let btnCreateBook = document.querySelector('#btnCreateBook');
-btnCreateBook.addEventListener('click', ValidateFile);
+﻿$(document).ready(function () {
+    //let btnCreateBook = document.querySelector('#btnCreateBook');
+    //if (btnCreateBook != null) {
+    //    btnCreateBook.addEventListener('click', validateFile);
+    //}
 
-function ValidateFile() {
+    loadBooksDataTable();
+})
+
+function validateFile() {
     let imageFile = document.querySelector('#imageFile').value;
     let errorText = '';
     let extensionRegex = /\.png$/;
@@ -20,4 +26,17 @@ function ValidateFile() {
         return false;
     }
     return true;
+}
+
+function loadBooksDataTable() {
+    $('#tableBooks').DataTable({
+        "ajax": {
+            "url": "Book/GetAllBooksApiEndPoint"
+        },
+        "columns": [
+            { "data": "title" },
+            { "data": "author" },
+            { "data": "price" }
+        ]
+    });
 }
