@@ -68,11 +68,12 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpsertBook(BookVM bookVm, IFormFile imageFile)
         {
+            ModelState.Remove("imageFile");
             if (ModelState.IsValid)
             {
                 Book book = bookVm.Book;
-                //create
-                if(book.BookId == 0)
+
+                if(imageFile != null)
                 {
                     string fileName = imageFile.FileName;
                     string imageExtension = Path.GetExtension(fileName);
@@ -85,30 +86,49 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
                     {
                         imageFile.CopyTo(fileStream);
                     }
-                    book.ImageUrl = imageUrlForDb;
+                    //already an image exists. so its an update
+                    if(book.ImageUrl != null)
+                    {
+                        string pathToDelete = Path.Combine(wwwRootPath, book.ImageUrl.TrimStart('\\'));
+                        if (System.IO.File.Exists(pathToDelete))
+                        {
+                            System.IO.File.Delete(pathToDelete);
+                        }
+                    }
 
-                    HttpClient httpClient = new HttpClient();
-                    httpClient.DefaultRequestHeaders.Accept.Clear();
-                    httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    httpClient.BaseAddress = new Uri(booksForSaleConfiguration.BaseAddressForWebApi);
-                    string requestUrl = "api/Book/POST/InsertBook";
-                    HttpResponseMessage response = await httpClient.PostAsJsonAsync<Book>(requestUrl, book);
+                    book.ImageUrl = $"\\images\\ImagesOfBooks\\{uniqueFileName}";
+                    
+                }
+                HttpClient httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Accept.Clear();
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                httpClient.BaseAddress = new Uri(booksForSaleConfiguration.BaseAddressForWebApi);
+                string requestUrl = "";
+                if (book.BookId != 0)
+                {
+                    book.UpdatedDateTime = DateTime.Now;
+                    requestUrl = "api/Book/PUT/UpdateBook";
+                    HttpResponseMessage response = await httpClient.PutAsJsonAsync<Book>(requestUrl, book);
                     if (response.IsSuccessStatusCode)
+                    {
+                        TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] = "Book updated successfully";
+                        return RedirectToAction("Index", "Book");
+                    }
+                }
+                else
+                {
+                    requestUrl = "api/Book/POST/InsertBook";
+                    HttpResponseMessage response = await httpClient.PostAsJsonAsync<Book>(requestUrl, book); if (response.IsSuccessStatusCode)
                     {
                         TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] = "Book created successfully";
                         return RedirectToAction("Index", "Book");
                     }
                 }
-                //update
-                else
-                {
-
-                }
             }
             return View(bookVm);
         }
 
-        //API END POINT - DataTable in Index.cshtml
+        #region API ENDPOINTS
         [HttpGet]
         public async Task<IActionResult> GetAllBooksApiEndPoint()
         {
@@ -121,5 +141,40 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
             List<Book> books = await httpClient.GetFromJsonAsync<List<Book>>(requestUrl);
             return Json(new { data = books });
         }
+
+        
+        [HttpDelete]
+        public async Task<IActionResult> RemoveBookApiEndPoint(int bookId)
+        {
+            HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Accept.Clear();
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.BaseAddress = new Uri(booksForSaleConfiguration.BaseAddressForWebApi);
+
+            string requestUrl = $"api/Book/GET/GetBook/{bookId}";
+            Book book = await httpClient.GetFromJsonAsync<Book>(requestUrl);
+
+            if(book != null)
+            {
+                requestUrl = "api/Book/DELETE/RemoveBook";
+                HttpResponseMessage response = await httpClient.PostAsJsonAsync<Book>(requestUrl, book);
+                if (response.IsSuccessStatusCode)
+                {
+                    string bookImagePathToDelete = Path.Combine(webHostEnvironment.WebRootPath, book.ImageUrl.TrimStart('\\'));
+                    if (System.IO.File.Exists(bookImagePathToDelete))
+                    {
+                        System.IO.File.Delete(bookImagePathToDelete);
+                    }
+                    return Json(new { success = true, message = "Book removed successfully!" });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Error occured while removing the book!" });
+                }
+            }
+            return Json(new { success = false, message = "Error occured while removing the book!" });
+        }
+
+        #endregion
     }
 }

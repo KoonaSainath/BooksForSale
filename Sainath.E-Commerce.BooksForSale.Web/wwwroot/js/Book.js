@@ -1,11 +1,22 @@
 ﻿$(document).ready(function () {
-    //let btnCreateBook = document.querySelector('#btnCreateBook');
-    //if (btnCreateBook != null) {
-    //    btnCreateBook.addEventListener('click', validateFile);
-    //}
-
+    let booksDataTable;
     loadBooksDataTable();
-})
+});
+
+function validateFileExtension() {
+    let extensionRegex = /\.png$/;
+    let imageFile = document.querySelector('#imageFile').value;
+    if (imageFile != '' && !extensionRegex.test(imageFile)) {
+        Swal.fire({
+            title: 'File upload error!',
+            text: 'Please upload an image with ".png" extension only',
+            icon: 'error',
+            confirmButtonText: 'Okay'
+        });
+        return false;
+    }
+    return true;
+}
 
 function validateFile() {
     let imageFile = document.querySelector('#imageFile').value;
@@ -22,14 +33,14 @@ function validateFile() {
             text: errorText,
             icon: 'error',
             confirmButtonText: 'Okay'
-        })
+        });
         return false;
     }
     return true;
 }
 
 function loadBooksDataTable() {
-    $('#tableBooks').DataTable({
+    booksDataTable = $('#tableBooks').DataTable({
         "ajax": {
             "url": "Book/GetAllBooksApiEndPoint"
         },
@@ -38,7 +49,55 @@ function loadBooksDataTable() {
             { "data": "author" },
             { "data": "price" },
             { "data": "category.categoryName" },
-            { "data": "coverType.coverTypeName" }
+            { "data": "coverType.coverTypeName" },
+            {
+                "data": "bookId",
+                "render": function (data) {
+                    return `
+                        <div class="btn-group">
+                            <a class="btn btn-primary" href="/Admin/Book/UpsertBook?bookId=${data}">Update</a>
+                            <a class="btn btn-danger" onclick="removeBookAjax(${data})">Delete</a>
+                        </div>
+                    `;
+                }
+            }
         ]
+    });
+}
+
+function removeBookAjax(bookId) {
+    Swal.fire({
+        title: 'Are you sure you want to delete this book?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `/Admin/Book/RemoveBookApiEndPoint?bookId=${bookId}`,
+                type: "DELETE",
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    if (data.success) {
+                        Swal.fire({
+                            title: 'Deleted!',
+                            text: data.message,
+                            icon: 'success'
+                        });
+
+                        booksDataTable.ajax.reload();
+                    } else {
+                        Swal.fire({
+                            title: 'Error occured!',
+                            text: data.message,
+                            icon: 'error'
+                        });
+                    }
+                }
+            }); 
+        }
     });
 }
