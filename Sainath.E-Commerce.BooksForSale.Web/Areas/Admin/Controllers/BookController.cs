@@ -144,22 +144,35 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
 
         
         [HttpDelete]
-        public async Task<IActionResult> RemoveBookApiEndPoint(Book book)
+        public async Task<IActionResult> RemoveBookApiEndPoint(int bookId)
         {
             HttpClient httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Accept.Clear();
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             httpClient.BaseAddress = new Uri(booksForSaleConfiguration.BaseAddressForWebApi);
-            string requestUrl = "api/Book/DELETE/RemoveBook";
-            HttpResponseMessage response = await httpClient.PostAsJsonAsync<Book>(requestUrl, book);
-            if (response.IsSuccessStatusCode)
+
+            string requestUrl = $"api/Book/GET/GetBook/{bookId}";
+            Book book = await httpClient.GetFromJsonAsync<Book>(requestUrl);
+
+            if(book != null)
             {
-                return Json(new { success = true, message = "Book removed successfully!" });
+                requestUrl = "api/Book/DELETE/RemoveBook";
+                HttpResponseMessage response = await httpClient.PostAsJsonAsync<Book>(requestUrl, book);
+                if (response.IsSuccessStatusCode)
+                {
+                    string bookImagePathToDelete = Path.Combine(webHostEnvironment.WebRootPath, book.ImageUrl.TrimStart('\\'));
+                    if (System.IO.File.Exists(bookImagePathToDelete))
+                    {
+                        System.IO.File.Delete(bookImagePathToDelete);
+                    }
+                    return Json(new { success = true, message = "Book removed successfully!" });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Error occured while removing the book!" });
+                }
             }
-            else
-            {
-                return Json(new { success = false, message = "Error occured while removing the book!" });
-            }
+            return Json(new { success = false, message = "Error occured while removing the book!" });
         }
 
         #endregion

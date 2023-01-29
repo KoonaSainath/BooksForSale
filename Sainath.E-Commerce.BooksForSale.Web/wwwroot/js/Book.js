@@ -55,11 +55,49 @@ function loadBooksDataTable() {
                 "render": function (data) {
                     return `
                         <div class="btn-group">
-                            <a class="btn btn-info" href="/Admin/Book/UpsertBook?bookId=${data}">Update</a>
+                            <a class="btn btn-primary" href="/Admin/Book/UpsertBook?bookId=${data}">Update</a>
+                            <a class="btn btn-danger" onclick="removeBookAjax(${data})">Delete</a>
                         </div>
                     `;
                 }
             }
         ]
+    });
+}
+
+function removeBookAjax(bookId) {
+    Swal.fire({
+        title: 'Are you sure you want to delete this book?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `/Admin/Book/RemoveBookApiEndPoint?bookId=${bookId}`,
+                type: "DELETE",
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    if (data.success) {
+                        Swal.fire({
+                            title: 'Deleted!',
+                            text: data.message,
+                            icon: 'success'
+                        });
+
+                        booksDataTable.ajax.reload();
+                    } else {
+                        Swal.fire({
+                            title: 'Error occured!',
+                            text: data.message,
+                            icon: 'error'
+                        });
+                    }
+                }
+            }); 
+        }
     });
 }

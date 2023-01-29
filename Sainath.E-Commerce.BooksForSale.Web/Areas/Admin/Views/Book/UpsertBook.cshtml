@@ -90,7 +90,10 @@
         </form>
     </div>
     <div class="col-2">
-        <img class="mt-4" src="@Model.Book.ImageUrl" height="220" width="200" style="object-fit: fill;"/>
+        @if(Model.Book.ImageUrl != null)
+        {
+            <img class="mt-4" src="@Model.Book.ImageUrl" height="220" width="200" style="object-fit: fill;"/>
+        }
     </div>
 </div>
 
