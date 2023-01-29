@@ -128,7 +128,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
             return View(bookVm);
         }
 
-        //API END POINT - DataTable in Index.cshtml
+        #region API ENDPOINTS
         [HttpGet]
         public async Task<IActionResult> GetAllBooksApiEndPoint()
         {
@@ -141,5 +141,27 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
             List<Book> books = await httpClient.GetFromJsonAsync<List<Book>>(requestUrl);
             return Json(new { data = books });
         }
+
+        
+        [HttpDelete]
+        public async Task<IActionResult> RemoveBookApiEndPoint(Book book)
+        {
+            HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Accept.Clear();
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.BaseAddress = new Uri(booksForSaleConfiguration.BaseAddressForWebApi);
+            string requestUrl = "api/Book/DELETE/RemoveBook";
+            HttpResponseMessage response = await httpClient.PostAsJsonAsync<Book>(requestUrl, book);
+            if (response.IsSuccessStatusCode)
+            {
+                return Json(new { success = true, message = "Book removed successfully!" });
+            }
+            else
+            {
+                return Json(new { success = false, message = "Error occured while removing the book!" });
+            }
+        }
+
+        #endregion
     }
 }
