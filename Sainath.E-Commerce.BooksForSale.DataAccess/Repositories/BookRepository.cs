@@ -33,6 +33,8 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.Repositories
                 bookFromDb.Price100 = book.Price100;
                 bookFromDb.CategoryId = book.CategoryId;
                 bookFromDb.CoverTypeId = book.CoverTypeId;
+                bookFromDb.CreatedDateTime = book.CreatedDateTime;
+                bookFromDb.UpdatedDateTime = book.UpdatedDateTime;
                 if(book.ImageUrl != null)
                 {
                     bookFromDb.ImageUrl = book.ImageUrl;

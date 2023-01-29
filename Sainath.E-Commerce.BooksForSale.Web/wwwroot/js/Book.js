@@ -1,11 +1,22 @@
 ﻿$(document).ready(function () {
-    //let btnCreateBook = document.querySelector('#btnCreateBook');
-    //if (btnCreateBook != null) {
-    //    btnCreateBook.addEventListener('click', validateFile);
-    //}
-
+    let booksDataTable;
     loadBooksDataTable();
-})
+});
+
+function validateFileExtension() {
+    let extensionRegex = /\.png$/;
+    let imageFile = document.querySelector('#imageFile').value;
+    if (imageFile != '' && !extensionRegex.test(imageFile)) {
+        Swal.fire({
+            title: 'File upload error!',
+            text: 'Please upload an image with ".png" extension only',
+            icon: 'error',
+            confirmButtonText: 'Okay'
+        });
+        return false;
+    }
+    return true;
+}
 
 function validateFile() {
     let imageFile = document.querySelector('#imageFile').value;
@@ -22,14 +33,14 @@ function validateFile() {
             text: errorText,
             icon: 'error',
             confirmButtonText: 'Okay'
-        })
+        });
         return false;
     }
     return true;
 }
 
 function loadBooksDataTable() {
-    $('#tableBooks').DataTable({
+    booksDataTable = $('#tableBooks').DataTable({
         "ajax": {
             "url": "Book/GetAllBooksApiEndPoint"
         },
@@ -38,7 +49,17 @@ function loadBooksDataTable() {
             { "data": "author" },
             { "data": "price" },
             { "data": "category.categoryName" },
-            { "data": "coverType.coverTypeName" }
+            { "data": "coverType.coverTypeName" },
+            {
+                "data": "bookId",
+                "render": function (data) {
+                    return `
+                        <div class="btn-group">
+                            <a class="btn btn-info" href="/Admin/Book/UpsertBook?bookId=${data}">Update</a>
+                        </div>
+                    `;
+                }
+            }
         ]
     });
 }
