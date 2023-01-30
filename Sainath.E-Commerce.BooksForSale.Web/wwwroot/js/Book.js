@@ -1,4 +1,5 @@
 ﻿$(document).ready(function () {
+    CKEDITOR.replace('textAreaDescription');
     let booksDataTable;
     loadBooksDataTable();
 });
@@ -97,7 +98,7 @@ function removeBookAjax(bookId) {
                         });
                     }
                 }
-            }); 
+            });
         }
     });
 }
