@@ -141,5 +141,21 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         {
             TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] = message;
         }
+
+        #region API ENDPOINTS
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllCategoriesApiEndPoint()
+        {
+            HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Accept.Clear();
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+            string requestUrl = "api/Category/GET/GetAllCategories";
+            IEnumerable<Category> categories = await httpClient.GetFromJsonAsync<IEnumerable<Category>>(requestUrl);
+            return Json(new { data = categories });
+        }
+
+        #endregion
     }
 }
