@@ -58,7 +58,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> UpdateCategory(int? categoryId)
         {
-            if(categoryId != 0 && categoryId != null)
+            if (categoryId != 0 && categoryId != null)
             {
                 HttpClient httpClient = new HttpClient();
                 httpClient.DefaultRequestHeaders.Accept.Clear();
@@ -70,7 +70,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
                 {
                     Task<Category> categoryTask = response.Content.ReadFromJsonAsync<Category>();
                     Category category = categoryTask.Result;
-                    if(category != null)
+                    if (category != null)
                     {
                         return View(category);
                     }
@@ -102,7 +102,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> RemoveCategory(int? categoryId)
         {
-            if(categoryId != null && categoryId > 0)
+            if (categoryId != null && categoryId > 0)
             {
                 HttpClient httpClient = new HttpClient();
                 httpClient.DefaultRequestHeaders.Accept.Clear();
@@ -110,7 +110,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
                 httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
                 string requestUrl = $"api/Category/GET/GetCategoryById/{categoryId}";
                 Category category = await httpClient.GetFromJsonAsync<Category>(requestUrl);
-                if(category != null)
+                if (category != null)
                 {
                     return View(category);
                 }
@@ -154,6 +154,34 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
             string requestUrl = "api/Category/GET/GetAllCategories";
             IEnumerable<Category> categories = await httpClient.GetFromJsonAsync<IEnumerable<Category>>(requestUrl);
             return Json(new { data = categories });
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> RemoveCategoryApiEndPoint(int categoryId)
+        {
+            HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Accept.Clear();
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+            string requestUrl = $"api/Category/GET/GetCategoryById/{categoryId}";
+            Category category = await httpClient.GetFromJsonAsync<Category>(requestUrl);
+            if (category != null)
+            {
+                requestUrl = "api/Category/DELETE/RemoveCategory";
+                HttpResponseMessage response = await httpClient.PostAsJsonAsync<Category>(requestUrl, category);
+                if (response.IsSuccessStatusCode)
+                {
+                    return Json(new { success = true, message = "Category removed successfully!" });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Error occured while removing the category!" });
+                }
+            }
+            else
+            {
+                return Json(new { success = false, message = "Error occured while removing the category!" });
+            }
         }
 
         #endregion
