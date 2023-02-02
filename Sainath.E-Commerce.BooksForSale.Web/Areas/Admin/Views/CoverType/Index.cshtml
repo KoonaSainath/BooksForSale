@@ -13,7 +13,7 @@
             <a class="btn btn-info" asp-area="Admin" asp-controller="CoverType" asp-action="InsertCoverType"><i class="bi bi-plus-circle"></i> Create a new cover type</a>
         </div>
     </div>
-    <table class="table table-bordered table-striped mt-3">
+    <table class="table table-bordered table-striped mt-3" id="tableCoverTypes">
         <thead>
             <tr>
                 <th>Cover type name</th>
@@ -22,19 +22,5 @@
                 <th></th>
             </tr>
         </thead>
-        <tbody>
-            @foreach(CoverType coverType in Model)
-            {
-                <tr>
-                    <td>@coverType.CoverTypeName</td>
-                    <td>@coverType.CreatedDateTime</td>
-                    <td>@coverType.UpdatedDateTime</td>
-                    <td>
-                        <a class="btn btn-info" asp-area="Admin" asp-controller="CoverType" asp-action="UpdateCoverType" asp-route-coverTypeId="@coverType.CoverTypeId"><i class="bi bi-pencil-square"></i></a>
-                        <a class="btn btn-danger asp-area="Admin" asp-controller="CoverType" asp-action="RemoveCoverType" asp-route-coverTypeId="@coverType.CoverTypeId"><i class="bi bi-trash3-fill"></i></a>
-                    </td>
-                </tr>
-            }
-        </tbody>
     </table>
 </div>

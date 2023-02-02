@@ -129,5 +129,20 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         {
             TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] = message;
         }
+
+        #region API END POINTS
+
+        public async Task<ActionResult> GetAllCoverTypesApiEndPoint()
+        {
+            HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Accept.Clear();
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+            string requestUrl = "api/CoverType/GET/GetAllCoverTypes";
+            IEnumerable<CoverType> coverTypes = await httpClient.GetFromJsonAsync<IEnumerable<CoverType>>(requestUrl);
+            return Json(new { data = coverTypes });
+        }
+
+        #endregion
     }
 }
