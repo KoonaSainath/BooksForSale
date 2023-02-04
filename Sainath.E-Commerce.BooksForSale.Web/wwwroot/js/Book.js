@@ -1,40 +1,48 @@
 ﻿$(document).ready(function () {
-    CKEDITOR.replace('textAreaDescription');
+    let textAreaDescription = document.getElementById('Description');
+    if (textAreaDescription != null) {
+        CKEDITOR.replace(textAreaDescription);
+    }
     let booksDataTable;
     loadBooksDataTable();
 });
 
-function validateFileExtension() {
-    let extensionRegex = /\.png$/;
+function validateFileExtensionAndTextArea() {
+    let errorText = '';
+    let titleText = '';
     let imageFile = document.querySelector('#imageFile').value;
-    if (imageFile != '' && !extensionRegex.test(imageFile)) {
-        Swal.fire({
-            title: 'File upload error!',
-            text: 'Please upload an image with ".png" extension only',
-            icon: 'error',
-            confirmButtonText: 'Okay'
-        });
+    CKEDITOR.instances.Description.updateElement();
+    if (imageFile != '' && !isFilePng(imageFile)) {
+        titleText = 'File extension error!';
+        errorText = 'Please upload an image with ".png" extension only';
+    } else if (!isDescriptionValid(document.getElementById('Description').value)) {
+        titleText = 'Book description error!';
+        errorText = 'Please enter book description';
+    }
+    if (errorText != '') {
+        SweetAlert(titleText, errorText, 'error', 'Okay');
         return false;
     }
     return true;
 }
 
-function validateFile() {
+function validateFileAndTextArea() {
     let imageFile = document.querySelector('#imageFile').value;
     let errorText = '';
-    let extensionRegex = /\.png$/;
+    let titleText = '';
+    CKEDITOR.instances.Description.updateElement();
     if (imageFile == '') {
         errorText = 'Please upload an image to create a book';
-    } else if (!extensionRegex.test(imageFile)) {
+        titleText = 'File error!';
+    } else if (!isFilePng(imageFile)) {
         errorText = 'Please upload an image with ".png" extension only';
+        titleText = 'File extension error!';
+    } else if (!isDescriptionValid(document.getElementById('Description').value)) {
+        errorText = 'Please enter book description';
+        titleText = 'Book description error!';
     }
     if (errorText != '') {
-        Swal.fire({
-            title: 'File upload error!',
-            text: errorText,
-            icon: 'error',
-            confirmButtonText: 'Okay'
-        });
+        SweetAlert(titleText, errorText, 'error', 'Okay');
         return false;
     }
     return true;
@@ -51,12 +59,14 @@ function loadBooksDataTable() {
             { "data": "price" },
             { "data": "category.categoryName" },
             { "data": "coverType.coverTypeName" },
+            { "data": "createdDateTimeString" },
+            { "data": "updatedDateTimeString" },
             {
                 "data": "bookId",
                 "render": function (data) {
                     return `
                         <div>
-                            <a class="btn btn-primary mx-4" href="/Admin/Book/UpsertBook?bookId=${data}"><i class="bi bi-pencil-square"></i></a>
+                            <a class="btn btn-primary" href="/Admin/Book/UpsertBook?bookId=${data}"><i class="bi bi-pencil-square"></i></a>
                             <a class="btn btn-danger" onclick="removeBookAjax(${data})"><i class="bi bi-trash3-fill"></i></a>
                         </div>
                     `;
@@ -83,22 +93,31 @@ function removeBookAjax(bookId) {
                 contentType: 'application/json; charset=utf-8',
                 success: function (data) {
                     if (data.success) {
-                        Swal.fire({
-                            title: 'Deleted!',
-                            text: data.message,
-                            icon: 'success'
-                        });
-
+                        SweetAlert('Deleted!', data.message, 'success', 'Okay');
                         booksDataTable.ajax.reload();
                     } else {
-                        Swal.fire({
-                            title: 'Error occured!',
-                            text: data.message,
-                            icon: 'error'
-                        });
+                        SweetAlert('Error occured!', data.message, 'error', 'Okay');
                     }
                 }
             });
         }
+    });
+}
+
+function isDescriptionValid(description) {
+    return !(description == '' || typeof description == undefined)
+}
+
+function isFilePng(fileName) {
+    let regex = /\.png$/;
+    return regex.test(fileName);
+}
+
+function SweetAlert(title, text, iconType, confirmButtonText) {
+    Swal.fire({
+        title: title,
+        text: text,
+        icon: iconType,
+        confirmButtonText: confirmButtonText
     });
 }

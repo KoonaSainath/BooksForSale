@@ -118,7 +118,9 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
                 else
                 {
                     requestUrl = "api/Book/POST/InsertBook";
-                    HttpResponseMessage response = await httpClient.PostAsJsonAsync<Book>(requestUrl, book); if (response.IsSuccessStatusCode)
+                    HttpResponseMessage response = await httpClient.PostAsJsonAsync<Book>(requestUrl, book);
+                    
+                    if (response.IsSuccessStatusCode)
                     {
                         TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] = "Book created successfully";
                         return RedirectToAction("Index", "Book");

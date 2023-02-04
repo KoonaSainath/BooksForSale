@@ -21,7 +21,6 @@ namespace Sainath.E_Commerce.BooksForSale.Models.ViewModels
         [MaxLength(100)]
         public string Title { get; set; }
 
-        [Required(ErrorMessage = "Please enter book description")]
         [MaxLength(1000)]
         public string Description { get; set; }
         
@@ -76,5 +75,21 @@ namespace Sainath.E_Commerce.BooksForSale.Models.ViewModels
 
         [Required]
         public DateTime UpdatedDateTime { get; set; } = DateTime.Now;
+
+        public string CreatedDateTimeString
+        {
+            get
+            {
+                return CreatedDateTime.ToString("dd/MM/yyyy HH:mm:ss");
+            }
+        }
+
+        public string UpdatedDateTimeString
+        {
+            get
+            {
+                return UpdatedDateTime.ToString("dd/MM/yyyy HH:mm:ss");
+            }
+        }
     }
 }
