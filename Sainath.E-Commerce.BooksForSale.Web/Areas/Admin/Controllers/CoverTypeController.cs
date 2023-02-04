@@ -131,7 +131,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         }
 
         #region API END POINTS
-
+        [HttpGet]
         public async Task<ActionResult> GetAllCoverTypesApiEndPoint()
         {
             HttpClient httpClient = new HttpClient();
@@ -141,6 +141,28 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
             string requestUrl = "api/CoverType/GET/GetAllCoverTypes";
             IEnumerable<CoverType> coverTypes = await httpClient.GetFromJsonAsync<IEnumerable<CoverType>>(requestUrl);
             return Json(new { data = coverTypes });
+        }
+        [HttpDelete]
+        //[ValidateAntiForgeryToken]
+        public async Task<ActionResult> RemoveCoverTypeApiEndPoint(int coverTypeId)
+        {
+            HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Accept.Clear();
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+            string requestUrl = $"api/CoverType/GET/GetCoverType/{coverTypeId}";
+            CoverType coverType = await httpClient.GetFromJsonAsync<CoverType>(requestUrl);
+
+            requestUrl = "api/CoverType/DELETE/RemoveCoverType";
+            HttpResponseMessage response = await httpClient.PostAsJsonAsync<CoverType>(requestUrl, coverType);
+            if (response.IsSuccessStatusCode)
+            {
+                return Json(new { success = true, message = "Cover type removed successfully!" });
+            }
+            else
+            {
+                return Json(new { success = false, message = "Error occured while removing the cover type!" });
+            }
         }
 
         #endregion
