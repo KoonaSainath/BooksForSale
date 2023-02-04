@@ -21,7 +21,6 @@ namespace Sainath.E_Commerce.BooksForSale.Models.ViewModels
         [MaxLength(100)]
         public string Title { get; set; }
 
-        [Required(ErrorMessage = "Please enter book description")]
         [MaxLength(1000)]
         public string Description { get; set; }
         

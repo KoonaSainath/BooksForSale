@@ -4,13 +4,25 @@
     loadBooksDataTable();
 });
 
-function validateFileExtension() {
+function validateFileExtensionAndTextArea() {
+    let errorText = '';
+    let titleText = '';
     let extensionRegex = /\.png$/;
     let imageFile = document.querySelector('#imageFile').value;
+    let textAreaDescription = document.querySelector('#textAreaDescription');
+    CKEDITOR.instances.textAreaDescription.updateElement();
+    let description = textAreaDescription.value;
     if (imageFile != '' && !extensionRegex.test(imageFile)) {
+        titleText = 'File extension error!';
+        errorText = 'Please upload an image with ".png" extension only';
+    } else if (description == '' || typeof description == undefined) {
+        titleText = 'Book description error!';
+        errorText = 'Please enter book description';
+    }
+    if (errorText != '') {
         Swal.fire({
-            title: 'File upload error!',
-            text: 'Please upload an image with ".png" extension only',
+            title: titleText,
+            text: errorText,
             icon: 'error',
             confirmButtonText: 'Okay'
         });
@@ -19,18 +31,27 @@ function validateFileExtension() {
     return true;
 }
 
-function validateFile() {
+function validateFileAndTextArea() {
     let imageFile = document.querySelector('#imageFile').value;
     let errorText = '';
+    let titleText = '';
+    let textAreaDescription = document.querySelector('#textAreaDescription');
+    CKEDITOR.instances.textAreaDescription.updateElement();
+    let description = textAreaDescription.value;
     let extensionRegex = /\.png$/;
     if (imageFile == '') {
         errorText = 'Please upload an image to create a book';
+        titleText = 'File error!';
     } else if (!extensionRegex.test(imageFile)) {
         errorText = 'Please upload an image with ".png" extension only';
+        titleText = 'File extension error!';
+    } else if (description == '' || typeof description == undefined) {
+        errorText = 'Please enter book description';
+        titleText = 'Book description error!';
     }
     if (errorText != '') {
         Swal.fire({
-            title: 'File upload error!',
+            title: titleText,
             text: errorText,
             icon: 'error',
             confirmButtonText: 'Okay'
