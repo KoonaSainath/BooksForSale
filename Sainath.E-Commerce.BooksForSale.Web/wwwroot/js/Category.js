@@ -12,14 +12,14 @@ function loadCategoriesDataTable() {
         "columns": [
             { "data": "categoryName" },
             { "data": "displayOrder" },
-            { "data": "createdDateTime" },
-            { "data": "updatedDateTime" },
+            { "data": "createdDateTimeString" },
+            { "data": "updatedDateTimeString" },
             {
                 "data": "categoryId",
                 "render": function (data) {
                     return `
                         <div>
-                            <a class="btn btn-primary mx-4" href="/Admin/Category/UpdateCategory?categoryId=${data
+                            <a class="btn btn-primary" href="/Admin/Category/UpdateCategory?categoryId=${data
                         }"><i class="bi bi-pencil-square"></i></a>
                             <a class="btn btn-danger" onclick="removeCategoryAjax(${data})"><i class="bi bi-trash3-fill"></i></a>
                         </div>

@@ -51,6 +51,8 @@ function loadBooksDataTable() {
             { "data": "price" },
             { "data": "category.categoryName" },
             { "data": "coverType.coverTypeName" },
+            { "data": "createdDateTimeString" },
+            { "data": "updatedDateTimeString" },
             {
                 "data": "bookId",
                 "render": function (data) {

@@ -10,8 +10,8 @@ function loadCoverTypesDataTable() {
         },
         "columns": [
             { "data": "coverTypeName" },
-            { "data": "createdDateTime" },
-            { "data": "updatedDateTime" },
+            { "data": "createdDateTimeString" },
+            { "data": "updatedDateTimeString" },
             {
                 "data": "coverTypeId",
                 "render": function (data) {

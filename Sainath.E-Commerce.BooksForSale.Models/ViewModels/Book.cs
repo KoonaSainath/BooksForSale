@@ -76,5 +76,21 @@ namespace Sainath.E_Commerce.BooksForSale.Models.ViewModels
 
         [Required]
         public DateTime UpdatedDateTime { get; set; } = DateTime.Now;
+
+        public string CreatedDateTimeString
+        {
+            get
+            {
+                return CreatedDateTime.ToString("dd/MM/yyyy HH:mm:ss");
+            }
+        }
+
+        public string UpdatedDateTimeString
+        {
+            get
+            {
+                return UpdatedDateTime.ToString("dd/MM/yyyy HH:mm:ss");
+            }
+        }
     }
 }
