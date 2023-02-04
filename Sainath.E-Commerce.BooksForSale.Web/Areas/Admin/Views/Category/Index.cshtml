@@ -12,7 +12,7 @@
             <a class="btn btn-info" asp-area="Admin" asp-controller="Category" asp-action="InsertCategory"><i class="bi bi-plus-circle"></i> Create a new category</a>
         </div>
     </div>
-    <table class="table table-bordered table-striped mt-3">
+    <table class="table table-bordered table-striped mt-3" id="tableCategories">
         <thead>
             <tr>
                 <th>Category name</th>
@@ -22,20 +22,9 @@
                 <th></th>
             </tr>
         </thead>
-        <tbody>
-            @foreach(Category category in Model)
-            {
-                <tr>
-                    <td>@category.CategoryName</td>
-                    <td>@category.DisplayOrder</td>
-                    <td>@category.CreatedDateTime</td>
-                    <td>@category.UpdatedDateTime</td>
-                    <td>
-                        <a class="btn btn-primary" asp-area="Admin" asp-controller="Category" asp-action="UpdateCategory" asp-route-categoryId="@category.CategoryId"><i class="bi bi-pencil-square"></i></a>
-                        <a class="btn btn-danger" asp-area="Admin" asp-controller="Category" asp-action="RemoveCategory" asp-route-categoryId="@category.CategoryId"><i class="bi bi-trash3-fill"></i></a>
-                    </td>
-                </tr>
-            }
-        </tbody>
     </table>
 </div>
+
+@section Scripts{
+    <script src="~/js/Category.js"></script>
+}

@@ -1,4 +1,5 @@
 ﻿$(document).ready(function () {
+    CKEDITOR.replace('textAreaDescription');
     let booksDataTable;
     loadBooksDataTable();
 });
@@ -54,9 +55,9 @@ function loadBooksDataTable() {
                 "data": "bookId",
                 "render": function (data) {
                     return `
-                        <div class="btn-group">
-                            <a class="btn btn-primary" href="/Admin/Book/UpsertBook?bookId=${data}">Update</a>
-                            <a class="btn btn-danger" onclick="removeBookAjax(${data})">Delete</a>
+                        <div>
+                            <a class="btn btn-primary mx-4" href="/Admin/Book/UpsertBook?bookId=${data}"><i class="bi bi-pencil-square"></i></a>
+                            <a class="btn btn-danger" onclick="removeBookAjax(${data})"><i class="bi bi-trash3-fill"></i></a>
                         </div>
                     `;
                 }
@@ -97,7 +98,7 @@ function removeBookAjax(bookId) {
                         });
                     }
                 }
-            }); 
+            });
         }
     });
 }
