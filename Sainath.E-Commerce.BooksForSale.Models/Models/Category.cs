@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Sainath.E_Commerce.BooksForSale.Models.ViewModels
+namespace Sainath.E_Commerce.BooksForSale.Models.Models
 {
     [Table(name: "Categories")]
     public class Category
@@ -26,12 +26,12 @@ namespace Sainath.E_Commerce.BooksForSale.Models.ViewModels
         public DateTime CreatedDateTime { get; set; } = DateTime.Now;
         public DateTime UpdatedDateTime { get; set; } = DateTime.Now;
 
-        public string CreatedDateTimeString 
-        { 
+        public string CreatedDateTimeString
+        {
             get
             {
                 return CreatedDateTime.ToString("dd/MM/yyyy HH:mm:ss");
-            } 
+            }
         }
 
         public string UpdatedDateTimeString
