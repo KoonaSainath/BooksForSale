@@ -1,27 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Sainath.E_Commerce.BooksForSale.Models.ViewModels
+namespace Sainath.E_Commerce.BooksForSale.Models.Models
 {
-    [Table(name: "CoverTypes")]
-    public class CoverType
+    [Table(name: "Categories")]
+    public class Category
     {
         [Key]
         [Column(name: "Id")]
-        public int CoverTypeId { get; set; }
-        [Required(ErrorMessage = "Please enter cover type name")]
-        [MaxLength(length: 50)]
+        public int CategoryId { get; set; }
+        [Required(ErrorMessage = "Please enter category name.")]
+        [MaxLength(50)]
         [Column(name: "Name")]
-        [Display(Name = "Cover type name")]
-        public string CoverTypeName { get; set; }
+        [Display(Name = "Category name")]
+        public string CategoryName { get; set; }
+        [Required(ErrorMessage = "Please enter display order.")]
+        [Range(minimum: 1, maximum: 100, ErrorMessage = "Display order must be between 1 and 100, both included.")]
+        [Display(Name = "Display order")]
+        public int? DisplayOrder { get; set; }
         public DateTime CreatedDateTime { get; set; } = DateTime.Now;
         public DateTime UpdatedDateTime { get; set; } = DateTime.Now;
 
+        [NotMapped]
         public string CreatedDateTimeString
         {
             get
@@ -30,6 +35,7 @@ namespace Sainath.E_Commerce.BooksForSale.Models.ViewModels
             }
         }
 
+        [NotMapped]
         public string UpdatedDateTimeString
         {
             get

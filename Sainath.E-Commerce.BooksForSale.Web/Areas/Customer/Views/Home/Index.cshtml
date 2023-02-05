@@ -1,8 +1,31 @@
-﻿@{
-    ViewData["Title"] = "BooksForSale";
+﻿@model IEnumerable<Book>
+
+@{
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome to BooksForSale</h1>
-    <p>One stop solution where buyers and sellers of books can get the best deals.</p>
+<div class="row mt-4">
+    @foreach (Book book in Model)
+    {
+        <div class="col-lg-3 col-md-6 p-1" style="height: 100%">
+            <img src="@book.ImageUrl" style="height: 250px; width: 100%; object-fit: fill;" />
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title">
+                        <p class="text-info h5 p-1">@book.Title</p>
+                    </div>
+                    <div class="card-title">
+                        <p class="text-primary p-1">by @book.Author</p>
+                    </div>
+                    <div class="card-title">
+                        <p class="text-white p-1">Price: <strike>@String.Format("{0:C}", Convert.ToInt32(@book.ListPrice))</strike></p>
+                    </div>
+                    <div class="card-title">
+                        <p class="text-white p-1"><strong>as low as @String.Format("{0:C}", Convert.ToInt32(@book.Price100))</strong></p>
+                    </div>
+                </div>
+                <a class="btn btn-info" asp-area="Customer" asp-controller="Home" asp-action="Details" asp-route-bookId="@book.BookId">Details</a>
+            </div>
+        </div>
+    }
 </div>

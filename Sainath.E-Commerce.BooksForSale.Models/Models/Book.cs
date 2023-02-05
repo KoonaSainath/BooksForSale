@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sainath.E_Commerce.BooksForSale.Models.ViewModels
+namespace Sainath.E_Commerce.BooksForSale.Models.Models
 {
     [Table(name: "Books")]
     public class Book
@@ -23,7 +23,7 @@ namespace Sainath.E_Commerce.BooksForSale.Models.ViewModels
 
         [MaxLength(1000)]
         public string Description { get; set; }
-        
+
         [Required(ErrorMessage = "Please enter ISBN number")]
         [MaxLength(20)]
         public string ISBN { get; set; }
@@ -76,6 +76,7 @@ namespace Sainath.E_Commerce.BooksForSale.Models.ViewModels
         [Required]
         public DateTime UpdatedDateTime { get; set; } = DateTime.Now;
 
+        [NotMapped]
         public string CreatedDateTimeString
         {
             get
@@ -84,6 +85,7 @@ namespace Sainath.E_Commerce.BooksForSale.Models.ViewModels
             }
         }
 
+        [NotMapped]
         public string UpdatedDateTimeString
         {
             get

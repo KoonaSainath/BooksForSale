@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Sainath.E_Commerce.BooksForSale.Models.Models;
 using Sainath.E_Commerce.BooksForSale.Models.ViewModels;
+using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
 using System.Diagnostics;
+using System.Net.Http.Headers;
 
 namespace Sainath.E_Commerce.BooksForSale.Web.Customer
 {
@@ -8,13 +11,27 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Customer
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IBooksForSaleConfiguration configuration;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IBooksForSaleConfiguration configuration)
         {
             _logger = logger;
+            this.configuration = configuration;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
+        {
+            HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Accept.Clear();
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+            string includeProperties = "Category,CoverType";
+            string requestUrl = $"api/Book/GET/GetAllBooks/{includeProperties}";
+            IEnumerable<Book> books = await httpClient.GetFromJsonAsync<IEnumerable<Book>>(requestUrl);
+            return View(books);
+        }
+
+        public async Task<IActionResult> Details(int bookId)
         {
             return View();
         }
