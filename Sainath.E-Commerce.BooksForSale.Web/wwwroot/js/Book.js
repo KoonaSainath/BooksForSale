@@ -72,7 +72,8 @@ function loadBooksDataTable() {
                     `;
                 }
             }
-        ]
+        ],
+        "order": []
     });
 }
 

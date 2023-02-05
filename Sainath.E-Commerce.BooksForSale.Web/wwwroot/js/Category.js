@@ -26,7 +26,8 @@ function loadCategoriesDataTable() {
                     `;
                 }
             }
-        ]
+        ],
+        "order": []
     });
 }
 

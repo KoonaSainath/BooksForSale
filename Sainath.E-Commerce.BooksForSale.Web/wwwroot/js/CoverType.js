@@ -23,7 +23,8 @@ function loadCoverTypesDataTable() {
                     `;
                 }
             }
-        ]
+        ],
+        "order": []
     });
 }
 

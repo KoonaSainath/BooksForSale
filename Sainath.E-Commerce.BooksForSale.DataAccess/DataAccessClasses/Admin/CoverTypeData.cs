@@ -16,7 +16,7 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Admin
         }
         public IEnumerable<CoverType> GetAllCoverTypes()
         {
-            return unitOfWork.CoverTypeRepository.GetAllRecords();
+            return unitOfWork.CoverTypeRepository.GetAllRecords().OrderByDescending(coverType => coverType.CoverTypeId);
         }
         public void InsertCoverType(CoverType coverType)
         {
