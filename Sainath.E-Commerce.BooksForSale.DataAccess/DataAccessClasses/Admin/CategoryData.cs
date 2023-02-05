@@ -18,7 +18,7 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Admin
         }  
         public IEnumerable<Category> GetAllCategories()
         {
-            return unitOfWork.CategoryRepository.GetAllRecords();
+            return unitOfWork.CategoryRepository.GetAllRecords().OrderByDescending(category => category.CategoryId);
         }
         public void InsertCategory(Category category)
         {
