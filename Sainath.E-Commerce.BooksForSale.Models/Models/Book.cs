@@ -76,6 +76,7 @@ namespace Sainath.E_Commerce.BooksForSale.Models.Models
         [Required]
         public DateTime UpdatedDateTime { get; set; } = DateTime.Now;
 
+        [NotMapped]
         public string CreatedDateTimeString
         {
             get
@@ -84,6 +85,7 @@ namespace Sainath.E_Commerce.BooksForSale.Models.Models
             }
         }
 
+        [NotMapped]
         public string UpdatedDateTimeString
         {
             get

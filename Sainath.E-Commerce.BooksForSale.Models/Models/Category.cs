@@ -26,6 +26,7 @@ namespace Sainath.E_Commerce.BooksForSale.Models.Models
         public DateTime CreatedDateTime { get; set; } = DateTime.Now;
         public DateTime UpdatedDateTime { get; set; } = DateTime.Now;
 
+        [NotMapped]
         public string CreatedDateTimeString
         {
             get
@@ -34,6 +35,7 @@ namespace Sainath.E_Commerce.BooksForSale.Models.Models
             }
         }
 
+        [NotMapped]
         public string UpdatedDateTimeString
         {
             get
