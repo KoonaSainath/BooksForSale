@@ -32,11 +32,6 @@ namespace Sainath.E_Commerce.BooksForSale.BusinessDomain.BusinessDomainClasses.A
             Category category = categoryData.GetCategory(id);
             return category;
         }
-        public Category GetCategory(Expression<Func<Category, bool>> expression)
-        {
-            Category category = categoryData.GetCategory(expression);
-            return category;
-        }
         public void RemoveCategory(Category category)
         {
             categoryData.RemoveCategory(category);

@@ -27,11 +27,6 @@ namespace Sainath.E_Commerce.BooksForSale.BusinessDomain.BusinessDomainClasses.A
             Book book = bookData.GetBook(id);
             return book;
         }
-        public Book GetBook(Expression<Func<Book, bool>> expression)
-        {
-            Book book = bookData.GetBook(expression);
-            return book;
-        }
         public void InsertBook(Book book)
         {
             bookData.InsertBook(book);

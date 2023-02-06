@@ -19,6 +19,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Customer
             this.configuration = configuration;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             HttpClient httpClient = new HttpClient();
@@ -31,11 +32,39 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Customer
             return View(books);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Details(int bookId)
         {
-            return View();
+            if(bookId != 0)
+            {
+                HttpClient httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Accept.Clear();
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+                string requestUrl = $"api/Book/GET/GetBook/{bookId}";
+                Book book = await httpClient.GetFromJsonAsync<Book>(requestUrl);
+                ShoppingCart cart = new ShoppingCart();
+                cart.Book = book;
+                if(book != null)
+                {
+                    return View(cart);
+                }
+            }
+            return NotFound();
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Details(ShoppingCart cart)
+        {
+            if (ModelState.IsValid)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            return View(cart);
+        }
+
+        [HttpGet]
         public IActionResult Privacy()
         {
             return View();
