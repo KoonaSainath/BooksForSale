@@ -37,13 +37,6 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Admin
             Category category = categoryDomain.GetCategory(id);
             return Ok(category);
         }
-        [HttpGet]
-        [Route(template: "GET/GetCategoryByExpression/{expression}", Name = "GetCategoryByExpression")]
-        public IActionResult GetCategoryByExpression(Expression<Func<Category, bool>> expression)
-        {
-            Category category = categoryDomain.GetCategory(expression);
-            return Ok(category);
-        }
         [HttpPost]
         [Route(template: "DELETE/RemoveCategory", Name = "RemoveCategory")]
         public IActionResult RemoveCategory(Category category)

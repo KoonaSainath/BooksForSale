@@ -29,10 +29,6 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Admin
         {
             return unitOfWork.CategoryRepository.GetRecord(id);
         }
-        public Category GetCategory(Expression<Func<Category, bool>> expression)
-        {
-            return unitOfWork.CategoryRepository.GetRecord(expression);
-        }
         public void RemoveCategory(Category category)
         {
             unitOfWork.CategoryRepository.RemoveRecord(category);

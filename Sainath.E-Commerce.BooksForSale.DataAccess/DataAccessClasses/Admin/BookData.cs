@@ -12,9 +12,12 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Admin
 {
     public class BookData : BaseData
     {
+        private readonly CategoryData categoryData;
+        private readonly CoverTypeData coverTypeData;
         public BookData(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
-
+            categoryData = new CategoryData(unitOfWork);
+            coverTypeData = new CoverTypeData(unitOfWork);
         }
 
         public IEnumerable<Book> GetAllBooks(string includeProperties)
@@ -31,12 +34,8 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Admin
         public Book GetBook(int id)
         {
             Book book = unitOfWork.BookRepository.GetRecord(id);
-            return book;
-        }
-
-        public Book GetBook(Expression<Func<Book, bool>> expression)
-        {
-            Book book = unitOfWork.BookRepository.GetRecord(expression);
+            book.Category = categoryData.GetCategory((int)book.CategoryId);
+            book.CoverType = coverTypeData.GetCoverTypeById((int)book.CoverTypeId);
             return book;
         }
 

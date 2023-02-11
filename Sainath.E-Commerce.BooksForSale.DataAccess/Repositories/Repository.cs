@@ -44,12 +44,6 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.Repositories
             T record = dbSet.Find(id);
             return record;
         }
-        public T GetRecord(Expression<Func<T, bool>> expression)
-        {
-            IQueryable<T> query = dbSet;
-            T record = query.Where(expression).FirstOrDefault();
-            return record;
-        }
         public void RemoveRecord(T record)
         {
             dbSet.Remove(record);
