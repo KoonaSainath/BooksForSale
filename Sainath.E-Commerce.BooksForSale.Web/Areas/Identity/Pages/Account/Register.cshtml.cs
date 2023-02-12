@@ -97,6 +97,20 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            [Required(ErrorMessage = "Please enter your name")]
+            [Display(Name = "User name")]
+            public string Name { get; set; }
+
+            [Display(Name = "Street address")]
+            public string? StreetAddress { get; set; }
+
+            public string? City { get; set; }
+
+            public string? State { get; set; }
+
+            [Display(Name = "Postal code")]
+            public string? PostalCode { get; set; }
         }
 
 
