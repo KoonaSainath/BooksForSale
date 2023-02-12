@@ -1,7 +1,0 @@
-USERS:
-
-email: sainath@test.com
-password: Sai@test7
-
-email: sainath1@test.com
-password: Sai1@test7
