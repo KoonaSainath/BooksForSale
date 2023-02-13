@@ -16,7 +16,7 @@ builder.Services.AddDbContext<BooksForSaleDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString(connectionStringKey));
 });
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<IdentityUser>()
     .AddEntityFrameworkStores<BooksForSaleDbContext>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IBooksForSaleConfiguration, BooksForSaleConfiguration>();

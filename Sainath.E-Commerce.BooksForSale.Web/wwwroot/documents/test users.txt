@@ -1,0 +1,19 @@
+﻿USERS:
+
+email: sainath@test.com
+password: Sai@test7
+
+email: sainath1@test.com
+password: Sai1@test7
+
+email: sainath2@test.com
+password: Sai2@test7
+
+email: sainath3@test.com
+password: Sai3@test7
+
+email: sainath4@test.com
+password: Sai4@test7
+
+email: sainath5@test.com
+password: Sai5@test7
