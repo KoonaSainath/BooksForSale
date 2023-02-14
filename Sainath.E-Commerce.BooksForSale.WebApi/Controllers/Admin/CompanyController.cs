@@ -32,7 +32,7 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Admin
             return Ok(company);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route(template: "POST/InsertCompany", Name = "InsertCompany")]
         public IActionResult InsertCompany(Company company)
         {

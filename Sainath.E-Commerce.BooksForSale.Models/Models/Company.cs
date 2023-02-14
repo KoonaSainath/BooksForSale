@@ -18,7 +18,7 @@ namespace Sainath.E_Commerce.BooksForSale.Models.Models
 
         [Display(Name = "Company name")]
         [Required(ErrorMessage = "Please enter company name")]
-        [Range(minimum: 2, maximum: 100, ErrorMessage = "Company name must contain atleast 2 and atmost 100 number of characters")]
+        [StringLength(maximumLength: 100, MinimumLength = 2, ErrorMessage = "Company name must contain atleast 2 and atmost 100 number of characters")]
         public string CompanyName { get; set; }
 
         [Display(Name = "Phone number")]
@@ -28,15 +28,15 @@ namespace Sainath.E_Commerce.BooksForSale.Models.Models
 
         [Display(Name = "Street address")]
         [Required(ErrorMessage = "Please enter street address")]
-        [Range(minimum: 10, maximum: 500, ErrorMessage = "Street address must contain atleast 10 and atmost 500 number of characters")]
+        [StringLength(maximumLength: 500, MinimumLength = 10, ErrorMessage = "Street address must contain atleast 10 and atmost 500 number of characters")]
         public string StreetAddress { get; set; }
 
         [Required(ErrorMessage = "Please enter city")]
-        [Range(minimum: 2, maximum: 50, ErrorMessage = "City must contain atleast 2 and atmost 50 number of characters")]
+        [StringLength(maximumLength: 50, MinimumLength = 2, ErrorMessage = "City must contain atleast 2 and atmost 50 number of characters")]
         public string City { get; set; }
 
         [Required(ErrorMessage = "Please enter state")]
-        [Range(minimum: 2, maximum: 50, ErrorMessage = "State must contain atleast 2 and atmost 50 number of characters")]
+        [StringLength(maximumLength: 50, MinimumLength = 2, ErrorMessage = "State must contain atleast 2 and atmost 50 number of characters")]
         public string State { get; set; }
 
         [Display(Name = "Postal code")]
