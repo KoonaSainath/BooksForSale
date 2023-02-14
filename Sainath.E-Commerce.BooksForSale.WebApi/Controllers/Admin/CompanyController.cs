@@ -17,7 +17,7 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Admin
         }
 
         [HttpGet]
-        [Route(template: "GET/GetAllCategories", Name = "GetAllCategories")]
+        [Route(template: "GET/GetAllCompanies", Name = "GetAllCompanies")]
         public IActionResult GetAllCompanies()
         {
             IEnumerable<Company> companies = companyDomain.GetAllCompanies();
@@ -25,7 +25,7 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Admin
         }
 
         [HttpGet]
-        [Route(template: "GET/GetCategory/{companyId}", Name = "GetCompany")]
+        [Route(template: "GET/GetCompany/{companyId}", Name = "GetCompany")]
         public IActionResult GetCompany(int companyId)
         {
             Company company = companyDomain.GetCompany(companyId);

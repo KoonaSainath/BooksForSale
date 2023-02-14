@@ -18,7 +18,7 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Admin
         
         public IEnumerable<Company> GetAllCompanies()
         {
-            return unitOfWork.CompanyRepository.GetAllRecords();
+            return unitOfWork.CompanyRepository.GetAllRecords().OrderByDescending(company => company.CompanyId);
         }
 
         public Company GetCompany(int companyId)

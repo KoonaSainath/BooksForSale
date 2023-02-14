@@ -1,0 +1,34 @@
+﻿@model Company
+@{
+    ViewData["Title"] = "Companies";
+}
+
+<div class="container">
+    <div class="row mt-4">
+        <div class="col-6">
+            <p class="display-6">List of companies</p>
+        </div>
+        <div class="col-6 text-end">
+            <a class="btn btn-info" asp-area="Admin" asp-controller="Company" asp-action="UpsertCompany"><i class="bi bi-plus-circle"></i> Create a new company</a>
+        </div>
+    </div>
+    <table id="tableCompanies" class="table table-bordered table-striped mt-3">
+        <thead>
+            <tr>
+                <th>Company name</th>
+                <th>Phone number</th>
+                <th>Street address</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Postal code</th>
+                <th>Created date time</th>
+                <th>Updated date time</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+@section Scripts{
+    <script src="~/js/Company.js"></script>
+}
+

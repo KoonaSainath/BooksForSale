@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace Sainath.E_Commerce.BooksForSale.Models.Models
 {
@@ -42,5 +43,31 @@ namespace Sainath.E_Commerce.BooksForSale.Models.Models
         [Required(ErrorMessage = "Please enter postal code")]
         [DataType(DataType.PostalCode)]
         public string PostalCode { get; set; }
+
+        [ValidateNever]
+        public DateTime CreatedDateTime { get; set; } = DateTime.Now;
+
+        [ValidateNever]
+        public DateTime UpdatedDateTime { get; set; } = DateTime.Now;
+
+        [NotMapped]
+        [ValidateNever]
+        public string CreatedDateTimeString
+        {
+            get
+            {
+                return CreatedDateTime.ToString("dd/MM/yyyy hh:mm:ss");
+            }
+        }
+
+        [NotMapped]
+        [ValidateNever]
+        public string UpdatedDateTimeString
+        {
+            get
+            {
+                return UpdatedDateTime.ToString("dd/MM/yyyy hh:mm:ss");
+            }
+        }
     }
 }
