@@ -54,16 +54,24 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
+                HttpClient httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Accept.Clear();
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+
                 if (company.CompanyId != 0)
                 {
-
+                    company.UpdatedDateTime = DateTime.Now;
+                    string requestUrl = "api/Company/PUT/UpdateCompany";
+                    HttpResponseMessage response = await httpClient.PutAsJsonAsync<Company>(requestUrl, company);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        TempData[Utility.Constants.GenericConstants.NOTIFICATION_MESSAGE_KEY] = "Company updated successfully!";
+                        return RedirectToAction("Index", "Company");
+                    }
                 }
                 else
                 {
-                    HttpClient httpClient = new HttpClient();
-                    httpClient.DefaultRequestHeaders.Accept.Clear();
-                    httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
                     string requestUrl = "api/Company/POST/InsertCompany";
                     HttpResponseMessage response = await httpClient.PostAsJsonAsync<Company>(requestUrl, company);
                     if (response.IsSuccessStatusCode)

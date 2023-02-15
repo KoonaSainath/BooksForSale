@@ -5,7 +5,7 @@
 
 <div class="container">
     <p class="display-6 mt-4">
-        @((Model.CompanyId != null) ? "Create" : "Update") company
+        @((Model.CompanyId != 0) ? "Update" : "Create") company
     </p>
     <form method="post" asp-area="Admin" asp-controller="Company" asp-action="UpsertCompany">
         <input asp-for="@Model.CompanyId" hidden />
@@ -42,7 +42,7 @@
             <span asp-validation-for="@Model.PostalCode" class="text-danger"></span>
         </div>
         <div class="mt-3">
-            <button class="btn btn-info mx-3" type="submit">@((Model.CompanyId != null) ? "Create" : "Update")</button>
+            <button class="btn btn-info mx-3" type="submit">@((Model.CompanyId != 0) ? "Update" : "Create")</button>
             <a class="btn btn-secondary" asp-area="Admin" asp-controller="Company" asp-action="Index">Back to list</a>
         </div>
     </form>

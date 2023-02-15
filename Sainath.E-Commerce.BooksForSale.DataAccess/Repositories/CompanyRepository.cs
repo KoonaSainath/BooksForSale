@@ -28,6 +28,8 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.Repositories
                 companyFromDb.City = company.City;
                 companyFromDb.State = company.State;
                 companyFromDb.PostalCode = company.PostalCode;
+                companyFromDb.CreatedDateTime = company.CreatedDateTime;
+                companyFromDb.UpdatedDateTime = company.UpdatedDateTime;
             }
         }
     }
