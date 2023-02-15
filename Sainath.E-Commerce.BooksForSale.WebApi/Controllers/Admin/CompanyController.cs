@@ -40,7 +40,7 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Admin
             return Ok("Company inserted successfully");
         }
 
-        [HttpDelete]
+        [HttpPost]
         [Route(template: "DELETE/RemoveCompany", Name = "RemoveCompany")]
         public IActionResult RemoveCompany(Company company)
         {
@@ -48,7 +48,7 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Admin
             return Ok("Company removed successfully");
         }
 
-        [HttpDelete]
+        [HttpPost]
         [Route(template: "DELETE/RemoveCompanies", Name = "RemoveCompanies")]
         public IActionResult RemoveCompanies(IEnumerable<Company> companies)
         {

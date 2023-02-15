@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using Sainath.E_Commerce.BooksForSale.Models.Models;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 
 namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
 {
@@ -100,6 +101,31 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
                 return Json(new { data = companies });
             }
             return Json(new { data = new List<Company>() });
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteCompanyApiEndPoint(int? companyId)
+        {
+            if(companyId != null)
+            {
+                HttpClient httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Accept.Clear();
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+
+                string requestUrl = $"api/Company/GET/GetCompany/{companyId}";
+                Company company = await httpClient.GetFromJsonAsync<Company>(requestUrl);
+                if(company != null)
+                {
+                    requestUrl = "api/Company/DELETE/RemoveCompany";
+                    HttpResponseMessage response = await httpClient.PostAsJsonAsync<Company>(requestUrl, company);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return Json(new { success = true, message = "Company deleted successfully!" });
+                    }
+                }
+            }
+            return Json( new { success = false, message = "Something went wrong while deleting the company!" } );
         }
 
         #endregion
