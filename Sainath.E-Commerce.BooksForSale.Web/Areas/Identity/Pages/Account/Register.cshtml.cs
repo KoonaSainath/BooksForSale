@@ -31,13 +31,15 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<IdentityUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -45,6 +47,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _roleManager = roleManager;
         }
 
         /// <summary>
@@ -118,8 +121,17 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Identity.Pages.Account
 
         public async Task OnGetAsync(string returnUrl = null)
         {
+            if (!_roleManager.RoleExistsAsync(Utility.Constants.GenericConstants.ROLE_ADMIN).GetAwaiter().GetResult())
+            {
+                await _roleManager.CreateAsync(new IdentityRole(Utility.Constants.GenericConstants.ROLE_ADMIN));
+                await _roleManager.CreateAsync(new IdentityRole(Utility.Constants.GenericConstants.ROLE_EMPLOYEE));
+                await _roleManager.CreateAsync(new IdentityRole(Utility.Constants.GenericConstants.ROLE_COMPANY_CUSTOMER));
+                await _roleManager.CreateAsync(new IdentityRole(Utility.Constants.GenericConstants.ROLE_CUSTOMER));
+            }
+
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
