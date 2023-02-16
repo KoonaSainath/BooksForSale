@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -15,7 +16,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -116,6 +119,14 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Identity.Pages.Account
 
             [Display(Name = "Postal code")]
             public string? PostalCode { get; set; }
+
+            [NotMapped]
+            [ValidateNever]
+            public List<SelectListItem> AllRoles { get; set; }
+
+            [Display(Name = "Select role")]
+            [Required(ErrorMessage = "Please select a role")]
+            public string? RoleId { get; set; }
         }
 
 
@@ -129,6 +140,22 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Identity.Pages.Account
                 await _roleManager.CreateAsync(new IdentityRole(Utility.Constants.GenericConstants.ROLE_CUSTOMER));
             }
 
+            IEnumerable<IdentityRole> allRoles = _roleManager.Roles.ToList();
+            Input = new InputModel();
+            Input.AllRoles = new List<SelectListItem>();
+
+            Input.AllRoles = allRoles.Select(role => new SelectListItem()
+            {
+                Text = role.Name,
+                Value = role.Id
+            }).ToList();
+
+            //Input.AllRoles = allRoles.Select(role => new SelectListItem()
+            //{
+            //    Text = role.Name,
+            //    Value = role.Id
+            //});
+
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
@@ -140,7 +167,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = CreateUser();
+                BooksForSaleUser user = CreateUser();
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
@@ -151,7 +178,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Identity.Pages.Account
                 user.State = Input.State;
                 user.PostalCode = Input.PostalCode;
 
-                var result = await _userManager.CreateAsync(user, Input.Password);
+                IdentityResult result = await _userManager.CreateAsync(user, Input.Password);
 
                 
 
@@ -181,7 +208,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Identity.Pages.Account
                         return LocalRedirect(returnUrl);
                     }
                 }
-                foreach (var error in result.Errors)
+                foreach (IdentityError error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
