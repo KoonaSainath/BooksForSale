@@ -126,7 +126,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Identity.Pages.Account
 
             [Display(Name = "Select role")]
             [Required(ErrorMessage = "Please select a role")]
-            public string? RoleId { get; set; }
+            public string? RoleName { get; set; }
         }
 
 
@@ -147,8 +147,8 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Identity.Pages.Account
             Input.AllRoles = allRoles.Select(role => new SelectListItem()
             {
                 Text = role.Name,
-                Value = role.Id
-            }).ToList();
+                Value = role.Name
+            }).OrderBy(selectListItem => selectListItem.Text).ToList();
 
             //Input.AllRoles = allRoles.Select(role => new SelectListItem()
             //{
@@ -180,8 +180,6 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Identity.Pages.Account
 
                 IdentityResult result = await _userManager.CreateAsync(user, Input.Password);
 
-                
-
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
@@ -189,6 +187,9 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Identity.Pages.Account
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
+                    _userManager.AddToRoleAsync(user, Input.RoleName).GetAwaiter().GetResult();
+
                     var callbackUrl = Url.Page(
                         "/Account/ConfirmEmail",
                         pageHandler: null,

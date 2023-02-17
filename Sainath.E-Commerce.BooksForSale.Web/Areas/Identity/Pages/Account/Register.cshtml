@@ -47,11 +47,11 @@
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
             <div class="mt-4 col-6">
-                <label asp-for="Input.RoleId" class="form-label"></label>
-                <select asp-for="Input.RoleId" asp-items="@Model.Input.AllRoles" class="form-control">
+                <label asp-for="Input.RoleName" class="form-label"></label>
+                <select asp-for="Input.RoleName" asp-items="@Model.Input.AllRoles" class="form-control">
                     <option selected disabled>--Select--</option>
                 </select>
-                <span asp-validation-for="Input.RoleId" class="text-danger"></span>
+                <span asp-validation-for="Input.RoleName" class="text-danger"></span>
             </div>
             <div class="mt-4 col-12">
                 <button id="registerSubmit" type="submit" class="btn btn-info">Register</button>
