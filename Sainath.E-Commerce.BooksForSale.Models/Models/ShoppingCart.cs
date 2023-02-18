@@ -14,7 +14,7 @@ namespace Sainath.E_Commerce.BooksForSale.Models.Models
     {
         [Column(name: "Id")]
         [Key]
-        public int ShoppingCardId { get; set; }
+        public int ShoppingCartId { get; set; }
 
         [Required]
         public int BookId { get; set; }
