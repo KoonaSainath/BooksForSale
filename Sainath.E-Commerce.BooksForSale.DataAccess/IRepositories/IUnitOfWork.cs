@@ -11,6 +11,7 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories
         ICategoryRepository CategoryRepository { get; }
         ICoverTypeRepository CoverTypeRepository { get; }
         IBookRepository BookRepository { get; }
+        ICompanyRepository CompanyRepository { get; }
         void Save();
     }
 }

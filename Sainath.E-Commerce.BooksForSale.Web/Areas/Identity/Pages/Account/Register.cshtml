@@ -1,0 +1,105 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="row">
+    <div class="col-md-12 mt-4">
+        <form id="registerForm" class="row" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+            <h2>Create a new account.</h2>
+            <hr />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="col-12">
+                <label asp-for="Input.Email" class="form-label"></label>
+                <input asp-for="Input.Email" class="form-control" />
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+            <div class="mt-4 col-6">
+                <label asp-for="@Model.Input.Name" class="form-label"></label>
+                <input asp-for="@Model.Input.Name" class="form-control" />
+                <span asp-validation-for="@Model.Input.Name" class="text-danger"></span>
+            </div>
+            <div class="mt-4 col-6">
+                <label asp-for="@Model.Input.StreetAddress" class="form-label"></label>
+                <input asp-for="@Model.Input.StreetAddress" class="form-control" />
+            </div>
+            <div class="mt-4 col-6">
+                <label asp-for="@Model.Input.City" class="form-label"></label>
+                <input asp-for="@Model.Input.City" class="form-control" />
+            </div>
+            <div class="mt-4 col-6">
+                <label asp-for="@Model.Input.State" class="form-label"></label>
+                <input asp-for="@Model.Input.State" class="form-control" />
+            </div>
+            <div class="mt-4 col-6">
+                <label asp-for="@Model.Input.PostalCode" class="form-label"></label>
+                <input asp-for="@Model.Input.PostalCode" class="form-control" />
+            </div>
+            <div class="mt-4 col-6">
+                <label asp-for="Input.Password" class="form-label"></label>
+                <input asp-for="Input.Password" class="form-control" />
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+            <div class="mt-4 col-6">
+                <label asp-for="Input.ConfirmPassword" class="form-label"></label>
+                <input asp-for="Input.ConfirmPassword" class="form-control" />
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+            </div>
+            <div class="mt-4 col-6">
+                <label asp-for="Input.RoleName" class="form-label"></label>
+                <select asp-for="Input.RoleName" asp-items="@Model.Input.AllRoles" class="form-control" id="roleDropDown">
+                    <option selected disabled>--Select--</option>
+                </select>
+                <span asp-validation-for="Input.RoleName" class="text-danger"></span>
+            </div>
+            <div class="mt-4 col-6" id="companyDiv">
+                <label asp-for="Input.CompanyId" class="form-label"></label>
+                <select asp-for="Input.CompanyId" asp-items="@Model.Input.Companies" class="form-control" id="companyDropDown">
+                    <option selected disabled>--Select--</option>
+                </select>
+                <span asp-validation-for="Input.CompanyId" class="text-danger"></span>
+            </div>
+            <div class="mt-4 col-12">
+                <button id="registerSubmit" type="submit" class="btn btn-info">Register</button>
+            </div>
+        </form>
+    </div>
+    @*<div class="col-md-4 col-md-offset-2">
+        <section>
+            <h3>Use another service to register.</h3>
+            <hr />
+            @{
+                if ((Model.ExternalLogins?.Count ?? 0) == 0)
+                {
+                    <div>
+                        <p>
+                            There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">
+                                article
+                                about setting up this ASP.NET application to support logging in via external services
+                            </a>.
+                        </p>
+                    </div>
+                }
+                else
+                {
+                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+                        <div>
+                            <p>
+                                @foreach (var provider in Model.ExternalLogins)
+                                {
+                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                                }
+                            </p>
+                        </div>
+                    </form>
+                }
+            }
+        </section>
+    </div>*@
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/Register.js"></script>
+}
