@@ -14,6 +14,7 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.Repositories
         public ICoverTypeRepository CoverTypeRepository { get; private set; }
         public IBookRepository BookRepository { get; private set; }
         public ICompanyRepository CompanyRepository { get; private set; }
+        public IShoppingCartRepository ShoppingCartRepository { get; private set; }
         private readonly BooksForSaleDbContext dbContext;
         public UnitOfWork(BooksForSaleDbContext dbContext)
         {
@@ -22,6 +23,7 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.Repositories
             CoverTypeRepository = new CoverTypeRepository(dbContext);
             BookRepository = new BookRepository(dbContext);
             CompanyRepository = new CompanyRepository(dbContext);
+            ShoppingCartRepository = new ShoppingCartRepository(dbContext);
         }
         public void Save()
         {
