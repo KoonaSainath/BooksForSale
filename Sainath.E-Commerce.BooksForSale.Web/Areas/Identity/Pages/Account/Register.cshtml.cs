@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories;
 using Sainath.E_Commerce.BooksForSale.Models.Models;
 
 namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Identity.Pages.Account
@@ -35,6 +36,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IUnitOfWork unitOfWork;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
@@ -42,7 +44,8 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Identity.Pages.Account
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -51,6 +54,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Identity.Pages.Account
             _logger = logger;
             _emailSender = emailSender;
             _roleManager = roleManager;
+            this.unitOfWork = unitOfWork;
         }
 
         /// <summary>
@@ -124,9 +128,17 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Identity.Pages.Account
             [ValidateNever]
             public List<SelectListItem> AllRoles { get; set; }
 
-            [Display(Name = "Select role")]
+            [Display(Name = "Select a role")]
             [Required(ErrorMessage = "Please select a role")]
             public string? RoleName { get; set; }
+
+            [NotMapped]
+            [ValidateNever]
+            public List<SelectListItem> Companies { get; set; }
+
+            [Display(Name = "Select a company")]
+            [Required(ErrorMessage = "Please select a company")]
+            public int? CompanyId { get; set; }
         }
 
 
@@ -142,13 +154,24 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Identity.Pages.Account
 
             IEnumerable<IdentityRole> allRoles = _roleManager.Roles.ToList();
             Input = new InputModel();
-            Input.AllRoles = new List<SelectListItem>();
 
             Input.AllRoles = allRoles.Select(role => new SelectListItem()
             {
                 Text = role.Name,
                 Value = role.Name
-            }).OrderBy(selectListItem => selectListItem.Text).ToList();
+            })
+                                        .OrderBy(selectListItem => selectListItem.Text)
+                                        .ToList();
+
+            Input.Companies = unitOfWork.CompanyRepository
+                                        .GetAllRecords()
+                                        .OrderBy(company => company.CompanyName)
+                                        .Select(company => new SelectListItem()
+                                        {
+                                            Text = company.CompanyName,
+                                            Value = company.CompanyId.ToString()
+                                        })
+                                        .ToList();
 
             //Input.AllRoles = allRoles.Select(role => new SelectListItem()
             //{
@@ -163,6 +186,11 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
+            if(Input.RoleName != Utility.Constants.GenericConstants.ROLE_COMPANY_CUSTOMER)
+            {
+                ModelState.ClearValidationState("Input.CompanyId");
+                ModelState.MarkFieldValid("Input.CompanyId");
+            }
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
@@ -177,6 +205,11 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Identity.Pages.Account
                 user.City = Input.City;
                 user.State = Input.State;
                 user.PostalCode = Input.PostalCode;
+
+                if (Input.RoleName == Utility.Constants.GenericConstants.ROLE_COMPANY_CUSTOMER)
+                {
+                    user.CompanyId = Input.CompanyId;
+                }
 
                 IdentityResult result = await _userManager.CreateAsync(user, Input.Password);
 
