@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -8,9 +9,27 @@ using System.Threading.Tasks;
 
 namespace Sainath.E_Commerce.BooksForSale.Models.Models
 {
+    [Table(name: "ShoppingCarts")]
     public class ShoppingCart
     {
+        [Column(name: "Id")]
+        [Key]
+        public int ShoppingCardId { get; set; }
+
+        [Required]
+        public int BookId { get; set; }
+
+        [ForeignKey("BookId")]
+        [ValidateNever]
         public Book Book { get; set; }
+
+        [Required]
+        [Column("UserId")]
+        public string Id { get; set; }
+
+        [ForeignKey(name: "Id")]
+        [ValidateNever]
+        public BooksForSaleUser BooksForSaleUser { get; set; }
 
         [Required(ErrorMessage = "Please enter number of books you want to add to the shopping cart")]
         [Range(minimum: 1, maximum: 100, ErrorMessage = "Only 1 to 100 number of books can be added to the shopping cart")]
