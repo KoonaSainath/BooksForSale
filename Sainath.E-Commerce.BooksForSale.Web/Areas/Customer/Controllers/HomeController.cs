@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Sainath.E_Commerce.BooksForSale.Models.Models;
 using Sainath.E_Commerce.BooksForSale.Models.ViewModels;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
@@ -55,6 +56,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Customer
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Details(ShoppingCart cart)
         {
             if (ModelState.IsValid)
