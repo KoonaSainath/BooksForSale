@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Versioning;
 using Sainath.E_Commerce.BooksForSale.Models.Models;
 using Sainath.E_Commerce.BooksForSale.Models.ViewModels;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
 using System.Diagnostics;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 
 namespace Sainath.E_Commerce.BooksForSale.Web.Customer
 {
@@ -34,6 +36,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Customer
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Details(int bookId)
         {
             if(bookId != 0)
@@ -46,6 +49,14 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Customer
                 Book book = await httpClient.GetFromJsonAsync<Book>(requestUrl);
                 ShoppingCart cart = new ShoppingCart();
                 cart.Book = book;
+                cart.BookId = bookId;
+
+                ClaimsIdentity claimsIdentity = (ClaimsIdentity) User.Identity;
+                Claim claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+                string userId = claim.Value;
+
+                cart.Id = userId;
+
                 if(book != null)
                 {
                     return View(cart);
@@ -61,7 +72,36 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Customer
         {
             if (ModelState.IsValid)
             {
-                return RedirectToAction("Index", "Home");
+                HttpClient httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Accept.Clear();
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+                if(cart.ShoppingCartId == 0)
+                {
+                    string requestUrl = "api/ShoppingCart/POST/InsertShoppingCart";
+                    HttpResponseMessage response = await httpClient.PostAsJsonAsync<ShoppingCart>(requestUrl, cart);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction(nameof(Index), nameof(HomeController));
+                    }
+                    else
+                    {
+                        return NotFound();
+                    }
+                }
+                else
+                {
+                    string requestUrl = "api/ShoppingCart/PUT/UpdateShoppingCart";
+                    HttpResponseMessage response = await httpClient.PutAsJsonAsync<ShoppingCart>(requestUrl, cart);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction(nameof(Index), nameof(HomeController));
+                    }
+                    else
+                    {
+                        return NotFound();
+                    }
+                }
             }
             return View(cart);
         }

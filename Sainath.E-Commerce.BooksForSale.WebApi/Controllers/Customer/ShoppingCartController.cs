@@ -17,6 +17,7 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Customer
         }
 
         [Route(template: "GET/GetAllShoppingCarts", Name = "GetAllShoppingCarts")]
+        [HttpGet]
         public IActionResult GetAllShoppingCarts()
         {
             IEnumerable<ShoppingCart> shoppingCarts = shoppingCartDomain.GetAllShoppingCarts();
@@ -24,6 +25,7 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Customer
         }
 
         [Route(template: "GET/GetShoppingCart/{shoppingCartId}", Name = "GetShoppingCart")]
+        [HttpGet]
         public IActionResult GetShoppingCart(int shoppingCartId)
         {
             ShoppingCart shoppingCart = shoppingCartDomain.GetShoppingCart(shoppingCartId);
@@ -31,6 +33,7 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Customer
         }
 
         [Route(template: "POST/InsertShoppingCart", Name = "InsertShoppingCart")]
+        [HttpPost]
         public IActionResult InsertShoppingCart(ShoppingCart shoppingCart)
         {
             shoppingCartDomain.InsertShoppingCart(shoppingCart);
@@ -38,6 +41,7 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Customer
         }
 
         [Route(template: "DELETE/RemoveShoppingCart", Name = "RemoveShoppingCart")]
+        [HttpPost]
         public IActionResult RemoveShoppingCart(ShoppingCart shoppingCart)
         {
             shoppingCartDomain.RemoveShoppingCart(shoppingCart);
@@ -45,6 +49,7 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Customer
         }
 
         [Route(template: "DELETE/RemoveShoppingCarts", Name = "RemoveShoppingCarts")]
+        [HttpPost]
         public IActionResult RemoveShoppingCarts(IEnumerable<ShoppingCart> shoppingCarts)
         {
             shoppingCartDomain.RemoveShoppingCarts(shoppingCarts);
