@@ -1,6 +1,6 @@
 ﻿using Sainath.E_Commerce.BooksForSale.DataAccess.BaseClasses;
 using Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories;
-using Sainath.E_Commerce.BooksForSale.Models.Models;
+using Sainath.E_Commerce.BooksForSale.Models.Models.Admin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,12 +12,8 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Admin
 {
     public class BookData : BaseData
     {
-        private readonly CategoryData categoryData;
-        private readonly CoverTypeData coverTypeData;
         public BookData(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
-            categoryData = new CategoryData(unitOfWork);
-            coverTypeData = new CoverTypeData(unitOfWork);
         }
 
         public IEnumerable<Book> GetAllBooks(string includeProperties)
@@ -33,9 +29,8 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Admin
 
         public Book GetBook(int id)
         {
-            Book book = unitOfWork.BookRepository.GetRecord(id);
-            book.Category = categoryData.GetCategory((int)book.CategoryId);
-            book.CoverType = coverTypeData.GetCoverTypeById((int)book.CoverTypeId);
+            string includeProperties = "Category,CoverType";
+            Book book = unitOfWork.BookRepository.GetRecordByExpression((book => book.BookId == id), includeProperties);
             return book;
         }
 

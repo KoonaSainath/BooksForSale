@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories.Admin;
+using Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories.Customer;
 
 namespace Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories
 {
@@ -12,6 +14,7 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories
         ICoverTypeRepository CoverTypeRepository { get; }
         IBookRepository BookRepository { get; }
         ICompanyRepository CompanyRepository { get; }
+        IShoppingCartRepository ShoppingCartRepository { get; }
         void Save();
     }
 }

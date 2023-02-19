@@ -52,5 +52,20 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.Repositories
         {
             dbSet.RemoveRange(records);
         }
+
+        public T GetRecordByExpression(Expression<Func<T, bool>> expression, string includeProperties = null)
+        {
+            IQueryable<T> query = dbSet;
+            if(includeProperties != null)
+            {
+                string[] includePropertiesList = includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                foreach(string property in includePropertiesList)
+                {
+                    query = query.Include(property.Trim());
+                }
+            }
+            T record = query.Where(expression).FirstOrDefault();
+            return record;
+        }
     }
 }

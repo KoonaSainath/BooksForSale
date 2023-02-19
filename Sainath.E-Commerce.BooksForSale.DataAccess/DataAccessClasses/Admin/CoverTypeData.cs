@@ -1,6 +1,6 @@
 ﻿using Sainath.E_Commerce.BooksForSale.DataAccess.BaseClasses;
 using Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories;
-using Sainath.E_Commerce.BooksForSale.Models.Models;
+using Sainath.E_Commerce.BooksForSale.Models.Models.Admin;
 using System;
 using System.Collections.Generic;
 using System.Linq;

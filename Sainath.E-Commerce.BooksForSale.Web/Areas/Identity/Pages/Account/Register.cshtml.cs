@@ -23,7 +23,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories;
-using Sainath.E_Commerce.BooksForSale.Models.Models;
+using Sainath.E_Commerce.BooksForSale.Models.Models.Customer;
 
 namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Identity.Pages.Account
 {

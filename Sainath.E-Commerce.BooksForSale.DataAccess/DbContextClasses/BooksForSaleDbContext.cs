@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Sainath.E_Commerce.BooksForSale.Models.Models;
+using Sainath.E_Commerce.BooksForSale.Models.Models.Admin;
+using Sainath.E_Commerce.BooksForSale.Models.Models.Customer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,5 +21,6 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DbContextClasses
         public DbSet<Book> Books { get; set; }
         public DbSet<BooksForSaleUser> BooksForSaleUsers { get; set; }
         public DbSet<Company> Companies { get; set; }
+        public DbSet<ShoppingCart> ShoppingCarts { get; set; }
     }
 }

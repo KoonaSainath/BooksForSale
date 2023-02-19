@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Sainath.E_Commerce.BooksForSale.Models.Models.Admin;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace Sainath.E_Commerce.BooksForSale.Models.Models
+namespace Sainath.E_Commerce.BooksForSale.Models.Models.Customer
 {
     public class BooksForSaleUser : IdentityUser
     {

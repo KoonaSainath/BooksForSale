@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Sainath.E_Commerce.BooksForSale.BusinessDomain.BusinessDomainClasses.Admin;
 using Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories;
-using Sainath.E_Commerce.BooksForSale.Models.Models;
+using Sainath.E_Commerce.BooksForSale.Models.Models.Admin;
 
 namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Admin
 {

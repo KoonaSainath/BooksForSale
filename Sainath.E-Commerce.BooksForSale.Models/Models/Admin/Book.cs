@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sainath.E_Commerce.BooksForSale.Models.Models
+namespace Sainath.E_Commerce.BooksForSale.Models.Models.Admin
 {
     [Table(name: "Books")]
     public class Book

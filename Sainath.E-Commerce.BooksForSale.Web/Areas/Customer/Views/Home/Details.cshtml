@@ -15,20 +15,9 @@
 
 <div class="container mt-4" style="border: 1px solid white;">
     <form method="post" asp-area="Customer" asp-controller="Home" asp-action="Details">
-        <input asp-for="@Model.Book.BookId" hidden />
-        <input asp-for="@Model.Book.Title" hidden />
-        <input asp-for="@Model.Book.Description" hidden />
-        <input asp-for="@Model.Book.ISBN" hidden />
-        <input asp-for="@Model.Book.Author" hidden />
-        <input asp-for="@Model.Book.ListPrice" hidden />
-        <input asp-for="@Model.Book.Price" hidden />
-        <input asp-for="@Model.Book.Price50" hidden />
-        <input asp-for="@Model.Book.Price100" hidden />
-        <input asp-for="@Model.Book.ImageUrl" hidden />
-        <input asp-for="@Model.Book.CategoryId" hidden />
-        <input asp-for="@Model.Book.CoverTypeId" hidden />
-        <input asp-for="@Model.Book.CreatedDateTime" hidden />
-        <input asp-for="@Model.Book.UpdatedDateTime" hidden />
+        <input asp-for="@Model.BookId" hidden />
+        <input asp-for="@Model.Id" hidden />
+        <input asp-for="@Model.ShoppingCartId" hidden />
         <div class="row bg-secondary">
             <div class="col-6 mt-2">
                 <p class="text-white h5">@Model.Book.Title</p>

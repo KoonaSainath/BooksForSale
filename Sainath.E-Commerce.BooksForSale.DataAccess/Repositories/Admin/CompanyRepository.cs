@@ -1,13 +1,13 @@
 ﻿using Sainath.E_Commerce.BooksForSale.DataAccess.DbContextClasses;
-using Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories;
-using Sainath.E_Commerce.BooksForSale.Models.Models;
+using Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories.Admin;
+using Sainath.E_Commerce.BooksForSale.Models.Models.Admin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sainath.E_Commerce.BooksForSale.DataAccess.Repositories
+namespace Sainath.E_Commerce.BooksForSale.DataAccess.Repositories.Admin
 {
     public class CompanyRepository : Repository<Company>, ICompanyRepository
     {
@@ -20,7 +20,7 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.Repositories
         public void UpdateCompany(Company company)
         {
             Company companyFromDb = dbContext.Companies.Where(c => c.CompanyId == company.CompanyId).FirstOrDefault();
-            if(companyFromDb != null)
+            if (companyFromDb != null)
             {
                 companyFromDb.CompanyName = company.CompanyName;
                 companyFromDb.PhoneNumber = company.PhoneNumber;

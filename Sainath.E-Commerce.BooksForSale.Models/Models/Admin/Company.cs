@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
-namespace Sainath.E_Commerce.BooksForSale.Models.Models
+namespace Sainath.E_Commerce.BooksForSale.Models.Models.Admin
 {
     [Table(name: "Companies")]
     public class Company

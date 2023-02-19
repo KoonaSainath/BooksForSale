@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Sainath.E_Commerce.BooksForSale.Models.Models;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using NuGet.Versioning;
+using Sainath.E_Commerce.BooksForSale.Models.Models.Admin;
+using Sainath.E_Commerce.BooksForSale.Models.Models.Customer;
 using Sainath.E_Commerce.BooksForSale.Models.ViewModels;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
 using System.Diagnostics;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 
 namespace Sainath.E_Commerce.BooksForSale.Web.Customer
 {
@@ -33,6 +37,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Customer
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Details(int bookId)
         {
             if(bookId != 0)
@@ -43,23 +48,67 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Customer
                 httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
                 string requestUrl = $"api/Book/GET/GetBook/{bookId}";
                 Book book = await httpClient.GetFromJsonAsync<Book>(requestUrl);
-                ShoppingCart cart = new ShoppingCart();
-                cart.Book = book;
-                if(book != null)
+
+                ClaimsIdentity claimsIdentity = (ClaimsIdentity) User.Identity;
+                Claim claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+                string userId = claim.Value;
+
+                ShoppingCart shoppingCart = null;
+
+                requestUrl = $"api/ShoppingCart/GET/GetShoppingCart/{bookId}/{userId}";
+                shoppingCart = await httpClient.GetFromJsonAsync<ShoppingCart>(requestUrl);
+
+                if(shoppingCart == null || (shoppingCart != null && shoppingCart.ShoppingCartId == 0))
                 {
-                    return View(cart);
-                }
+                    shoppingCart = new ShoppingCart();
+                    shoppingCart.Book = book;
+                    shoppingCart.BookId = bookId;
+                    shoppingCart.Id = userId;
+                } 
+                return View(shoppingCart);
             }
             return NotFound();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Details(ShoppingCart cart)
         {
             if (ModelState.IsValid)
             {
-                return RedirectToAction("Index", "Home");
+                HttpClient httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Accept.Clear();
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+                if(cart.ShoppingCartId == 0)
+                {
+                    string requestUrl = "api/ShoppingCart/POST/InsertShoppingCart";
+                    HttpResponseMessage response = await httpClient.PostAsJsonAsync<ShoppingCart>(requestUrl, cart);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        TempData[Utility.Constants.GenericConstants.NOTIFICATION_MESSAGE_KEY] = "Shopping cart is inserted successfully!";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        return NotFound();
+                    }
+                }
+                else
+                {
+                    string requestUrl = "api/ShoppingCart/PUT/UpdateShoppingCart";
+                    HttpResponseMessage response = await httpClient.PutAsJsonAsync<ShoppingCart>(requestUrl, cart);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        TempData[Utility.Constants.GenericConstants.NOTIFICATION_MESSAGE_KEY] = "Shopping cart is updated successfully";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        return NotFound();
+                    }
+                }
             }
             return View(cart);
         }
