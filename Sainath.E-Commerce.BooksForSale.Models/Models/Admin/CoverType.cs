@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 
-namespace Sainath.E_Commerce.BooksForSale.Models.Models
+namespace Sainath.E_Commerce.BooksForSale.Models.Models.Admin
 {
     [Table(name: "CoverTypes")]
     public class CoverType

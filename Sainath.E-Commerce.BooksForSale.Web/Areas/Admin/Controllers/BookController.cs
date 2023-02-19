@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Sainath.E_Commerce.BooksForSale.Models.Models;
-using Sainath.E_Commerce.BooksForSale.Models.ViewModels;
+using Sainath.E_Commerce.BooksForSale.Models.Models.Admin;
+using Sainath.E_Commerce.BooksForSale.Models.ViewModels.Admin;
 using Sainath.E_Commerce.BooksForSale.Utility.Constants;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
 using System.Net.Http.Headers;

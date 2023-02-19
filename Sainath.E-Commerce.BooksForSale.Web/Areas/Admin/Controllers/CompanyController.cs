@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using Sainath.E_Commerce.BooksForSale.Models.Models;
+using Sainath.E_Commerce.BooksForSale.Models.Models.Admin;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;

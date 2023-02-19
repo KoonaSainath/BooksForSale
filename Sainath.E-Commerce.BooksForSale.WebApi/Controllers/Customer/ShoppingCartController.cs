@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Sainath.E_Commerce.BooksForSale.BusinessDomain.BusinessDomainClasses.Customer;
 using Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories;
-using Sainath.E_Commerce.BooksForSale.Models.Models;
+using Sainath.E_Commerce.BooksForSale.Models.Models.Customer;
 
 namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Customer
 {

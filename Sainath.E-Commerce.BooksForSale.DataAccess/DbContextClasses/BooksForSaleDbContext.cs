@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Sainath.E_Commerce.BooksForSale.Models.Models;
+using Sainath.E_Commerce.BooksForSale.Models.Models.Admin;
+using Sainath.E_Commerce.BooksForSale.Models.Models.Customer;
 using System;
 using System.Collections.Generic;
 using System.Linq;

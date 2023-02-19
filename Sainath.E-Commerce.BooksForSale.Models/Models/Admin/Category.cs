@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Sainath.E_Commerce.BooksForSale.Models.Models
+namespace Sainath.E_Commerce.BooksForSale.Models.Models.Admin
 {
     [Table(name: "Categories")]
     public class Category

@@ -1,5 +1,7 @@
 ﻿using Sainath.E_Commerce.BooksForSale.DataAccess.DbContextClasses;
 using Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories;
+using Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories.Admin;
+using Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories.Customer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
