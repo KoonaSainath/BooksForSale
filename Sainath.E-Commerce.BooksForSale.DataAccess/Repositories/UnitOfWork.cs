@@ -2,6 +2,8 @@
 using Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories;
 using Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories.Admin;
 using Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories.Customer;
+using Sainath.E_Commerce.BooksForSale.DataAccess.Repositories.Admin;
+using Sainath.E_Commerce.BooksForSale.DataAccess.Repositories.Customer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
