@@ -24,11 +24,11 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Customer
             return Ok(shoppingCarts);
         }
 
-        [Route(template: "GET/GetShoppingCart/{shoppingCartId}", Name = "GetShoppingCart")]
+        [Route(template: "GET/GetShoppingCart/{bookId}/{userId}/{shoppingCartId?}", Name = "GetShoppingCart")]
         [HttpGet]
-        public IActionResult GetShoppingCart(int shoppingCartId)
+        public IActionResult GetShoppingCart(int bookId, string userId, int? shoppingCartId = 0)
         {
-            ShoppingCart shoppingCart = shoppingCartDomain.GetShoppingCart(shoppingCartId);
+            ShoppingCart shoppingCart = shoppingCartDomain.GetShoppingCart(bookId, userId, (int)shoppingCartId);
             return Ok(shoppingCart);
         }
 
@@ -54,6 +54,13 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Customer
         {
             shoppingCartDomain.RemoveShoppingCarts(shoppingCarts);
             return Ok("Shopping carts are removed successfully!");
+        }
+
+        [Route(template: "PUT/UpdateShoppingCart", Name = "UpdateShoppingCart")]
+        public IActionResult UpdateShoppingCart(ShoppingCart shoppingCart)
+        {
+            shoppingCartDomain.UpdateShoppingCart(shoppingCart);
+            return Ok("Shopping cart is updated successfully");
         }
     }
 }

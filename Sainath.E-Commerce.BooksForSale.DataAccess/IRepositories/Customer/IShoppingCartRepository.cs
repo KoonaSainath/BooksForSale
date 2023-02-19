@@ -9,6 +9,6 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories.Customer
 {
     public interface IShoppingCartRepository : IRepository<ShoppingCart>
     {
-
+        public void UpdateShoppingCart(ShoppingCart shoppingCart);
     }
 }

@@ -22,9 +22,9 @@ namespace Sainath.E_Commerce.BooksForSale.BusinessDomain.BusinessDomainClasses.C
             return shoppingCartData.GetAllShoppingCarts();
         }
 
-        public ShoppingCart GetShoppingCart(int shoppingCartId)
+        public ShoppingCart GetShoppingCart(int bookId, string userId, int shoppingCartId)
         {
-            return shoppingCartData.GetShoppingCart(shoppingCartId);
+            return shoppingCartData.GetShoppingCart(bookId, userId, shoppingCartId);
         }
 
         public void InsertShoppingCart(ShoppingCart shoppingCart)
@@ -40,6 +40,11 @@ namespace Sainath.E_Commerce.BooksForSale.BusinessDomain.BusinessDomainClasses.C
         public void RemoveShoppingCarts(IEnumerable<ShoppingCart> shoppingCarts)
         {
             shoppingCartData.RemoveShoppingCarts(shoppingCarts);
+        }
+
+        public void UpdateShoppingCart(ShoppingCart shoppingCart)
+        {
+            shoppingCartData.UpdateShoppingCart(shoppingCart);
         }
     }
 }

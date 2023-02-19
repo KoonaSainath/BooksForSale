@@ -22,7 +22,6 @@ namespace Sainath.E_Commerce.BooksForSale.Models.Models.Customer
 
         [ForeignKey("BookId")]
         [ValidateNever]
-        [NotMapped]
         public Book Book { get; set; }
 
         [Required]

@@ -11,9 +11,19 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.Repositories.Customer
 {
     public class ShoppingCartRepository : Repository<ShoppingCart>, IShoppingCartRepository
     {
+        private readonly BooksForSaleDbContext dbContext;
         public ShoppingCartRepository(BooksForSaleDbContext dbContext) : base(dbContext)
         {
+            this.dbContext = dbContext;
+        }
 
+        public void UpdateShoppingCart(ShoppingCart shoppingCart)
+        {
+            ShoppingCart shoppingCartFromDb = dbContext.ShoppingCarts.Find(shoppingCart.ShoppingCartId);
+            if(shoppingCartFromDb != null)
+            {
+                shoppingCartFromDb.CartItemCount = shoppingCart.CartItemCount;
+            }
         }
     }
 }

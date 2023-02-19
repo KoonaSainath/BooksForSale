@@ -48,20 +48,24 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Customer
                 httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
                 string requestUrl = $"api/Book/GET/GetBook/{bookId}";
                 Book book = await httpClient.GetFromJsonAsync<Book>(requestUrl);
-                ShoppingCart cart = new ShoppingCart();
-                cart.Book = book;
-                cart.BookId = bookId;
 
                 ClaimsIdentity claimsIdentity = (ClaimsIdentity) User.Identity;
                 Claim claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
                 string userId = claim.Value;
 
-                cart.Id = userId;
+                ShoppingCart shoppingCart = null;
 
-                if(book != null)
+                requestUrl = $"api/ShoppingCart/GET/GetShoppingCart/{bookId}/{userId}";
+                shoppingCart = await httpClient.GetFromJsonAsync<ShoppingCart>(requestUrl);
+
+                if(shoppingCart == null || (shoppingCart != null && shoppingCart.ShoppingCartId == 0))
                 {
-                    return View(cart);
-                }
+                    shoppingCart = new ShoppingCart();
+                    shoppingCart.Book = book;
+                    shoppingCart.BookId = bookId;
+                    shoppingCart.Id = userId;
+                } 
+                return View(shoppingCart);
             }
             return NotFound();
         }
@@ -83,7 +87,8 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Customer
                     HttpResponseMessage response = await httpClient.PostAsJsonAsync<ShoppingCart>(requestUrl, cart);
                     if (response.IsSuccessStatusCode)
                     {
-                        return RedirectToAction(nameof(Index), nameof(HomeController));
+                        TempData[Utility.Constants.GenericConstants.NOTIFICATION_MESSAGE_KEY] = "Shopping cart is inserted successfully!";
+                        return RedirectToAction(nameof(Index));
                     }
                     else
                     {
@@ -96,7 +101,8 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Customer
                     HttpResponseMessage response = await httpClient.PutAsJsonAsync<ShoppingCart>(requestUrl, cart);
                     if (response.IsSuccessStatusCode)
                     {
-                        return RedirectToAction(nameof(Index), nameof(HomeController));
+                        TempData[Utility.Constants.GenericConstants.NOTIFICATION_MESSAGE_KEY] = "Shopping cart is updated successfully";
+                        return RedirectToAction(nameof(Index));
                     }
                     else
                     {
