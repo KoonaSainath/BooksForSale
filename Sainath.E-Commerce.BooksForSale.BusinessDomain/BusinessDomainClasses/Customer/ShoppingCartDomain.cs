@@ -17,9 +17,9 @@ namespace Sainath.E_Commerce.BooksForSale.BusinessDomain.BusinessDomainClasses.C
             shoppingCartData = new ShoppingCartData(unitOfWork);
         }
 
-        public IEnumerable<ShoppingCart> GetAllShoppingCarts()
+        public IEnumerable<ShoppingCart> GetAllShoppingCarts(string userId)
         {
-            return shoppingCartData.GetAllShoppingCarts();
+            return shoppingCartData.GetAllShoppingCarts(userId);
         }
 
         public ShoppingCart GetShoppingCart(int bookId, string userId, int shoppingCartId)

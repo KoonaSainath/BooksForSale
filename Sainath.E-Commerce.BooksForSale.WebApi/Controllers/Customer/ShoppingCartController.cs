@@ -16,11 +16,11 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Customer
             shoppingCartDomain = new ShoppingCartDomain(unitOfWork);
         }
 
-        [Route(template: "GET/GetAllShoppingCarts", Name = "GetAllShoppingCarts")]
+        [Route(template: "GET/GetAllShoppingCarts/{userId?}", Name = "GetAllShoppingCarts")]
         [HttpGet]
-        public IActionResult GetAllShoppingCarts()
+        public IActionResult GetAllShoppingCarts(string? userId = null)
         {
-            IEnumerable<ShoppingCart> shoppingCarts = shoppingCartDomain.GetAllShoppingCarts();
+            IEnumerable<ShoppingCart> shoppingCarts = shoppingCartDomain.GetAllShoppingCarts(userId);
             return Ok(shoppingCarts);
         }
 

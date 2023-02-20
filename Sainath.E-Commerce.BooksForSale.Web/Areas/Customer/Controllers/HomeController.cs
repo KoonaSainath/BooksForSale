@@ -114,6 +114,25 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Customer
         }
 
         [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> LoadShoppingCart()
+        {
+            ClaimsIdentity claimsIdentity = (ClaimsIdentity)User.Identity;
+            Claim claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            string userId = claim.Value;
+
+            HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Accept.Clear();
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+
+            string requestUrl = $"api/ShoppingCart/GET/GetAllShoppingCarts/{userId}";
+            IEnumerable<ShoppingCart> shoppingCarts = await httpClient.GetFromJsonAsync<IEnumerable<ShoppingCart>>(requestUrl);
+
+            return View(shoppingCarts);
+        }
+
+        [HttpGet]
         public IActionResult Privacy()
         {
             return View();
