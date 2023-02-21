@@ -1,0 +1,49 @@
+﻿@model ShoppingCartVM
+@{
+    ViewData["Title"] = "Shopping cart";
+}
+
+<div class="container">
+    <div class="row m-4 bg-light p-4">
+        <div class="col-6">
+            <h5 class="text-white">Shopping cart</h5>
+        </div>
+        <div class="col-6 text-end">
+            <a class="btn btn-info bg-transparent text-info">Continue shopping</a>
+        </div>
+    </div>
+    <div>
+        @foreach (ShoppingCart cart in Model.ShoppingCarts)
+        {
+            <div class="row m-4">
+                <div class="col-1">
+                    <img src="@cart.Book.ImageUrl" alt="Book image" height="100" width="80" style="object-fit: fill;" />
+                </div>
+                <div class="col-6">
+                    <p class="text-white">@cart.Book.Title</p>
+                    <p>@Html.Raw(cart.Book.Description)</p>
+                </div>
+                <div class="col-2">
+                    <p class="text-white"><strong>@cart.Price.ToString("c")&nbsp;x&nbsp;@cart.CartItemCount</strong></p>
+                </div>
+                <div class="col-2">
+                    <a class="btn btn-light p-3 mx-2 text-white"><i class="bi bi-plus-circle"></i></a>
+                    <a class="btn btn-light p-3 text-white"><i class="bi bi-dash-circle"></i></a>
+                </div>
+                <div class="col-1">
+                    <a class="btn btn-danger p-3 mx-2"><i class="bi bi-trash3-fill"></i></a>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="row m-4 p-4" style="border: 1px white solid;">
+        <div class="col-6">
+            <h5>Total: @Model.TotalPrice.ToString("c")</h5>
+        </div>
+        <div class="col-6 text-end">
+            <a class="btn btn-info">Summary</a>
+        </div>
+    </div>
+</div>
+
+

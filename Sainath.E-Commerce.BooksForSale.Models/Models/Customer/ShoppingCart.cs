@@ -36,5 +36,9 @@ namespace Sainath.E_Commerce.BooksForSale.Models.Models.Customer
         [Range(minimum: 1, maximum: 100, ErrorMessage = "Only 1 to 100 number of books can be added to the shopping cart")]
         [Display(Name = "Number of books")]
         public int? CartItemCount { get; set; }
+
+        [NotMapped]
+        public double Price { get; set; }
+
     }
 }
