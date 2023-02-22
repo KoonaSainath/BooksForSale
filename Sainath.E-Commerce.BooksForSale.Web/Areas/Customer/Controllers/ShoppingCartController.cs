@@ -45,6 +45,64 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
             return View(shoppingCartVM);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> IncrementBookCountInShoppingCart(int shoppingCartId)
+        {
+            HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Accept.Clear();
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+            string requestUrl = $"api/ShoppingCart/GET/GetShoppingCart/0/0/{shoppingCartId}";
+            ShoppingCart shoppingCart = await httpClient.GetFromJsonAsync<ShoppingCart>(requestUrl);
+
+            if(shoppingCart != null && shoppingCart.CartItemCount < 200)
+            {
+                requestUrl = $"api/ShoppingCart/PUT/IncrementBookCountInShoppingCart";
+                HttpResponseMessage response = await httpClient.PutAsJsonAsync<ShoppingCart>(requestUrl, shoppingCart);
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DecrementBookCountInShoppingCart(int shoppingCartId)
+        {
+            HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Accept.Clear();
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+            string requestUrl = $"api/ShoppingCart/GET/GetshoppingCart/0/0/{shoppingCartId}";
+            ShoppingCart shoppingCart = await httpClient.GetFromJsonAsync<ShoppingCart>(requestUrl);
+
+            if(shoppingCart != null && shoppingCart.CartItemCount > 1)
+            {
+                requestUrl = "api/ShoppingCart/PUT/DecrementBookCountInShoppingCart";
+                HttpResponseMessage response = await httpClient.PutAsJsonAsync<ShoppingCart>(requestUrl, shoppingCart);
+            }
+            else if(shoppingCart != null && shoppingCart.CartItemCount <= 1)
+            {
+                requestUrl = "api/ShoppingCart/DELETE/RemoveShoppingCart";
+                HttpResponseMessage response = await httpClient.PostAsJsonAsync<ShoppingCart>(requestUrl, shoppingCart);
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> RemoveBookFromShoppingCart(int shoppingCartId)
+        {
+            HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Accept.Clear();
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+            string requestUrl = $"api/ShoppingCart/GET/GetShoppingCart/0/0/{shoppingCartId}";
+            ShoppingCart shoppingCart = await httpClient.GetFromJsonAsync<ShoppingCart>(requestUrl);
+            if(shoppingCart != null)
+            {
+                requestUrl = "api/ShoppingCart/DELETE/RemoveShoppingCart";
+                HttpResponseMessage response = await httpClient.PostAsJsonAsync<ShoppingCart>(requestUrl, shoppingCart);
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
         private double CalculateFinalPrice(int? cartItemCount, double? price, double? price50, double? price100)
         {
             if (cartItemCount <= 50)

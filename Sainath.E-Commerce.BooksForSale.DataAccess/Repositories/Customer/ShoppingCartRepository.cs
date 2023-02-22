@@ -1,6 +1,7 @@
 ﻿using Sainath.E_Commerce.BooksForSale.DataAccess.DbContextClasses;
 using Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories.Customer;
 using Sainath.E_Commerce.BooksForSale.Models.Models.Customer;
+using Sainath.ECommerce.BooksForSale.DataAccess.Migrations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,10 +20,24 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.Repositories.Customer
 
         public void UpdateShoppingCart(ShoppingCart shoppingCart)
         {
-            ShoppingCart shoppingCartFromDb = dbContext.ShoppingCarts.Find(shoppingCart.ShoppingCartId);
-            if(shoppingCartFromDb != null)
+            dbContext.ShoppingCarts.Update(shoppingCart);
+        }
+
+        public void IncrementBookCountInShoppingCart(ShoppingCart shoppingCart)
+        {
+            if(shoppingCart != null)
             {
-                shoppingCartFromDb.CartItemCount = shoppingCart.CartItemCount;
+                shoppingCart.CartItemCount++;
+                UpdateShoppingCart(shoppingCart);
+            }
+        }
+
+        public void DecrementBookCountInShoppingCart(ShoppingCart shoppingCart)
+        {
+            if(shoppingCart != null)
+            {
+                shoppingCart.CartItemCount--;
+                UpdateShoppingCart(shoppingCart);
             }
         }
     }

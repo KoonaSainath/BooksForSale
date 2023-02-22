@@ -67,5 +67,17 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Customer
             unitOfWork.ShoppingCartRepository.UpdateShoppingCart(shoppingCart);
             unitOfWork.Save();
         }
+
+        public void IncrementBookCountInShoppingCart(ShoppingCart shoppingCart)
+        {
+            unitOfWork.ShoppingCartRepository.IncrementBookCountInShoppingCart(shoppingCart);
+            unitOfWork.Save();
+        }
+
+        public void DecrementBookCountInShoppingCart(ShoppingCart shoppingCart)
+        {
+            unitOfWork.ShoppingCartRepository.DecrementBookCountInShoppingCart(shoppingCart);
+            unitOfWork.Save();
+        }
     }
 }

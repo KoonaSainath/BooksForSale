@@ -24,11 +24,11 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Customer
             return Ok(shoppingCarts);
         }
 
-        [Route(template: "GET/GetShoppingCart/{bookId}/{userId}/{shoppingCartId?}", Name = "GetShoppingCart")]
+        [Route(template: "GET/GetShoppingCart/{bookId?}/{userId?}/{shoppingCartId?}", Name = "GetShoppingCart")]
         [HttpGet]
-        public IActionResult GetShoppingCart(int bookId, string userId, int? shoppingCartId = 0)
+        public IActionResult GetShoppingCart(int? bookId = 0, string? userId = null, int? shoppingCartId = 0)
         {
-            ShoppingCart shoppingCart = shoppingCartDomain.GetShoppingCart(bookId, userId, (int)shoppingCartId);
+            ShoppingCart shoppingCart = shoppingCartDomain.GetShoppingCart((int)bookId, userId, (int)shoppingCartId);
             return Ok(shoppingCart);
         }
 
@@ -61,6 +61,20 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Customer
         {
             shoppingCartDomain.UpdateShoppingCart(shoppingCart);
             return Ok("Shopping cart is updated successfully");
+        }
+
+        [Route(template: "PUT/IncrementBookCountInShoppingCart", Name = "IncrementBookCountInShoppingCart")]
+        public IActionResult IncrementBookCountInShoppingCart(ShoppingCart shoppingCart)
+        {
+            shoppingCartDomain.IncrementBookCountInShoppingCart(shoppingCart);
+            return Ok();
+        }
+
+        [Route(template: "PUT/DecrementBookCountInShoppingCart", Name = "DecrementBookCountInShoppingCart")]
+        public IActionResult DecrementBookCountInShoppingCart(ShoppingCart shoppingCart)
+        {
+            shoppingCartDomain.DecrementBookCountInShoppingCart(shoppingCart);
+            return Ok();
         }
     }
 }
