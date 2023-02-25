@@ -13,6 +13,8 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
     public class ShoppingCartController : Controller
     {
         private readonly IBooksForSaleConfiguration configuration;
+        [BindProperty]
+        public ShoppingCartVM ShoppingCartVM { get; set; }
         public ShoppingCartController(IBooksForSaleConfiguration configuration)
         {
             this.configuration = configuration;
@@ -34,11 +36,12 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
             string requestUrl = $"api/ShoppingCart/GET/GetAllShoppingCarts/{userId}";
             IEnumerable<ShoppingCart> shoppingCarts = await httpClient.GetFromJsonAsync<IEnumerable<ShoppingCart>>(requestUrl);
 
-            shoppingCartVM.TotalPrice = 0;
+            shoppingCartVM.OrderHeader = new OrderHeader();
+            shoppingCartVM.OrderHeader.TotalOrderAmount = 0;
             foreach (ShoppingCart cart in shoppingCarts)
             {
                 cart.Price = CalculateFinalPrice(cart.CartItemCount, cart.Book.Price, cart.Book.Price50, cart.Book.Price100);
-                shoppingCartVM.TotalPrice += (double)(cart.Price * cart.CartItemCount);
+                shoppingCartVM.OrderHeader.TotalOrderAmount += (double)(cart.Price * cart.CartItemCount);
             }
 
             shoppingCartVM.ShoppingCarts = shoppingCarts;
@@ -101,6 +104,41 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
                 HttpResponseMessage response = await httpClient.PostAsJsonAsync<ShoppingCart>(requestUrl, shoppingCart);
             }
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Summary()
+        {
+            ClaimsIdentity claimsIdentity = (ClaimsIdentity) User.Identity;
+            Claim claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            string userId = claim.Value;
+
+            ShoppingCartVM = new ShoppingCartVM();
+            ShoppingCartVM.OrderHeader = new OrderHeader();
+            ShoppingCartVM.OrderHeader.UserId = userId;
+
+            HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Accept.Clear();
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+
+            string requestUrl = $"api/ShoppingCart/GET/GetAllShoppingCarts/{userId}";
+            ShoppingCartVM.ShoppingCarts = await httpClient.GetFromJsonAsync<IEnumerable<ShoppingCart>>(requestUrl);
+
+            requestUrl = $"api/BooksForSaleUser/GET/GetUser/{userId}";
+            ShoppingCartVM.OrderHeader.BooksForSaleUser = await httpClient.GetFromJsonAsync<BooksForSaleUser>(requestUrl);
+
+            ShoppingCartVM.OrderHeader.Name = ShoppingCartVM.OrderHeader.BooksForSaleUser.Name;
+            ShoppingCartVM.OrderHeader.PhoneNumber = ShoppingCartVM.OrderHeader.BooksForSaleUser.PhoneNumber;
+            ShoppingCartVM.OrderHeader.StreetAddress = ShoppingCartVM.OrderHeader.BooksForSaleUser.StreetAddress;
+            ShoppingCartVM.OrderHeader.City = ShoppingCartVM.OrderHeader.BooksForSaleUser.City;
+            ShoppingCartVM.OrderHeader.State = ShoppingCartVM.OrderHeader.BooksForSaleUser.State;
+            ShoppingCartVM.OrderHeader.PostalCode = ShoppingCartVM.OrderHeader.BooksForSaleUser.PostalCode;
+
+            ShoppingCartVM.OrderHeader.EstimatedFromDate = DateTime.Now.AddDays(7);
+            ShoppingCartVM.OrderHeader.EstimatedToDate = DateTime.Now.AddDays(14);
+            return View(ShoppingCartVM);
         }
 
         private double CalculateFinalPrice(int? cartItemCount, double? price, double? price50, double? price100)

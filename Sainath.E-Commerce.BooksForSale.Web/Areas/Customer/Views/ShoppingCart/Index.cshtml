@@ -38,10 +38,13 @@
     </div>
     <div class="row m-4 p-4" style="border: 1px white solid;">
         <div class="col-6">
-            <h5>Total: @Model.TotalPrice.ToString("c")</h5>
+            <h5>Total: @Model.OrderHeader.TotalOrderAmount.ToString("c")</h5>
         </div>
         <div class="col-6 text-end">
-            <a class="btn btn-info">Summary</a>
+            @if(Model.OrderHeader.TotalOrderAmount > 0)
+            {
+                <a class="btn btn-info" asp-area="Customer" asp-controller="ShoppingCart" asp-action="Summary">Summary</a>                
+            }
         </div>
     </div>
 </div>

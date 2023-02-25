@@ -10,6 +10,6 @@ namespace Sainath.E_Commerce.BooksForSale.Models.ViewModels.Customer
     public class ShoppingCartVM
     {
         public IEnumerable<ShoppingCart> ShoppingCarts { get; set; }
-        public double TotalPrice { get; set; }
+        public OrderHeader OrderHeader { get; set; }
     }
 }

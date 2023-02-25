@@ -32,6 +32,10 @@ namespace Sainath.E_Commerce.BooksForSale.Models.Models.Customer
         public DateTime PaymentDueDate { get; set; }
         public string? StripeSessionId { get; set; }
         public string? StripePaymentIntentId { get; set; }
+        [Required]
+        public DateTime EstimatedFromDate { get; set; }
+        [Required]
+        public DateTime EstimatedToDate { get; set; }
         [Required(ErrorMessage = "Please enter name for billing address")]
         [Display(Name = "Customer name")]
         [StringLength(maximumLength: 50)]
