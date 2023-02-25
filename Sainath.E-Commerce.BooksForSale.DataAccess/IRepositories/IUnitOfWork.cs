@@ -15,6 +15,7 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories
         IBookRepository BookRepository { get; }
         ICompanyRepository CompanyRepository { get; }
         IShoppingCartRepository ShoppingCartRepository { get; }
+        IBooksForSaleUserRepository BooksForSaleUserRepository { get; }
         void Save();
     }
 }
