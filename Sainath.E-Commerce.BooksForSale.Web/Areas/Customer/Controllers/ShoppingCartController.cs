@@ -126,6 +126,13 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
             string requestUrl = $"api/ShoppingCart/GET/GetAllShoppingCarts/{userId}";
             ShoppingCartVM.ShoppingCarts = await httpClient.GetFromJsonAsync<IEnumerable<ShoppingCart>>(requestUrl);
 
+            ShoppingCartVM.OrderHeader.TotalOrderAmount = 0;
+            foreach(ShoppingCart shoppingCart in ShoppingCartVM.ShoppingCarts)
+            {
+                shoppingCart.Price = CalculateFinalPrice(shoppingCart.CartItemCount, shoppingCart.Book.Price, shoppingCart.Book.Price50, shoppingCart.Book.Price100);
+                ShoppingCartVM.OrderHeader.TotalOrderAmount += shoppingCart.Price;
+            }
+
             requestUrl = $"api/BooksForSaleUser/GET/GetUser/{userId}";
             ShoppingCartVM.OrderHeader.BooksForSaleUser = await httpClient.GetFromJsonAsync<BooksForSaleUser>(requestUrl);
 
@@ -140,6 +147,15 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
             ShoppingCartVM.OrderHeader.EstimatedToDate = DateTime.Now.AddDays(14);
             return View(ShoppingCartVM);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ActionName("Summary")]
+        public async Task<IActionResult> PlaceOrder() 
+        {
+            return View();
+        }
+
 
         private double CalculateFinalPrice(int? cartItemCount, double? price, double? price50, double? price100)
         {

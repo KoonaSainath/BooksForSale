@@ -4,5 +4,125 @@
 }
 
 <div class="container">
+    <div class="row m-4 bg-light p-4">
+        <div class="col-6 p-1">
+            <h4 class="text-white">Order summary</h4>
+        </div>
+        <div class="col-6 text-end">
+            <a class="btn btn-info bg-transparent text-info" asp-area="Customer" asp-controller="ShoppingCart" asp-action="Index">Back to shopping cart</a>
+        </div>
+    </div>
+    <form method="post" asp-area="Customer" asp-controller="ShoppingCart" asp-action="Summary">
+        <div class="row px-4"> 
+            <div class="col-7">
+                <h5 class="text-primary">Shipping details</h5>
+                <table class="table table-borderless bg-black mt-4">
+                    <tr>
+                        <td>
+                            <label asp-for="@Model.OrderHeader.Name" class="form-label"></label>
+                        </td>
+                        <td>
+                            <input asp-for="@Model.OrderHeader.Name" class="w-100" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <span asp-validation-for="@Model.OrderHeader.Name" class="text-danger"></span>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label asp-for="@Model.OrderHeader.PhoneNumber" class="form-label"></label>
+                        </td>
+                        <td>
+                            <input asp-for="@Model.OrderHeader.PhoneNumber" class="w-100" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <span asp-validation-for="@Model.OrderHeader.PhoneNumber" class="text-danger"></span>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label asp-for="@Model.OrderHeader.StreetAddress" class="form-label"></label>
+                        </td>
+                        <td>
+                            <input asp-for="@Model.OrderHeader.StreetAddress" class="w-100" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <span asp-validation-for="@Model.OrderHeader.StreetAddress" class="text-danger"></span>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label asp-for="@Model.OrderHeader.City" class="form-label"></label>
+                        </td>
+                        <td>
+                            <input asp-for="@Model.OrderHeader.City" class="w-100" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <span asp-validation-for="@Model.OrderHeader.City" class="text-danger"></span>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label asp-for="@Model.OrderHeader.State" class="form-label"></label>
+                        </td>
+                        <td>
+                            <input asp-for="@Model.OrderHeader.State" class="w-100" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <span asp-validation-for="@Model.OrderHeader.State" class="text-danger"></span>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label asp-for="@Model.OrderHeader.PostalCode" class="form-label"></label>
+                        </td>
+                        <td>
+                            <input asp-for="@Model.OrderHeader.PostalCode" class="w-100" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <span asp-validation-for="@Model.OrderHeader.PostalCode" class="text-danger"></span>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-5">
+                <h5 class="text-primary p-1">Order summary</h5>
+                <div class="mt-4">
+                    @foreach(ShoppingCart shoppingCart in Model.ShoppingCarts)
+                    {
+                        <div class="m-1 p-2">
+                            <div class="row">
+                                <div class="col-6">
+                                    <h5>@shoppingCart.Book.Title</h5>
+                                    <h6 class="text-muted">Quantity: @shoppingCart.CartItemCount</h6>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <h5>@shoppingCart.Price.ToString("c")</h5>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div class="m-1 p-3 bg-light">
+                        <div class="row">
+                            <div class="col-6">
+                                <h5><strong>Total</strong></h5>
+                            </div>
+                            <div class="col-6 text-end">
+                                <h5><strong>@Model.OrderHeader.TotalOrderAmount.ToString("c")</strong></h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4 px-4">
+            <div class="col-6">
+                <h6 class="text-danger">Estimated arrival date: @Model.OrderHeader.EstimatedFromDate.ToShortDateString() - @Model.OrderHeader.EstimatedToDate.ToShortDateString()</h6>
+            </div>
+            <div class="col-6 text-end">
+                <button type="submit" class="btn btn-info btn-lg">Place order</button>
+            </div>
+        </div>
+    </form>
 </div>
 
