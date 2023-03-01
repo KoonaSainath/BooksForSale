@@ -20,7 +20,7 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.Repositories
             this.dbContext = dbContext;
             dbSet = dbContext.Set<T>();
         }
-        public IEnumerable<T> GetAllRecords(string includeProperties = null)
+        public IEnumerable<T> GetAllRecords(string includeProperties = null, Expression<Func<T,bool>> expression = null)
         {
             IQueryable<T> query = dbSet;
 
@@ -31,6 +31,11 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.Repositories
                 {
                     query = query.Include(property.Trim());
                 }
+            }
+
+            if(expression != null)
+            {
+                query = query.Where(expression);
             }
             
             return query.ToList();

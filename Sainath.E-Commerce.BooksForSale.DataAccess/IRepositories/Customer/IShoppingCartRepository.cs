@@ -10,5 +10,7 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories.Customer
     public interface IShoppingCartRepository : IRepository<ShoppingCart>
     {
         public void UpdateShoppingCart(ShoppingCart shoppingCart);
+        public void IncrementBookCountInShoppingCart(ShoppingCart shoppingCart);
+        public void DecrementBookCountInShoppingCart(ShoppingCart shoppingCart);
     }
 }

@@ -16,19 +16,19 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Customer
             shoppingCartDomain = new ShoppingCartDomain(unitOfWork);
         }
 
-        [Route(template: "GET/GetAllShoppingCarts", Name = "GetAllShoppingCarts")]
+        [Route(template: "GET/GetAllShoppingCarts/{userId?}", Name = "GetAllShoppingCarts")]
         [HttpGet]
-        public IActionResult GetAllShoppingCarts()
+        public IActionResult GetAllShoppingCarts(string? userId = null)
         {
-            IEnumerable<ShoppingCart> shoppingCarts = shoppingCartDomain.GetAllShoppingCarts();
+            IEnumerable<ShoppingCart> shoppingCarts = shoppingCartDomain.GetAllShoppingCarts(userId);
             return Ok(shoppingCarts);
         }
 
-        [Route(template: "GET/GetShoppingCart/{bookId}/{userId}/{shoppingCartId?}", Name = "GetShoppingCart")]
+        [Route(template: "GET/GetShoppingCart/{bookId?}/{userId?}/{shoppingCartId?}", Name = "GetShoppingCart")]
         [HttpGet]
-        public IActionResult GetShoppingCart(int bookId, string userId, int? shoppingCartId = 0)
+        public IActionResult GetShoppingCart(int? bookId = 0, string? userId = null, int? shoppingCartId = 0)
         {
-            ShoppingCart shoppingCart = shoppingCartDomain.GetShoppingCart(bookId, userId, (int)shoppingCartId);
+            ShoppingCart shoppingCart = shoppingCartDomain.GetShoppingCart((int)bookId, userId, (int)shoppingCartId);
             return Ok(shoppingCart);
         }
 
@@ -56,11 +56,60 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Customer
             return Ok("Shopping carts are removed successfully!");
         }
 
+        [HttpPut]
         [Route(template: "PUT/UpdateShoppingCart", Name = "UpdateShoppingCart")]
         public IActionResult UpdateShoppingCart(ShoppingCart shoppingCart)
         {
             shoppingCartDomain.UpdateShoppingCart(shoppingCart);
             return Ok("Shopping cart is updated successfully");
+        }
+
+        [HttpPut]
+        [Route(template: "PUT/IncrementBookCountInShoppingCart", Name = "IncrementBookCountInShoppingCart")]
+        public IActionResult IncrementBookCountInShoppingCart(ShoppingCart shoppingCart)
+        {
+            shoppingCartDomain.IncrementBookCountInShoppingCart(shoppingCart);
+            return Ok();
+        }
+
+        [HttpPut]
+        [Route(template: "PUT/DecrementBookCountInShoppingCart", Name = "DecrementBookCountInShoppingCart")]
+        public IActionResult DecrementBookCountInShoppingCart(ShoppingCart shoppingCart)
+        {
+            shoppingCartDomain.DecrementBookCountInShoppingCart(shoppingCart);
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route(template: "POST/InsertOrderHeader", Name = "InsertOrderHeader")]
+        public IActionResult InsertOrderHeader(OrderHeader orderHeader)
+        {
+            OrderHeader insertedOrderHeader = shoppingCartDomain.InsertOrderHeader(orderHeader);
+            return Ok(insertedOrderHeader);
+        }
+
+        [HttpPut]
+        [Route(template: "PUT/UpdateOrderHeader", Name = "UpdateOrderHeader")]
+        public IActionResult UpdateOrderHeader(OrderHeader orderHeader)
+        {
+            shoppingCartDomain.UpdateOrderHeader(orderHeader);
+            return Ok("Order header updated successfully");
+        }
+
+        [HttpPut]
+        [Route(template: "PUT/UpdateOrderHeaderStatus/{orderHeaderId}/{orderStatus}/{paymentStatus?}", Name = "UpdateOrderHeaderStatus")]
+        public IActionResult UpdateOrderHeaderStatus(int orderHeaderId, string orderStatus, string? paymentStatus = null)
+        {
+            shoppingCartDomain.UpdateOrderHeaderStatus(orderHeaderId, orderStatus, paymentStatus);
+            return Ok("Order header status updated successfully");
+        }
+
+        [HttpPost]
+        [Route(template: "POST/InsertOrderDetails", Name = "InsertOrderDetails")]
+        public IActionResult InsertOrderDetails(OrderDetails orderDetails)
+        {
+            shoppingCartDomain.InsertOrderDetails(orderDetails);
+            return Ok("Order details inserted successfully");
         }
     }
 }

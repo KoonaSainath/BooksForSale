@@ -4,6 +4,7 @@ using NuGet.Versioning;
 using Sainath.E_Commerce.BooksForSale.Models.Models.Admin;
 using Sainath.E_Commerce.BooksForSale.Models.Models.Customer;
 using Sainath.E_Commerce.BooksForSale.Models.ViewModels;
+using Sainath.E_Commerce.BooksForSale.Models.ViewModels.Customer;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
 using System.Diagnostics;
 using System.Net.Http.Headers;

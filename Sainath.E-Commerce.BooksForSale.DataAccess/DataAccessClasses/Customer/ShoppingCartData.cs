@@ -4,6 +4,7 @@ using Sainath.E_Commerce.BooksForSale.Models.Models.Customer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,9 +17,11 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Customer
 
         }
 
-        public IEnumerable<ShoppingCart> GetAllShoppingCarts()
+        public IEnumerable<ShoppingCart> GetAllShoppingCarts(string userId)
         {
-            return unitOfWork.ShoppingCartRepository.GetAllRecords().OrderByDescending(cart => cart.ShoppingCartId).AsEnumerable();
+            string includeProperties = "Book,BooksForSaleUser,Book.Category,Book.CoverType";
+            Expression<Func<ShoppingCart, bool>> expression = (cart => cart.Id == userId);
+            return unitOfWork.ShoppingCartRepository.GetAllRecords(includeProperties, expression).OrderByDescending(cart => cart.ShoppingCartId).AsEnumerable();
         }
 
         public ShoppingCart GetShoppingCart(int bookId, string userId, int shoppingCartId)
@@ -62,6 +65,43 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Customer
         public void UpdateShoppingCart(ShoppingCart shoppingCart)
         {
             unitOfWork.ShoppingCartRepository.UpdateShoppingCart(shoppingCart);
+            unitOfWork.Save();
+        }
+
+        public void IncrementBookCountInShoppingCart(ShoppingCart shoppingCart)
+        {
+            unitOfWork.ShoppingCartRepository.IncrementBookCountInShoppingCart(shoppingCart);
+            unitOfWork.Save();
+        }
+
+        public void DecrementBookCountInShoppingCart(ShoppingCart shoppingCart)
+        {
+            unitOfWork.ShoppingCartRepository.DecrementBookCountInShoppingCart(shoppingCart);
+            unitOfWork.Save();
+        }
+
+        public OrderHeader InsertOrderHeader(OrderHeader orderHeader)
+        {
+            unitOfWork.OrderHeaderRepository.InsertRecord(orderHeader);
+            unitOfWork.Save();
+            return orderHeader;
+        }
+
+        public void UpdateOrderHeader(OrderHeader orderHeader)
+        {
+            unitOfWork.OrderHeaderRepository.Update(orderHeader);
+            unitOfWork.Save();
+        }
+
+        public void UpdateOrderHeaderStatus(int orderHeaderId, string orderStatus, string? paymentStatus)
+        {
+            unitOfWork.OrderHeaderRepository.UpdateStatus(orderHeaderId, orderStatus, paymentStatus);
+            unitOfWork.Save();
+        }
+
+        public void InsertOrderDetails(OrderDetails orderDetails)
+        {
+            unitOfWork.OrderDetailsRepository.InsertRecord(orderDetails);
             unitOfWork.Save();
         }
     }

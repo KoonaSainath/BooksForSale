@@ -17,9 +17,9 @@ namespace Sainath.E_Commerce.BooksForSale.BusinessDomain.BusinessDomainClasses.C
             shoppingCartData = new ShoppingCartData(unitOfWork);
         }
 
-        public IEnumerable<ShoppingCart> GetAllShoppingCarts()
+        public IEnumerable<ShoppingCart> GetAllShoppingCarts(string userId)
         {
-            return shoppingCartData.GetAllShoppingCarts();
+            return shoppingCartData.GetAllShoppingCarts(userId);
         }
 
         public ShoppingCart GetShoppingCart(int bookId, string userId, int shoppingCartId)
@@ -45,6 +45,37 @@ namespace Sainath.E_Commerce.BooksForSale.BusinessDomain.BusinessDomainClasses.C
         public void UpdateShoppingCart(ShoppingCart shoppingCart)
         {
             shoppingCartData.UpdateShoppingCart(shoppingCart);
+        }
+
+        public void IncrementBookCountInShoppingCart(ShoppingCart shoppingCart)
+        {
+            shoppingCartData.IncrementBookCountInShoppingCart(shoppingCart);
+        }
+
+        public void DecrementBookCountInShoppingCart(ShoppingCart shoppingCart)
+        {
+            shoppingCartData.DecrementBookCountInShoppingCart(shoppingCart);
+        }
+
+        public OrderHeader InsertOrderHeader(OrderHeader orderHeader)
+        {
+            OrderHeader insertedOrderHeader = shoppingCartData.InsertOrderHeader(orderHeader);
+            return insertedOrderHeader;
+        }
+
+        public void UpdateOrderHeader(OrderHeader orderHeader)
+        {
+            shoppingCartData.UpdateOrderHeader(orderHeader);
+        }
+
+        public void UpdateOrderHeaderStatus(int orderHeaderId, string orderStatus, string? paymentStatus = null)
+        {
+            shoppingCartData.UpdateOrderHeaderStatus(orderHeaderId, orderStatus, paymentStatus);
+        }
+
+        public void InsertOrderDetails(OrderDetails orderDetails)
+        {
+            shoppingCartData.InsertOrderDetails(orderDetails);
         }
     }
 }
