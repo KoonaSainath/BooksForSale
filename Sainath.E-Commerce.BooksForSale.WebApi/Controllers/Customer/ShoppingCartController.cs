@@ -56,6 +56,7 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Customer
             return Ok("Shopping carts are removed successfully!");
         }
 
+        [HttpPut]
         [Route(template: "PUT/UpdateShoppingCart", Name = "UpdateShoppingCart")]
         public IActionResult UpdateShoppingCart(ShoppingCart shoppingCart)
         {
@@ -63,6 +64,7 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Customer
             return Ok("Shopping cart is updated successfully");
         }
 
+        [HttpPut]
         [Route(template: "PUT/IncrementBookCountInShoppingCart", Name = "IncrementBookCountInShoppingCart")]
         public IActionResult IncrementBookCountInShoppingCart(ShoppingCart shoppingCart)
         {
@@ -70,11 +72,44 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Customer
             return Ok();
         }
 
+        [HttpPut]
         [Route(template: "PUT/DecrementBookCountInShoppingCart", Name = "DecrementBookCountInShoppingCart")]
         public IActionResult DecrementBookCountInShoppingCart(ShoppingCart shoppingCart)
         {
             shoppingCartDomain.DecrementBookCountInShoppingCart(shoppingCart);
             return Ok();
+        }
+
+        [HttpPost]
+        [Route(template: "POST/InsertOrderHeader", Name = "InsertOrderHeader")]
+        public IActionResult InsertOrderHeader(OrderHeader orderHeader)
+        {
+            OrderHeader insertedOrderHeader = shoppingCartDomain.InsertOrderHeader(orderHeader);
+            return Ok(insertedOrderHeader);
+        }
+
+        [HttpPut]
+        [Route(template: "PUT/UpdateOrderHeader", Name = "UpdateOrderHeader")]
+        public IActionResult UpdateOrderHeader(OrderHeader orderHeader)
+        {
+            shoppingCartDomain.UpdateOrderHeader(orderHeader);
+            return Ok("Order header updated successfully");
+        }
+
+        [HttpPut]
+        [Route(template: "PUT/UpdateOrderHeaderStatus/{orderHeaderId}/{orderStatus}/{paymentStatus?}", Name = "UpdateOrderHeaderStatus")]
+        public IActionResult UpdateOrderHeaderStatus(int orderHeaderId, string orderStatus, string? paymentStatus = null)
+        {
+            shoppingCartDomain.UpdateOrderHeaderStatus(orderHeaderId, orderStatus, paymentStatus);
+            return Ok("Order header status updated successfully");
+        }
+
+        [HttpPost]
+        [Route(template: "POST/InsertOrderDetails", Name = "InsertOrderDetails")]
+        public IActionResult InsertOrderDetails(OrderDetails orderDetails)
+        {
+            shoppingCartDomain.InsertOrderDetails(orderDetails);
+            return Ok("Order details inserted successfully");
         }
     }
 }

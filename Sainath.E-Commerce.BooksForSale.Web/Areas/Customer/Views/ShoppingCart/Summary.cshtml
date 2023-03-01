@@ -13,6 +13,9 @@
         </div>
     </div>
     <form method="post" asp-area="Customer" asp-controller="ShoppingCart" asp-action="Summary">
+        <input asp-for="@Model.OrderHeader.UserId" hidden />
+        <input asp-for="@Model.OrderHeader.EstimatedFromDate" hidden/>
+        <input asp-for="@Model.OrderHeader.EstimatedToDate" hidden />
         <div class="row px-4"> 
             <div class="col-7">
                 <h5 class="text-primary">Shipping details</h5>
@@ -26,7 +29,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <span asp-validation-for="@Model.OrderHeader.Name" class="text-danger"></span>
+                        <p><span asp-validation-for="@Model.OrderHeader.Name" class="text-danger"></span></p>
                     </tr>
                     <tr>
                         <td>
@@ -37,7 +40,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <span asp-validation-for="@Model.OrderHeader.PhoneNumber" class="text-danger"></span>
+                        <p><span asp-validation-for="@Model.OrderHeader.PhoneNumber" class="text-danger"></span></p>
                     </tr>
                     <tr>
                         <td>
@@ -48,7 +51,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <span asp-validation-for="@Model.OrderHeader.StreetAddress" class="text-danger"></span>
+                        <p><span asp-validation-for="@Model.OrderHeader.StreetAddress" class="text-danger"></span></p>
                     </tr>
                     <tr>
                         <td>
@@ -59,7 +62,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <span asp-validation-for="@Model.OrderHeader.City" class="text-danger"></span>
+                        <p><span asp-validation-for="@Model.OrderHeader.City" class="text-danger"></span></p>
                     </tr>
                     <tr>
                         <td>
@@ -70,7 +73,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <span asp-validation-for="@Model.OrderHeader.State" class="text-danger"></span>
+                        <p><span asp-validation-for="@Model.OrderHeader.State" class="text-danger"></span></p>
                     </tr>
                     <tr>
                         <td>
@@ -81,7 +84,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <span asp-validation-for="@Model.OrderHeader.PostalCode" class="text-danger"></span>
+                        <p><span asp-validation-for="@Model.OrderHeader.PostalCode" class="text-danger"></span></p>
                     </tr>
                 </table>
             </div>
@@ -125,4 +128,8 @@
         </div>
     </form>
 </div>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial"></partial>
+}
 

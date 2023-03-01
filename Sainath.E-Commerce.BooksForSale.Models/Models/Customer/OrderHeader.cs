@@ -41,11 +41,13 @@ namespace Sainath.E_Commerce.BooksForSale.Models.Models.Customer
         [StringLength(maximumLength: 50)]
         public string Name { get; set; }
         [Required(ErrorMessage = "Please enter your phone number")]
-        [RegularExpression(pattern: "/^[0-9]{10}$/", ErrorMessage = "Please enter a valid mobile number of 10 digits")]
+        [RegularExpression(pattern: "^[0-9]{10}$", ErrorMessage = "Please enter a valid mobile number of 10 digits")]
         [DataType(DataType.PhoneNumber)]
+        [Display(Name = "Phone number")]
         public string PhoneNumber { get; set; }
         [Required(ErrorMessage = "Please enter street address")]
         [StringLength(maximumLength: 500)]
+        [Display(Name = "Street address")]
         public string StreetAddress { get; set; }
         [Required(ErrorMessage = "Please enter city")]
         [StringLength(maximumLength: 100)]
@@ -55,7 +57,8 @@ namespace Sainath.E_Commerce.BooksForSale.Models.Models.Customer
         public string State { get; set; }
         [Required(ErrorMessage = "Please enter postal code")]
         [DataType(DataType.PostalCode)]
-        [RegularExpression(pattern: "/^[0-9]{4,6}$/", ErrorMessage = "Please enter a valid pincode of 4 to 6 digits")]
+        [RegularExpression(pattern: "^[0-9]{4,6}$", ErrorMessage = "Please enter a valid pincode of 4 to 6 digits")]
+        [Display(Name = "Postal code")]
         public string PostalCode { get; set; }
     }
 }

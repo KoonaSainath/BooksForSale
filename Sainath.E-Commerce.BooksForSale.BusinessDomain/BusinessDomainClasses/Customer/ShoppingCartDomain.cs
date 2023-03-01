@@ -56,5 +56,26 @@ namespace Sainath.E_Commerce.BooksForSale.BusinessDomain.BusinessDomainClasses.C
         {
             shoppingCartData.DecrementBookCountInShoppingCart(shoppingCart);
         }
+
+        public OrderHeader InsertOrderHeader(OrderHeader orderHeader)
+        {
+            OrderHeader insertedOrderHeader = shoppingCartData.InsertOrderHeader(orderHeader);
+            return insertedOrderHeader;
+        }
+
+        public void UpdateOrderHeader(OrderHeader orderHeader)
+        {
+            shoppingCartData.UpdateOrderHeader(orderHeader);
+        }
+
+        public void UpdateOrderHeaderStatus(int orderHeaderId, string orderStatus, string? paymentStatus = null)
+        {
+            shoppingCartData.UpdateOrderHeaderStatus(orderHeaderId, orderStatus, paymentStatus);
+        }
+
+        public void InsertOrderDetails(OrderDetails orderDetails)
+        {
+            shoppingCartData.InsertOrderDetails(orderDetails);
+        }
     }
 }

@@ -79,5 +79,30 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Customer
             unitOfWork.ShoppingCartRepository.DecrementBookCountInShoppingCart(shoppingCart);
             unitOfWork.Save();
         }
+
+        public OrderHeader InsertOrderHeader(OrderHeader orderHeader)
+        {
+            unitOfWork.OrderHeaderRepository.InsertRecord(orderHeader);
+            unitOfWork.Save();
+            return orderHeader;
+        }
+
+        public void UpdateOrderHeader(OrderHeader orderHeader)
+        {
+            unitOfWork.OrderHeaderRepository.Update(orderHeader);
+            unitOfWork.Save();
+        }
+
+        public void UpdateOrderHeaderStatus(int orderHeaderId, string orderStatus, string? paymentStatus)
+        {
+            unitOfWork.OrderHeaderRepository.UpdateStatus(orderHeaderId, orderStatus, paymentStatus);
+            unitOfWork.Save();
+        }
+
+        public void InsertOrderDetails(OrderDetails orderDetails)
+        {
+            unitOfWork.OrderDetailsRepository.InsertRecord(orderDetails);
+            unitOfWork.Save();
+        }
     }
 }

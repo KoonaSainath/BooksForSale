@@ -20,6 +20,8 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.Repositories
         public ICompanyRepository CompanyRepository { get; private set; }
         public IShoppingCartRepository ShoppingCartRepository { get; private set; }
         public IBooksForSaleUserRepository BooksForSaleUserRepository { get; private set; }
+        public IOrderHeaderRepository OrderHeaderRepository { get; private set; }
+        public IOrderDetailsRepository OrderDetailsRepository { get; private set; }
         private readonly BooksForSaleDbContext dbContext;
         public UnitOfWork(BooksForSaleDbContext dbContext)
         {
@@ -30,6 +32,8 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.Repositories
             CompanyRepository = new CompanyRepository(dbContext);
             ShoppingCartRepository = new ShoppingCartRepository(dbContext);
             BooksForSaleUserRepository = new BooksForSaleUserRepository(dbContext);
+            OrderHeaderRepository = new OrderHeaderRepository(dbContext);
+            OrderDetailsRepository = new OrderDetailsRepository(dbContext);
         }
         public void Save()
         {
