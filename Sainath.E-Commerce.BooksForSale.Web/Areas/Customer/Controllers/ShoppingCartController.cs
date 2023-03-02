@@ -4,6 +4,7 @@ using Sainath.E_Commerce.BooksForSale.Models.Models.Customer;
 using Sainath.E_Commerce.BooksForSale.Models.ViewModels.Customer;
 using Sainath.E_Commerce.BooksForSale.Utility.Constants;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
+using Stripe.Checkout;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 
@@ -191,6 +192,28 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
                         response = await httpClient.PostAsJsonAsync<OrderDetails>(requestUrl, orderDetails);
                     }
                 }
+
+                //string domain = configuration.BaseAddressForWebApplication;
+                //var options = new SessionCreateOptions
+                //{
+                //    LineItems = new List<SessionLineItemOptions>
+                //{
+                //  new SessionLineItemOptions
+                //  {
+                //    // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+                //    Price = "{{PRICE_ID}}",
+                //    Quantity = 1,
+                //  },
+                //},
+                //    Mode = "payment",
+                //    SuccessUrl = domain + "/success.html",
+                //    CancelUrl = domain + "/cancel.html",
+                //};
+                //var service = new SessionService();
+                //Session session = service.Create(options);
+
+                //Response.Headers.Add("Location", session.Url);
+                //return new StatusCodeResult(303);
 
                 requestUrl = "api/ShoppingCart/DELETE/RemoveShoppingCarts";
                 response = await httpClient.PostAsJsonAsync<IEnumerable<ShoppingCart>>(requestUrl, ShoppingCartVM.ShoppingCarts);

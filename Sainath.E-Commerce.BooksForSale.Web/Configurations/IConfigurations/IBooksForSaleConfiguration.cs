@@ -5,5 +5,6 @@
         string BaseAddressForWebApi { get; }
         string StripePublishableKey { get; }
         string StripeSecretKey { get;  }
+        string BaseAddressForWebApplication { get; }
     }
 }
