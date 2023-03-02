@@ -7,6 +7,7 @@ using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Sainath.E_Commerce.BooksForSale.Utility;
+using Stripe;
 
 string connectionStringKey = "BooksForSaleConnectionString";
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -46,6 +47,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+StripeConfiguration.ApiKey = builder.Configuration.GetSection("StripeKeys:StripeSecretKey").Get<string>();
+    
 app.UseAuthentication();;
 
 app.UseAuthorization();

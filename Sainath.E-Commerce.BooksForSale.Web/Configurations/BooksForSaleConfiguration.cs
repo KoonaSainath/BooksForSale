@@ -11,6 +11,20 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Configurations
                 return configuration["BaseAddresses:BaseAddressForWebApi"];
             }
         }
+        public string StripePublishableKey
+        {
+            get
+            {
+                return configuration["StripeKeys:StripePublishableKey"];
+            }
+        }
+        public string StripeSecretKey
+        {
+            get
+            {
+                return configuration["StripeKeys:StripeSecretKey"];
+            }
+        }
         private readonly IConfiguration configuration;
         public BooksForSaleConfiguration(IConfiguration configuration)
         {

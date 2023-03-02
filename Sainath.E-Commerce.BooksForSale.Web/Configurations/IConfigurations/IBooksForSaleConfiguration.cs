@@ -3,5 +3,7 @@
     public interface IBooksForSaleConfiguration
     {
         string BaseAddressForWebApi { get; }
+        string StripePublishableKey { get; }
+        string StripeSecretKey { get;  }
     }
 }
