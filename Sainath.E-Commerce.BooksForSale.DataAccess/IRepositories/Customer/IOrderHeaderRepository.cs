@@ -11,5 +11,6 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories.Customer
     {
         public void Update(OrderHeader orderHeader);
         public void UpdateStatus(int orderHeaderId, string orderStatus, string? paymentStatus = null);
+        public void UpdateStripeStatus(int orderHeaderId, string stripeSessionId, string stripePaymentIntentId);
     }
 }

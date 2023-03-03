@@ -77,5 +77,10 @@ namespace Sainath.E_Commerce.BooksForSale.BusinessDomain.BusinessDomainClasses.C
         {
             shoppingCartData.InsertOrderDetails(orderDetails);
         }
+
+        public void UpdateStripeStatus(int orderHeaderId, string stripeSessionId, string stripePaymentIntentId)
+        {
+            shoppingCartData.UpdateStripeStatus(orderHeaderId, stripeSessionId, stripePaymentIntentId);
+        }
     }
 }

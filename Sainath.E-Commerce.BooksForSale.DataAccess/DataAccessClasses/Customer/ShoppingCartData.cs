@@ -104,5 +104,11 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Customer
             unitOfWork.OrderDetailsRepository.InsertRecord(orderDetails);
             unitOfWork.Save();
         }
+
+        public void UpdateStripeStatus(int orderHeaderId, string stripeSessionId, string stripePaymentIntentId)
+        {
+            unitOfWork.OrderHeaderRepository.UpdateStripeStatus(orderHeaderId, stripeSessionId, stripePaymentIntentId);
+            unitOfWork.Save();
+        }
     }
 }

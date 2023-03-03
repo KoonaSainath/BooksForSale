@@ -111,5 +111,13 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Customer
             shoppingCartDomain.InsertOrderDetails(orderDetails);
             return Ok("Order details inserted successfully");
         }
+
+        [HttpPut]
+        [Route(template: "PUT/UpdateStripeStatus/{orderHeaderId}/{stripeSessionId}/{stripePaymentIntentId}", Name = "UpdateStripeStatus")]
+        public IActionResult UpdateStripeStatus(OrderHeader orderHeader, int orderHeaderId, string stripeSessionId, string stripePaymentIntentId)
+        {
+            shoppingCartDomain.UpdateStripeStatus(orderHeaderId, stripeSessionId, stripePaymentIntentId);
+            return Ok("Stripe status updated successfully");
+        }
     }
 }

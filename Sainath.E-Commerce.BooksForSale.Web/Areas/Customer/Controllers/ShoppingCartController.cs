@@ -178,9 +178,9 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
 
                 requestUrl = "api/ShoppingCart/POST/InsertOrderHeader";
                 HttpResponseMessage response = await httpClient.PostAsJsonAsync<OrderHeader>(requestUrl, ShoppingCartVM.OrderHeader);
+                OrderHeader orderHeader = response.Content.ReadFromJsonAsync<OrderHeader>().Result;
                 if (response.IsSuccessStatusCode)
                 {
-                    OrderHeader orderHeader = response.Content.ReadFromJsonAsync<OrderHeader>().Result;
                     requestUrl = "api/ShoppingCart/POST/InsertOrderDetails";
                     foreach (ShoppingCart cart in ShoppingCartVM.ShoppingCarts)
                     {
@@ -221,8 +221,9 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
                 var service = new SessionService();
                 Session session = service.Create(options);
 
-                ShoppingCartVM.OrderHeader.StripeSessionId = session.Id;
-                ShoppingCartVM.OrderHeader.StripePaymentIntentId = session.PaymentIntentId;
+                session.PaymentIntentId = "test";
+                requestUrl = $"api/ShoppingCart/PUT/UpdateStripeStatus/{orderHeader.OrderHeaderId}/{session.Id}/{session.PaymentIntentId}";
+                response = await httpClient.PutAsJsonAsync<OrderHeader>(requestUrl, ShoppingCartVM.OrderHeader);
 
                 Response.Headers.Add("Location", session.Url);
                 return new StatusCodeResult(303);
