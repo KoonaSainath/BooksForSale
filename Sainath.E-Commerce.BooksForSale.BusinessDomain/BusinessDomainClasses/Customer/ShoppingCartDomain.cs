@@ -17,14 +17,14 @@ namespace Sainath.E_Commerce.BooksForSale.BusinessDomain.BusinessDomainClasses.C
             shoppingCartData = new ShoppingCartData(unitOfWork);
         }
 
-        public IEnumerable<ShoppingCart> GetAllShoppingCarts(string userId)
+        public IEnumerable<ShoppingCart> GetAllShoppingCarts(string userId, string includeProperties)
         {
-            return shoppingCartData.GetAllShoppingCarts(userId);
+            return shoppingCartData.GetAllShoppingCarts(userId, includeProperties);
         }
 
-        public ShoppingCart GetShoppingCart(int bookId, string userId, int shoppingCartId)
+        public ShoppingCart GetShoppingCart(int bookId, string userId, int shoppingCartId, string includeProperties)
         {
-            return shoppingCartData.GetShoppingCart(bookId, userId, shoppingCartId);
+            return shoppingCartData.GetShoppingCart(bookId, userId, shoppingCartId, includeProperties);
         }
 
         public void InsertShoppingCart(ShoppingCart shoppingCart)
@@ -81,6 +81,11 @@ namespace Sainath.E_Commerce.BooksForSale.BusinessDomain.BusinessDomainClasses.C
         public void UpdateStripeStatus(int orderHeaderId, string stripeSessionId, string stripePaymentIntentId)
         {
             shoppingCartData.UpdateStripeStatus(orderHeaderId, stripeSessionId, stripePaymentIntentId);
+        }
+
+        public OrderHeader GetOrderHeader(int orderHeaderId)
+        {
+            return shoppingCartData.GetOrderHeader(orderHeaderId);
         }
     }
 }
