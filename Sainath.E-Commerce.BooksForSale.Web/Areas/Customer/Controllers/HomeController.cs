@@ -55,8 +55,8 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Customer
                 string userId = claim.Value;
 
                 ShoppingCart shoppingCart = null;
-
-                requestUrl = $"api/ShoppingCart/GET/GetShoppingCart/{bookId}/{userId}";
+                string includeProperties = "Book,BooksForSaleUser,Book.Category,Book.CoverType";
+                requestUrl = $"api/ShoppingCart/GET/GetShoppingCart/{bookId}/{userId}/0/{includeProperties}";
                 shoppingCart = await httpClient.GetFromJsonAsync<ShoppingCart>(requestUrl);
 
                 if(shoppingCart == null || (shoppingCart != null && shoppingCart.ShoppingCartId == 0))

@@ -1,4 +1,8 @@
-﻿@model ShoppingCartVM
+﻿@using Microsoft.Extensions.Options;
+@using Sainath.E_Commerce.BooksForSale.Web.Configurations;
+@model ShoppingCartVM
+
+@inject IOptions<BooksForSaleConfiguration> stripe
 @{
     ViewData["Title"] = "Order summary";
 }

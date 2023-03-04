@@ -1,4 +1,5 @@
-﻿using Sainath.E_Commerce.BooksForSale.DataAccess.DbContextClasses;
+﻿using Microsoft.Identity.Client;
+using Sainath.E_Commerce.BooksForSale.DataAccess.DbContextClasses;
 using Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories.Customer;
 using Sainath.E_Commerce.BooksForSale.Models.Models.Customer;
 using System;
@@ -33,6 +34,13 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.Repositories.Customer
                     orderHeader.PaymentStatus = paymentStatus;
                 }
             }
+        }
+
+        public void UpdateStripeStatus(int orderHeaderId, string stripeSessionId, string stripePaymentIntentId)
+        {
+            OrderHeader orderHeader = dbContext.OrderHeaders.Find(orderHeaderId);
+            orderHeader.StripeSessionId = stripeSessionId;
+            orderHeader.StripePaymentIntentId = stripePaymentIntentId;
         }
     }
 }

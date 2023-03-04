@@ -4,6 +4,7 @@ using Sainath.E_Commerce.BooksForSale.Models.Models.Customer;
 using Sainath.E_Commerce.BooksForSale.Models.ViewModels.Customer;
 using Sainath.E_Commerce.BooksForSale.Utility.Constants;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
+using Stripe.Checkout;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 
@@ -33,8 +34,8 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
             httpClient.DefaultRequestHeaders.Accept.Clear();
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
-
-            string requestUrl = $"api/ShoppingCart/GET/GetAllShoppingCarts/{userId}";
+            string includeProperties = "Book,BooksForSaleUser,Book.Category,Book.CoverType";
+            string requestUrl = $"api/ShoppingCart/GET/GetAllShoppingCarts/{userId}/{includeProperties}";
             IEnumerable<ShoppingCart> shoppingCarts = await httpClient.GetFromJsonAsync<IEnumerable<ShoppingCart>>(requestUrl);
 
             shoppingCartVM.OrderHeader = new OrderHeader();
@@ -56,10 +57,11 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
             httpClient.DefaultRequestHeaders.Accept.Clear();
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
-            string requestUrl = $"api/ShoppingCart/GET/GetShoppingCart/0/0/{shoppingCartId}";
+            string includeProperties = "Book,BooksForSaleUser,Book.Category,Book.CoverType";
+            string requestUrl = $"api/ShoppingCart/GET/GetShoppingCart/0/0/{shoppingCartId}/{includeProperties}";
             ShoppingCart shoppingCart = await httpClient.GetFromJsonAsync<ShoppingCart>(requestUrl);
 
-            if(shoppingCart != null && shoppingCart.CartItemCount < 200)
+            if (shoppingCart != null && shoppingCart.CartItemCount < 200)
             {
                 requestUrl = $"api/ShoppingCart/PUT/IncrementBookCountInShoppingCart";
                 HttpResponseMessage response = await httpClient.PutAsJsonAsync<ShoppingCart>(requestUrl, shoppingCart);
@@ -74,15 +76,16 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
             httpClient.DefaultRequestHeaders.Accept.Clear();
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
-            string requestUrl = $"api/ShoppingCart/GET/GetshoppingCart/0/0/{shoppingCartId}";
+            string includeProperties = "Book,BooksForSaleUser,Book.Category,Book.CoverType";
+            string requestUrl = $"api/ShoppingCart/GET/GetshoppingCart/0/0/{shoppingCartId}/{includeProperties}";
             ShoppingCart shoppingCart = await httpClient.GetFromJsonAsync<ShoppingCart>(requestUrl);
 
-            if(shoppingCart != null && shoppingCart.CartItemCount > 1)
+            if (shoppingCart != null && shoppingCart.CartItemCount > 1)
             {
                 requestUrl = "api/ShoppingCart/PUT/DecrementBookCountInShoppingCart";
                 HttpResponseMessage response = await httpClient.PutAsJsonAsync<ShoppingCart>(requestUrl, shoppingCart);
             }
-            else if(shoppingCart != null && shoppingCart.CartItemCount <= 1)
+            else if (shoppingCart != null && shoppingCart.CartItemCount <= 1)
             {
                 requestUrl = "api/ShoppingCart/DELETE/RemoveShoppingCart";
                 HttpResponseMessage response = await httpClient.PostAsJsonAsync<ShoppingCart>(requestUrl, shoppingCart);
@@ -97,9 +100,10 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
             httpClient.DefaultRequestHeaders.Accept.Clear();
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
-            string requestUrl = $"api/ShoppingCart/GET/GetShoppingCart/0/0/{shoppingCartId}";
+            string includeProperties = "Book,BooksForSaleUser,Book.Category,Book.CoverType";
+            string requestUrl = $"api/ShoppingCart/GET/GetShoppingCart/0/0/{shoppingCartId}/{includeProperties}";
             ShoppingCart shoppingCart = await httpClient.GetFromJsonAsync<ShoppingCart>(requestUrl);
-            if(shoppingCart != null)
+            if (shoppingCart != null)
             {
                 requestUrl = "api/ShoppingCart/DELETE/RemoveShoppingCart";
                 HttpResponseMessage response = await httpClient.PostAsJsonAsync<ShoppingCart>(requestUrl, shoppingCart);
@@ -111,7 +115,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
         [Authorize]
         public async Task<IActionResult> Summary()
         {
-            ClaimsIdentity claimsIdentity = (ClaimsIdentity) User.Identity;
+            ClaimsIdentity claimsIdentity = (ClaimsIdentity)User.Identity;
             Claim claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
             string userId = claim.Value;
 
@@ -123,15 +127,15 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
             httpClient.DefaultRequestHeaders.Accept.Clear();
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
-
-            string requestUrl = $"api/ShoppingCart/GET/GetAllShoppingCarts/{userId}";
+            string includeProperties = "Book,Book.Category,Book.CoverType";
+            string requestUrl = $"api/ShoppingCart/GET/GetAllShoppingCarts/{userId}/{includeProperties}";
             ShoppingCartVM.ShoppingCarts = await httpClient.GetFromJsonAsync<IEnumerable<ShoppingCart>>(requestUrl);
 
             ShoppingCartVM.OrderHeader.TotalOrderAmount = 0;
-            foreach(ShoppingCart shoppingCart in ShoppingCartVM.ShoppingCarts)
+            foreach (ShoppingCart shoppingCart in ShoppingCartVM.ShoppingCarts)
             {
                 shoppingCart.Price = CalculateFinalPrice(shoppingCart.CartItemCount, shoppingCart.Book.Price, shoppingCart.Book.Price50, shoppingCart.Book.Price100);
-                ShoppingCartVM.OrderHeader.TotalOrderAmount += shoppingCart.Price;
+                ShoppingCartVM.OrderHeader.TotalOrderAmount += (double) (shoppingCart.Price * shoppingCart.CartItemCount);
             }
 
             requestUrl = $"api/BooksForSaleUser/GET/GetUser/{userId}";
@@ -152,53 +156,106 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Summary")]
-        public async Task<IActionResult> PlaceOrder() 
+        public async Task<IActionResult> PlaceOrder()
         {
             if (ModelState.IsValid)
             {
-
                 ShoppingCartVM.OrderHeader.OrderDate = DateTime.Now;
                 ShoppingCartVM.OrderHeader.OrderStatus = OrderStatus.STATUS_PENDING;
-
                 HttpClient httpClient = new HttpClient();
                 httpClient.DefaultRequestHeaders.Accept.Clear();
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
-
-                string requestUrl = $"api/ShoppingCart/GET/GetAllShoppingCarts/{ShoppingCartVM.OrderHeader.UserId}";
+                string includeProperties = "Book,BooksForSaleUser,Book.Category,Book.CoverType";
+                string requestUrl = $"api/ShoppingCart/GET/GetAllShoppingCarts/{ShoppingCartVM.OrderHeader.UserId}/{includeProperties}";
                 ShoppingCartVM.ShoppingCarts = await httpClient.GetFromJsonAsync<IEnumerable<ShoppingCart>>(requestUrl);
                 ShoppingCartVM.OrderHeader.TotalOrderAmount = 0;
-                foreach(ShoppingCart cart in ShoppingCartVM.ShoppingCarts)
+                foreach (ShoppingCart cart in ShoppingCartVM.ShoppingCarts)
                 {
-                    cart.BooksForSaleUser = null;
                     cart.Price = CalculateFinalPrice(cart.CartItemCount, cart.Book.Price, cart.Book.Price50, cart.Book.Price100);
                     ShoppingCartVM.OrderHeader.TotalOrderAmount += (double)(cart.Price * cart.CartItemCount);
                 }
 
                 requestUrl = "api/ShoppingCart/POST/InsertOrderHeader";
                 HttpResponseMessage response = await httpClient.PostAsJsonAsync<OrderHeader>(requestUrl, ShoppingCartVM.OrderHeader);
+                OrderHeader orderHeader = response.Content.ReadFromJsonAsync<OrderHeader>().Result;
                 if (response.IsSuccessStatusCode)
                 {
-                    OrderHeader orderHeader = response.Content.ReadFromJsonAsync<OrderHeader>().Result;
                     requestUrl = "api/ShoppingCart/POST/InsertOrderDetails";
-                    foreach(ShoppingCart cart in ShoppingCartVM.ShoppingCarts)
+                    foreach (ShoppingCart cart in ShoppingCartVM.ShoppingCarts)
                     {
                         OrderDetails orderDetails = new OrderDetails();
                         orderDetails.OrderHeaderId = orderHeader.OrderHeaderId;
                         orderDetails.BookId = cart.BookId;
-                        orderDetails.Count = (int) cart.CartItemCount;
+                        orderDetails.Count = (int)cart.CartItemCount;
                         orderDetails.OrderPrice = (double)(cart.Price * cart.CartItemCount);
                         response = await httpClient.PostAsJsonAsync<OrderDetails>(requestUrl, orderDetails);
                     }
                 }
 
-                requestUrl = "api/ShoppingCart/DELETE/RemoveShoppingCarts";
-                response = await httpClient.PostAsJsonAsync<IEnumerable<ShoppingCart>>(requestUrl, ShoppingCartVM.ShoppingCarts);
+                var options = new SessionCreateOptions
+                {
+                    LineItems = new List<SessionLineItemOptions>(),
+                    Mode = "payment",
+                    SuccessUrl = configuration.BaseAddressForWebApplication + $"Customer/ShoppingCart/OrderConfirmation?orderHeaderId={orderHeader.OrderHeaderId}",
+                    CancelUrl = configuration.BaseAddressForWebApplication + "Customer/ShoppingCart/Index",
+                };
 
-                TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] = "Order placed successfully";
-                return RedirectToAction("Index", "Home");
+                foreach(ShoppingCart cart in ShoppingCartVM.ShoppingCarts)
+                {
+                    options.LineItems.Add(new SessionLineItemOptions()
+                    {
+                        Quantity = cart.CartItemCount,
+                        PriceData = new SessionLineItemPriceDataOptions()
+                        {
+                            Currency = "inr",
+                            UnitAmount = (long) (cart.Price * 100),
+                            ProductData = new SessionLineItemPriceDataProductDataOptions()
+                            {
+                                Name = cart.Book.Title
+                            }
+                        },
+                    });
+                }
+
+                SessionService service = new SessionService();
+                Session session = service.Create(options);
+
+                session.PaymentIntentId = "test. will fix this later";
+                requestUrl = $"api/ShoppingCart/PUT/UpdateStripeStatus/{orderHeader.OrderHeaderId}/{session.Id}/{session.PaymentIntentId}";
+                response = await httpClient.PutAsJsonAsync<OrderHeader>(requestUrl, ShoppingCartVM.OrderHeader);
+
+                Response.Headers.Add("Location", session.Url);
+                return new StatusCodeResult(303);
             }
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> OrderConfirmation(int orderHeaderId)
+        {
+            HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Accept.Clear();
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+
+            string requestUrl = $"api/ShoppingCart/GET/GetOrderHeader/{orderHeaderId}";
+            OrderHeader orderHeader = await httpClient.GetFromJsonAsync<OrderHeader>(requestUrl);
+
+            SessionService sessionService = new SessionService();
+            Session session = sessionService.Get(orderHeader.StripeSessionId);
+            if(session.PaymentStatus.ToLower() == OrderStatus.PAYMENT_STATUS_PAID.ToLower())
+            {
+                requestUrl = $"api/ShoppingCart/PUT/UpdateOrderHeaderStatus/{orderHeaderId}/{OrderStatus.STATUS_APPROVED}/{OrderStatus.PAYMENT_STATUS_APPROVED}";
+                await httpClient.PutAsJsonAsync<OrderHeader>(requestUrl, orderHeader);
+
+                requestUrl = $"api/ShoppingCart/GET/GetAllShoppingCarts/{orderHeader.UserId}";
+                IEnumerable<ShoppingCart> shoppingCarts = await httpClient.GetFromJsonAsync<IEnumerable<ShoppingCart>>(requestUrl);
+
+                requestUrl = $"api/ShoppingCart/DELETE/RemoveShoppingCarts";
+                await httpClient.PostAsJsonAsync<IEnumerable<ShoppingCart>>(requestUrl, shoppingCarts);
+            }
+            return View(orderHeaderId);
         }
 
 

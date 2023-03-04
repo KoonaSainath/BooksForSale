@@ -16,19 +16,19 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Customer
             shoppingCartDomain = new ShoppingCartDomain(unitOfWork);
         }
 
-        [Route(template: "GET/GetAllShoppingCarts/{userId?}", Name = "GetAllShoppingCarts")]
+        [Route(template: "GET/GetAllShoppingCarts/{userId?}/{includeProperties?}", Name = "GetAllShoppingCarts")]
         [HttpGet]
-        public IActionResult GetAllShoppingCarts(string? userId = null)
+        public IActionResult GetAllShoppingCarts(string? userId = null, string? includeProperties = null)
         {
-            IEnumerable<ShoppingCart> shoppingCarts = shoppingCartDomain.GetAllShoppingCarts(userId);
+            IEnumerable<ShoppingCart> shoppingCarts = shoppingCartDomain.GetAllShoppingCarts(userId, includeProperties);
             return Ok(shoppingCarts);
         }
 
-        [Route(template: "GET/GetShoppingCart/{bookId?}/{userId?}/{shoppingCartId?}", Name = "GetShoppingCart")]
+        [Route(template: "GET/GetShoppingCart/{bookId?}/{userId?}/{shoppingCartId?}/{includleProperties?}", Name = "GetShoppingCart")]
         [HttpGet]
-        public IActionResult GetShoppingCart(int? bookId = 0, string? userId = null, int? shoppingCartId = 0)
+        public IActionResult GetShoppingCart(int? bookId = 0, string? userId = null, int? shoppingCartId = 0, string? includeProperties = null)
         {
-            ShoppingCart shoppingCart = shoppingCartDomain.GetShoppingCart((int)bookId, userId, (int)shoppingCartId);
+            ShoppingCart shoppingCart = shoppingCartDomain.GetShoppingCart((int)bookId, userId, (int)shoppingCartId, includeProperties);
             return Ok(shoppingCart);
         }
 
@@ -98,7 +98,7 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Customer
 
         [HttpPut]
         [Route(template: "PUT/UpdateOrderHeaderStatus/{orderHeaderId}/{orderStatus}/{paymentStatus?}", Name = "UpdateOrderHeaderStatus")]
-        public IActionResult UpdateOrderHeaderStatus(int orderHeaderId, string orderStatus, string? paymentStatus = null)
+        public IActionResult UpdateOrderHeaderStatus(OrderHeader orderHeader, int orderHeaderId, string orderStatus, string? paymentStatus = null)
         {
             shoppingCartDomain.UpdateOrderHeaderStatus(orderHeaderId, orderStatus, paymentStatus);
             return Ok("Order header status updated successfully");
@@ -110,6 +110,22 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Customer
         {
             shoppingCartDomain.InsertOrderDetails(orderDetails);
             return Ok("Order details inserted successfully");
+        }
+
+        [HttpPut]
+        [Route(template: "PUT/UpdateStripeStatus/{orderHeaderId}/{stripeSessionId}/{stripePaymentIntentId}", Name = "UpdateStripeStatus")]
+        public IActionResult UpdateStripeStatus(OrderHeader orderHeader, int orderHeaderId, string stripeSessionId, string stripePaymentIntentId)
+        {
+            shoppingCartDomain.UpdateStripeStatus(orderHeaderId, stripeSessionId, stripePaymentIntentId);
+            return Ok("Stripe status updated successfully");
+        }
+
+        [HttpGet]
+        [Route(template: "GET/GetOrderHeader/{orderHeaderId}", Name = "GetOrderHeader")]
+        public IActionResult GetOrderHeader(int orderHeaderId)
+        {
+            OrderHeader orderHeader = shoppingCartDomain.GetOrderHeader(orderHeaderId);
+            return Ok(orderHeader);
         }
     }
 }

@@ -17,17 +17,15 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Customer
 
         }
 
-        public IEnumerable<ShoppingCart> GetAllShoppingCarts(string userId)
+        public IEnumerable<ShoppingCart> GetAllShoppingCarts(string userId, string includeProperties)
         {
-            string includeProperties = "Book,BooksForSaleUser,Book.Category,Book.CoverType";
             Expression<Func<ShoppingCart, bool>> expression = (cart => cart.Id == userId);
             return unitOfWork.ShoppingCartRepository.GetAllRecords(includeProperties, expression).OrderByDescending(cart => cart.ShoppingCartId).AsEnumerable();
         }
 
-        public ShoppingCart GetShoppingCart(int bookId, string userId, int shoppingCartId)
+        public ShoppingCart GetShoppingCart(int bookId, string userId, int shoppingCartId, string includeProperties)
         {
             ShoppingCart shoppingCart = new ShoppingCart();
-            string includeProperties = "Book,BooksForSaleUser,Book.Category,Book.CoverType";
             if(bookId != 0 && userId != null)
             {
                 shoppingCart = unitOfWork.ShoppingCartRepository.GetRecordByExpression((cart => cart.BookId == bookId && cart.Id == userId), includeProperties);
@@ -103,6 +101,18 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Customer
         {
             unitOfWork.OrderDetailsRepository.InsertRecord(orderDetails);
             unitOfWork.Save();
+        }
+
+        public void UpdateStripeStatus(int orderHeaderId, string stripeSessionId, string stripePaymentIntentId)
+        {
+            unitOfWork.OrderHeaderRepository.UpdateStripeStatus(orderHeaderId, stripeSessionId, stripePaymentIntentId);
+            unitOfWork.Save();
+        }
+
+        public OrderHeader GetOrderHeader(int orderHeaderId)
+        {
+            OrderHeader orderHeader = unitOfWork.OrderHeaderRepository.GetRecordByExpression((orderHeader => orderHeader.OrderHeaderId == orderHeaderId));
+            return orderHeader;
         }
     }
 }
