@@ -132,7 +132,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
             foreach (ShoppingCart shoppingCart in ShoppingCartVM.ShoppingCarts)
             {
                 shoppingCart.Price = CalculateFinalPrice(shoppingCart.CartItemCount, shoppingCart.Book.Price, shoppingCart.Book.Price50, shoppingCart.Book.Price100);
-                ShoppingCartVM.OrderHeader.TotalOrderAmount += shoppingCart.Price;
+                ShoppingCartVM.OrderHeader.TotalOrderAmount += (double) (shoppingCart.Price * shoppingCart.CartItemCount);
             }
 
             requestUrl = $"api/BooksForSaleUser/GET/GetUser/{userId}";
@@ -197,7 +197,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
                 {
                     LineItems = new List<SessionLineItemOptions>(),
                     Mode = "payment",
-                    SuccessUrl = configuration.BaseAddressForWebApplication + $"Customer/ShoppingCart/OrderConfirmation?orderHeaderId={ShoppingCartVM.OrderHeader.OrderHeaderId}",
+                    SuccessUrl = configuration.BaseAddressForWebApplication + $"Customer/ShoppingCart/OrderConfirmation?orderHeaderId={orderHeader.OrderHeaderId}",
                     CancelUrl = configuration.BaseAddressForWebApplication + "Customer/ShoppingCart/Index",
                 };
 
@@ -209,7 +209,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
                         PriceData = new SessionLineItemPriceDataOptions()
                         {
                             Currency = "inr",
-                            UnitAmount = (long)cart.Price,
+                            UnitAmount = (long) (cart.Price * 100),
                             ProductData = new SessionLineItemPriceDataProductDataOptions()
                             {
                                 Name = cart.Book.Title
@@ -221,7 +221,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
                 var service = new SessionService();
                 Session session = service.Create(options);
 
-                session.PaymentIntentId = "test";
+                session.PaymentIntentId = "test. will fix this later";
                 requestUrl = $"api/ShoppingCart/PUT/UpdateStripeStatus/{orderHeader.OrderHeaderId}/{session.Id}/{session.PaymentIntentId}";
                 response = await httpClient.PutAsJsonAsync<OrderHeader>(requestUrl, ShoppingCartVM.OrderHeader);
 
