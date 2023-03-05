@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Sainath.E_Commerce.BooksForSale.Models.Models.Customer;
 using Sainath.E_Commerce.BooksForSale.Models.ViewModels.Customer;
 using Sainath.E_Commerce.BooksForSale.Utility.Constants;
+using Sainath.E_Commerce.BooksForSale.Utility.Extensions;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
 using Stripe.Checkout;
 using System.Net.Http.Headers;
@@ -160,14 +161,31 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
         {
             if (ModelState.IsValid)
             {
-                ShoppingCartVM.OrderHeader.OrderDate = DateTime.Now;
-                ShoppingCartVM.OrderHeader.OrderStatus = OrderStatus.STATUS_PENDING;
                 HttpClient httpClient = new HttpClient();
                 httpClient.DefaultRequestHeaders.Accept.Clear();
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+
+                string requestUrl = $"api/BooksForSaleUser/GET/GetUser/{ShoppingCartVM.OrderHeader.UserId}";
+                BooksForSaleUser booksForSaleUser = await httpClient.GetFromJsonAsync<BooksForSaleUser>(requestUrl);
+
+                ShoppingCartVM.OrderHeader.OrderDate = DateTime.Now;
+
+                //Individual customer
+                if(booksForSaleUser.CompanyId.GetValueOrDefault() == 0)
+                {
+                    ShoppingCartVM.OrderHeader.OrderStatus = OrderStatus.STATUS_PENDING;
+                    ShoppingCartVM.OrderHeader.PaymentStatus = OrderStatus.PAYMENT_STATUS_PENDING;
+                }
+                //Company customer
+                else
+                {
+                    ShoppingCartVM.OrderHeader.OrderStatus = OrderStatus.STATUS_APPROVED;
+                    ShoppingCartVM.OrderHeader.PaymentStatus = OrderStatus.PAYMENT_STATUS_DELAYED_PAYMENT;
+                }
+                
                 string includeProperties = "Book,BooksForSaleUser,Book.Category,Book.CoverType";
-                string requestUrl = $"api/ShoppingCart/GET/GetAllShoppingCarts/{ShoppingCartVM.OrderHeader.UserId}/{includeProperties}";
+                requestUrl = $"api/ShoppingCart/GET/GetAllShoppingCarts/{ShoppingCartVM.OrderHeader.UserId}/{includeProperties}";
                 ShoppingCartVM.ShoppingCarts = await httpClient.GetFromJsonAsync<IEnumerable<ShoppingCart>>(requestUrl);
                 ShoppingCartVM.OrderHeader.TotalOrderAmount = 0;
                 foreach (ShoppingCart cart in ShoppingCartVM.ShoppingCarts)
@@ -193,40 +211,49 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
                     }
                 }
 
-                var options = new SessionCreateOptions
+                // Redirecting to payment page only if logged in user is an individual customer
+                if(booksForSaleUser.CompanyId.GetValueOrDefault() == 0)
                 {
-                    LineItems = new List<SessionLineItemOptions>(),
-                    Mode = "payment",
-                    SuccessUrl = configuration.BaseAddressForWebApplication + $"Customer/ShoppingCart/OrderConfirmation?orderHeaderId={orderHeader.OrderHeaderId}",
-                    CancelUrl = configuration.BaseAddressForWebApplication + "Customer/ShoppingCart/Index",
-                };
-
-                foreach(ShoppingCart cart in ShoppingCartVM.ShoppingCarts)
-                {
-                    options.LineItems.Add(new SessionLineItemOptions()
+                    var options = new SessionCreateOptions
                     {
-                        Quantity = cart.CartItemCount,
-                        PriceData = new SessionLineItemPriceDataOptions()
+                        LineItems = new List<SessionLineItemOptions>(),
+                        Mode = "payment",
+                        SuccessUrl = configuration.BaseAddressForWebApplication + $"Customer/ShoppingCart/OrderConfirmation?orderHeaderId={orderHeader.OrderHeaderId}",
+                        CancelUrl = configuration.BaseAddressForWebApplication + "Customer/ShoppingCart/Index",
+                    };
+
+                    foreach (ShoppingCart cart in ShoppingCartVM.ShoppingCarts)
+                    {
+                        options.LineItems.Add(new SessionLineItemOptions()
                         {
-                            Currency = "inr",
-                            UnitAmount = (long) (cart.Price * 100),
-                            ProductData = new SessionLineItemPriceDataProductDataOptions()
+                            Quantity = cart.CartItemCount,
+                            PriceData = new SessionLineItemPriceDataOptions()
                             {
-                                Name = cart.Book.Title
-                            }
-                        },
-                    });
+                                Currency = "inr",
+                                UnitAmount = (long)(cart.Price * 100),
+                                ProductData = new SessionLineItemPriceDataProductDataOptions()
+                                {
+                                    Name = cart.Book.Title
+                                }
+                            },
+                        });
+                    }
+
+                    SessionService service = new SessionService();
+                    Session session = service.Create(options);
+
+                    session.PaymentIntentId = "test. will fix this later";
+                    requestUrl = $"api/ShoppingCart/PUT/UpdateStripeStatus/{orderHeader.OrderHeaderId}/{session.Id}/{session.PaymentIntentId}";
+                    response = await httpClient.PutAsJsonAsync<OrderHeader>(requestUrl, ShoppingCartVM.OrderHeader);
+
+                    Response.Headers.Add("Location", session.Url);
+                    return new StatusCodeResult(303);
                 }
-
-                SessionService service = new SessionService();
-                Session session = service.Create(options);
-
-                session.PaymentIntentId = "test. will fix this later";
-                requestUrl = $"api/ShoppingCart/PUT/UpdateStripeStatus/{orderHeader.OrderHeaderId}/{session.Id}/{session.PaymentIntentId}";
-                response = await httpClient.PutAsJsonAsync<OrderHeader>(requestUrl, ShoppingCartVM.OrderHeader);
-
-                Response.Headers.Add("Location", session.Url);
-                return new StatusCodeResult(303);
+                // Redirecting directly to OrderConfirmation page
+                else
+                {
+                    return RedirectToAction(nameof(OrderConfirmation), new { orderHeaderId = orderHeader.OrderHeaderId });
+                }
             }
             return View();
         }
@@ -242,19 +269,23 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
             string requestUrl = $"api/ShoppingCart/GET/GetOrderHeader/{orderHeaderId}";
             OrderHeader orderHeader = await httpClient.GetFromJsonAsync<OrderHeader>(requestUrl);
 
-            SessionService sessionService = new SessionService();
-            Session session = sessionService.Get(orderHeader.StripeSessionId);
-            if(session.PaymentStatus.ToLower() == OrderStatus.PAYMENT_STATUS_PAID.ToLower())
+            if(orderHeader.PaymentStatus.NullCheckTrim().ToLower() != OrderStatus.PAYMENT_STATUS_DELAYED_PAYMENT.ToLower())
             {
-                requestUrl = $"api/ShoppingCart/PUT/UpdateOrderHeaderStatus/{orderHeaderId}/{OrderStatus.STATUS_APPROVED}/{OrderStatus.PAYMENT_STATUS_APPROVED}";
-                await httpClient.PutAsJsonAsync<OrderHeader>(requestUrl, orderHeader);
-
-                requestUrl = $"api/ShoppingCart/GET/GetAllShoppingCarts/{orderHeader.UserId}";
-                IEnumerable<ShoppingCart> shoppingCarts = await httpClient.GetFromJsonAsync<IEnumerable<ShoppingCart>>(requestUrl);
-
-                requestUrl = $"api/ShoppingCart/DELETE/RemoveShoppingCarts";
-                await httpClient.PostAsJsonAsync<IEnumerable<ShoppingCart>>(requestUrl, shoppingCarts);
+                SessionService sessionService = new SessionService();
+                Session session = sessionService.Get(orderHeader.StripeSessionId);
+                if (session.PaymentStatus.NullCheckTrim().ToLower() == OrderStatus.PAYMENT_STATUS_PAID.ToLower())
+                {
+                    requestUrl = $"api/ShoppingCart/PUT/UpdateOrderHeaderStatus/{orderHeaderId}/{OrderStatus.STATUS_APPROVED}/{OrderStatus.PAYMENT_STATUS_APPROVED}";
+                    await httpClient.PutAsJsonAsync<OrderHeader>(requestUrl, orderHeader);
+                }
             }
+
+            requestUrl = $"api/ShoppingCart/GET/GetAllShoppingCarts/{orderHeader.UserId}";
+            IEnumerable<ShoppingCart> shoppingCarts = await httpClient.GetFromJsonAsync<IEnumerable<ShoppingCart>>(requestUrl);
+
+            requestUrl = $"api/ShoppingCart/DELETE/RemoveShoppingCarts";
+            await httpClient.PostAsJsonAsync<IEnumerable<ShoppingCart>>(requestUrl, shoppingCarts);
+
             return View(orderHeaderId);
         }
 

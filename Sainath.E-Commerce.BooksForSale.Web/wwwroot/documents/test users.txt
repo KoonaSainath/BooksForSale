@@ -6,7 +6,7 @@ password: Sai@test7
 email: sainath1@test.com
 password: Sai1@test7
 
-email: sainath2@test.com
+email: sainath2@test.com -company user
 password: Sai2@test7
 
 email: sainath3@test.com
