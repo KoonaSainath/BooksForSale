@@ -24,7 +24,7 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Customer
             return Ok(shoppingCarts);
         }
 
-        [Route(template: "GET/GetShoppingCart/{bookId?}/{userId?}/{shoppingCartId?}/{includleProperties?}", Name = "GetShoppingCart")]
+        [Route(template: "GET/GetShoppingCart/{bookId?}/{userId?}/{shoppingCartId?}/{includeProperties?}", Name = "GetShoppingCart")]
         [HttpGet]
         public IActionResult GetShoppingCart(int? bookId = 0, string? userId = null, int? shoppingCartId = 0, string? includeProperties = null)
         {
