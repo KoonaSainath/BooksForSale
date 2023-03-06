@@ -21,7 +21,7 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Customer
             IEnumerable<OrderHeader> orders = new List<OrderHeader>();
             if (isUserAdminOrEmployee)
             {
-                orders = unitOfWork.OrderHeaderRepository.GetAllRecords(includeProperties);
+                orders = unitOfWork.OrderHeaderRepository.GetAllRecords(includeProperties).OrderByDescending(order => order.OrderHeaderId);
             }
             else
             {
