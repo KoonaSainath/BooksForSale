@@ -16,9 +16,9 @@ namespace Sainath.E_Commerce.BooksForSale.BusinessDomain.BusinessDomainClasses.C
         {
             manageOrdersData = new ManageOrdersData(unitOfWork);
         }
-        public IEnumerable<OrderHeader> GetAllOrders(string userId, bool IsUserAdminOrEmployee, string? includeProperties)
+        public IEnumerable<OrderHeader> GetAllOrders(string userId, bool isUserAdminOrEmployee, string? includeProperties)
         {
-            return manageOrdersData.GetAllOrders(userId, IsUserAdminOrEmployee, includeProperties);
+            return manageOrdersData.GetAllOrders(userId, isUserAdminOrEmployee, includeProperties);
         }
     }
 }
