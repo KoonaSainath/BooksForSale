@@ -22,8 +22,24 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Customer
         {
             IEnumerable<OrderHeader> orders = new List<OrderHeader>();
             Expression<Func<OrderHeader, bool>> userIdFilter = (order => order.UserId == userId);
-            Expression<Func<OrderHeader, bool>> statusFilter = (order => order.OrderStatus == status);
-            Expression<Func<OrderHeader, bool>> userIdAndStatusFilter = (order => order.UserId == userId && order.OrderStatus == status);
+            Expression<Func<OrderHeader, bool>> statusFilter;
+            if(status.NullCheckTrim().ToLower() == OrderStatus.PAYMENT_STATUS_DELAYED_PAYMENT.ToLower())
+            {
+                statusFilter = (order => order.PaymentStatus == OrderStatus.PAYMENT_STATUS_DELAYED_PAYMENT);
+            }
+            else
+            {
+                statusFilter = (order => order.OrderStatus == status);
+            }
+            Expression<Func<OrderHeader, bool>> userIdAndStatusFilter;
+            if(status.NullCheckTrim().ToLower() == OrderStatus.PAYMENT_STATUS_DELAYED_PAYMENT.ToLower())
+            {
+                userIdAndStatusFilter = (order => order.UserId == userId && order.PaymentStatus == OrderStatus.PAYMENT_STATUS_DELAYED_PAYMENT);
+            }
+            else
+            {
+                userIdAndStatusFilter = (order => order.UserId == userId && order.OrderStatus == status);
+            }
             if (isUserAdminOrEmployee)
             {
                 if(status.NullCheckTrim().ToLower() == GenericConstants.ALL.ToLower())
