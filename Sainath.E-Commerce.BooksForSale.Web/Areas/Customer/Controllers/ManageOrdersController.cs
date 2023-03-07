@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sainath.E_Commerce.BooksForSale.Models.Models.Customer;
+using Sainath.E_Commerce.BooksForSale.Models.ViewModels.Customer;
 using Sainath.E_Commerce.BooksForSale.Utility.Constants;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
 using System.Net.Http.Headers;
@@ -17,10 +18,33 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
         {
             this.configuration = configuration;
         }
+
         [HttpGet]
         public IActionResult Index(string? status = null)
         {
             return View(nameof(Index), status);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetOrder(int orderHeaderId)
+        {
+            HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Accept.Clear();
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+
+            string requestUrl = $"api/ManageOrders/GET/GetOrder/{orderHeaderId}";
+            OrderHeader orderHeader = await httpClient.GetFromJsonAsync<OrderHeader>(requestUrl);
+
+            requestUrl = $"api/ManageOrders/GET/GetOrderDetails/{orderHeaderId}";
+            IEnumerable<OrderDetails> orderDetails = await httpClient.GetFromJsonAsync<IEnumerable<OrderDetails>>(requestUrl);
+
+            OrderVM orderVM = new OrderVM()
+            {
+                OrderHeader = orderHeader,
+                ListOfOrderDetails = orderDetails
+            };
+            return View(orderVM);
         }
 
         #region API ENDPOINTS
