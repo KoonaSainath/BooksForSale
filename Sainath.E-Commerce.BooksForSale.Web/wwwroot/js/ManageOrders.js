@@ -1,12 +1,24 @@
 ﻿$(document).ready(function () {
+    let processing = 'processing', pendingPayment = 'approvedfordelayedpayment', approved = 'approved', shipped = 'shipped', all = 'all';
     let ordersDataTable;
-    loadOrdersDataTable();
+    let url = window.location.search.toLowerCase();
+    if (url.includes(processing)) {
+        loadOrdersDataTable(processing);
+    } else if (url.includes(pendingPayment)) {
+        loadOrdersDataTable(pendingPayment);
+    } else if (url.includes(approved)) {
+        loadOrdersDataTable(approved);
+    } else if (url.includes(shipped)) {
+        loadOrdersDataTable(shipped);
+    } else {
+        loadOrdersDataTable(all);
+    }
 });
 
-function loadOrdersDataTable() {
+function loadOrdersDataTable(status) {
     ordersDataTable = $('#tableOrders').DataTable({
         "ajax": {
-            "url": "ManageOrders/GetAllOrders"
+            "url": `ManageOrders/GetAllOrders/?status=${status}`
         },
         "columns": [
             { "data": "orderHeaderId", "width": "15%" },

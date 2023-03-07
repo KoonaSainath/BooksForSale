@@ -1,6 +1,8 @@
 ﻿using Sainath.E_Commerce.BooksForSale.DataAccess.BaseClasses;
 using Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories;
 using Sainath.E_Commerce.BooksForSale.Models.Models.Customer;
+using Sainath.E_Commerce.BooksForSale.Utility.Constants;
+using Sainath.E_Commerce.BooksForSale.Utility.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,17 +18,33 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Customer
         {
         }
 
-        public IEnumerable<OrderHeader> GetAllOrders(string userId, bool isUserAdminOrEmployee, string? includeProperties)
+        public IEnumerable<OrderHeader> GetAllOrders(string userId, bool isUserAdminOrEmployee, string status, string? includeProperties)
         {
             IEnumerable<OrderHeader> orders = new List<OrderHeader>();
+            Expression<Func<OrderHeader, bool>> userIdFilter = (order => order.UserId == userId);
+            Expression<Func<OrderHeader, bool>> statusFilter = (order => order.OrderStatus == status);
+            Expression<Func<OrderHeader, bool>> userIdAndStatusFilter = (order => order.UserId == userId && order.OrderStatus == status);
             if (isUserAdminOrEmployee)
             {
-                orders = unitOfWork.OrderHeaderRepository.GetAllRecords(includeProperties).OrderByDescending(order => order.OrderHeaderId);
+                if(status.NullCheckTrim().ToLower() == GenericConstants.ALL.ToLower())
+                {
+                    orders = unitOfWork.OrderHeaderRepository.GetAllRecords(includeProperties).OrderByDescending(order => order.OrderHeaderId);
+                }
+                else
+                {
+                    orders = unitOfWork.OrderHeaderRepository.GetAllRecords(includeProperties, statusFilter);
+                }
             }
             else
             {
-                Expression<Func<OrderHeader, bool>> expression = (order => order.UserId == userId);
-                orders = unitOfWork.OrderHeaderRepository.GetAllRecords(includeProperties, expression);
+                if(status.NullCheckTrim().ToLower() == GenericConstants.ALL.ToLower())
+                {
+                    orders = unitOfWork.OrderHeaderRepository.GetAllRecords(includeProperties, userIdFilter);
+                }
+                else
+                {
+                    orders = unitOfWork.OrderHeaderRepository.GetAllRecords(includeProperties, userIdAndStatusFilter);
+                }
             }
             return orders;
         }

@@ -7,5 +7,6 @@
         public static string ROLE_EMPLOYEE = "Employee";
         public static string ROLE_COMPANY_CUSTOMER = "Company customer";
         public static string ROLE_CUSTOMER = "Customer";
+        public const string ALL = "All";
     }
 }

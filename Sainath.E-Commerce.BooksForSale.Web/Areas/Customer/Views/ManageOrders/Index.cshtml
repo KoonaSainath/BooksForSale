@@ -47,7 +47,7 @@
                 <a asp-area="Customer" asp-controller="ManageOrders" asp-action="Index" asp-route-status="@OrderStatus.STATUS_SHIPPED" style="text-decoration: none;" class="text-black">
                 <li class="list-group-item @completedClass">Completed</li>
                 </a>
-                <a asp-area="Customer" asp-controller="ManageOrders" asp-action="Index" asp-route-status="all" style="text-decoration: none;" class="text-black">
+                <a asp-area="Customer" asp-controller="ManageOrders" asp-action="Index" asp-route-status="@GenericConstants.ALL" style="text-decoration: none;" class="text-black">
                 <li class="list-group-item @allClass">All</li>
                 </a>
 

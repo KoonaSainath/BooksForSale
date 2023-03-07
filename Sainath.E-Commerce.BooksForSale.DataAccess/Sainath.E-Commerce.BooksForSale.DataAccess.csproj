@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Sainath.E-Commerce.BooksForSale.Models\Sainath.E-Commerce.BooksForSale.Models.csproj" />
+    <ProjectReference Include="..\Sainath.E-Commerce.BooksForSale.Utility\Sainath.E-Commerce.BooksForSale.Utility.csproj" />
   </ItemGroup>
 
 </Project>

@@ -18,7 +18,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
             this.configuration = configuration;
         }
         [HttpGet]
-        public IActionResult Index(string status = null)
+        public IActionResult Index(string? status = null)
         {
             return View(nameof(Index), status);
         }
@@ -26,7 +26,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
         #region API ENDPOINTS
 
         [HttpGet]
-        public async Task<IActionResult> GetAllOrders()
+        public async Task<IActionResult> GetAllOrders(string status)
         {
             HttpClient httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Accept.Clear();
@@ -43,7 +43,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
                 isUserAdminOrEmployee = true;
             }
             string includeProperties = "BooksForSaleUser";
-            string requestUrl = $"api/ManageOrders/GET/GetAllOrders/{userId}/{isUserAdminOrEmployee}/{includeProperties}";
+            string requestUrl = $"api/ManageOrders/GET/GetAllOrders/{userId}/{isUserAdminOrEmployee}/{status}/{includeProperties}";
             IEnumerable<OrderHeader> orders = await httpClient.GetFromJsonAsync<IEnumerable<OrderHeader>>(requestUrl);
 
             return Json(new { data = orders });

@@ -17,10 +17,10 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Customer
         }
 
         [HttpGet]
-        [Route(template: "GET/GetAllOrders/{userId}/{isUserAdminOrEmployee}/{includeProperties?}", Name = "GetAllOrders")]
-        public IActionResult GetAllOrders(string userId, bool isUserAdminOrEmployee, string? includeProperties = null)
+        [Route(template: "GET/GetAllOrders/{userId}/{isUserAdminOrEmployee}/{status}/{includeProperties?}", Name = "GetAllOrders")]
+        public IActionResult GetAllOrders(string userId, bool isUserAdminOrEmployee, string status, string? includeProperties = null)
         {
-            IEnumerable<OrderHeader> orders = manageOrdersDomain.GetAllOrders(userId, isUserAdminOrEmployee, includeProperties);
+            IEnumerable<OrderHeader> orders = manageOrdersDomain.GetAllOrders(userId, isUserAdminOrEmployee, status, includeProperties);
             return Ok(orders);
         }
     }
