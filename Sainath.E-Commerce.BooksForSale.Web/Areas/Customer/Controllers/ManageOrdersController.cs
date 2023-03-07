@@ -18,9 +18,9 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
             this.configuration = configuration;
         }
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index(string status = null)
         {
-            return View();
+            return View(nameof(Index), status);
         }
 
         #region API ENDPOINTS

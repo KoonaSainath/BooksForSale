@@ -19,7 +19,7 @@ function loadOrdersDataTable() {
                 "width": "5%",
                 "render": function () {
                     return `
-                        <a class="btn btn-primary"><i class="bi bi-info-circle"></i></a>
+                        <a class="btn btn-info"><i class="bi bi-info-circle"></i></a>
                     `;
                 }
             }

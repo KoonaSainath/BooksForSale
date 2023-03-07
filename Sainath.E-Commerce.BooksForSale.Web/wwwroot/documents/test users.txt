@@ -3,16 +3,16 @@
 email: sainath@test.com
 password: Sai@test7
 
-email: sainath1@test.com
+email: sainath1@test.com -admin user role
 password: Sai1@test7
 
-email: sainath2@test.com -company user
+email: sainath2@test.com -company user role
 password: Sai2@test7
 
 email: sainath3@test.com
 password: Sai3@test7
 
-email: sainath4@test.com
+email: sainath4@test.com -employee user role
 password: Sai4@test7
 
 email: sainath5@test.com

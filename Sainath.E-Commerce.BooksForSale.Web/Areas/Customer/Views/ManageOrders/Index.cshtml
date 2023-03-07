@@ -1,23 +1,73 @@
-﻿@{
+﻿@model string
+@using Sainath.E_Commerce.BooksForSale.Utility.Constants;
+@{
     ViewData["Title"] = "Manage orders";
+
+    string inProcessClass = "text-black bg-white";
+    string paymentPendingClass = "text-black bg-white";
+    string approvedClass = "text-black bg-white";
+    string completedClass = "text-black bg-white";
+    string allClass = "text-black bg-white";
+    @switch (Model)
+    {
+        case OrderStatus.STATUS_PROCESSING:
+            inProcessClass = "text-white bg-info";
+            break;
+        case OrderStatus.PAYMENT_STATUS_DELAYED_PAYMENT:
+            paymentPendingClass = "text-white bg-info"; 
+            break;
+        case OrderStatus.STATUS_APPROVED:
+            approvedClass = "text-white bg-info";
+            break;
+        case OrderStatus.STATUS_SHIPPED:
+            completedClass = "text-white bg-info";
+            break;
+        default:
+            allClass = "text-white bg-info";
+            break;
+    }
 }
 
 <div class="container">
-    <div class="mt-4">
-        <h5>@ViewData["Title"]</h5>
+    <div class="mt-4 d-flex justify-content-between">
+        <div>
+            <h5>@ViewData["Title"]</h5>
+        </div>
+        <div class="p-2">
+            <ul class="list-group list-group-horizontal">
+                <a asp-area="Customer" asp-controller="ManageOrders" asp-action="Index" asp-route-status="@OrderStatus.STATUS_PROCESSING" style="text-decoration: none;">
+                <li class="list-group-item @inProcessClass">In process</li>
+                </a>
+                <a asp-area="Customer" asp-controller="ManageOrders" asp-action="Index" asp-route-status="@OrderStatus.PAYMENT_STATUS_DELAYED_PAYMENT" style="text-decoration: none;">
+                <li class="list-group-item @paymentPendingClass">Payment pending</li>
+                </a>
+                <a asp-area="Customer" asp-controller="ManageOrders" asp-action="Index" asp-route-status="@OrderStatus.STATUS_APPROVED" style="text-decoration: none;">
+                <li class="list-group-item @approvedClass">Approved</li>
+                </a>
+                <a asp-area="Customer" asp-controller="ManageOrders" asp-action="Index" asp-route-status="@OrderStatus.STATUS_SHIPPED" style="text-decoration: none;" class="text-black">
+                <li class="list-group-item @completedClass">Completed</li>
+                </a>
+                <a asp-area="Customer" asp-controller="ManageOrders" asp-action="Index" asp-route-status="all" style="text-decoration: none;" class="text-black">
+                <li class="list-group-item @allClass">All</li>
+                </a>
+
+            </ul>
+        </div>
     </div>
-    <table class="table table-bordered table-striped mt-8" id="tableOrders">
-        <thead>
-            <tr>
-                <th>Order id</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Phone number</th>
-                <th>Status</th>
-                <th></th>
-            </tr>
-        </thead>
-    </table>
+    <div class="mt-4">
+        <table class="table table-bordered table-striped" id="tableOrders">
+            <thead>
+                <tr>
+                    <th>Order id</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone number</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
 </div>
 
 @section Scripts{
