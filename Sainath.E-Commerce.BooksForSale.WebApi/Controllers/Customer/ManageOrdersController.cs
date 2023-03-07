@@ -23,5 +23,21 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Customer
             IEnumerable<OrderHeader> orders = manageOrdersDomain.GetAllOrders(userId, isUserAdminOrEmployee, status, includeProperties);
             return Ok(orders);
         }
+
+        [HttpGet]
+        [Route(template: "GET/GetOrder/{orderHeaderId}/{includeProperties?}", Name = "GetOrder")]
+        public IActionResult GetOrder(int orderHeaderId, string? includeProperties = null)
+        {
+            OrderHeader orderHeader = manageOrdersDomain.GetOrder(orderHeaderId, includeProperties);
+            return Ok(orderHeader);
+        }
+
+        [HttpGet]
+        [Route(template: "GET/GetOrderDetails/{orderHeaderId}/{includeProperties?}", Name = "GetOrderDetails")]
+        public IActionResult GetOrderDetails(int orderHeaderId, string? includeProperties = null)
+        {
+            IEnumerable<OrderDetails> orderDetails = manageOrdersDomain.GetOrderDetails(orderHeaderId, includeProperties);
+            return Ok(orderDetails);
+        }
     }
 }

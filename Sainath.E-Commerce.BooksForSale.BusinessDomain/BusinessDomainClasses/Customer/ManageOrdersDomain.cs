@@ -20,5 +20,13 @@ namespace Sainath.E_Commerce.BooksForSale.BusinessDomain.BusinessDomainClasses.C
         {
             return manageOrdersData.GetAllOrders(userId, isUserAdminOrEmployee, status, includeProperties);
         }
+        public OrderHeader GetOrder(int orderHeaderId, string includeProperties)
+        {
+            return manageOrdersData.GetOrder(orderHeaderId, includeProperties);
+        }
+        public IEnumerable<OrderDetails> GetOrderDetails(int orderHeaderId, string includeProperties)
+        {
+            return manageOrdersData.GetOrderDetails(orderHeaderId, includeProperties);
+        }
     }
 }

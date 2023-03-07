@@ -13,6 +13,8 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
     [Authorize]
     public class ManageOrdersController : Controller
     {
+        [BindProperty]
+        public OrderVM OrderVM { get; set; }
         private readonly IBooksForSaleConfiguration configuration;
         public ManageOrdersController(IBooksForSaleConfiguration configuration)
         {
@@ -33,18 +35,20 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
 
-            string requestUrl = $"api/ManageOrders/GET/GetOrder/{orderHeaderId}";
+            string includeProperties = "BooksForSaleUser";
+            string requestUrl = $"api/ManageOrders/GET/GetOrder/{orderHeaderId}/{includeProperties}";
             OrderHeader orderHeader = await httpClient.GetFromJsonAsync<OrderHeader>(requestUrl);
 
-            requestUrl = $"api/ManageOrders/GET/GetOrderDetails/{orderHeaderId}";
+            includeProperties = "Book,Book.Category,Book.CoverType";
+            requestUrl = $"api/ManageOrders/GET/GetOrderDetails/{orderHeaderId}/{includeProperties}";
             IEnumerable<OrderDetails> orderDetails = await httpClient.GetFromJsonAsync<IEnumerable<OrderDetails>>(requestUrl);
 
-            OrderVM orderVM = new OrderVM()
+            OrderVM = new OrderVM()
             {
                 OrderHeader = orderHeader,
                 ListOfOrderDetails = orderDetails
             };
-            return View(orderVM);
+            return View(OrderVM);
         }
 
         #region API ENDPOINTS

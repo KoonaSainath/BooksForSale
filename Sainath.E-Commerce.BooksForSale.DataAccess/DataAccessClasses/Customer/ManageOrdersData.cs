@@ -64,5 +64,17 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Customer
             }
             return orders;
         }
+
+        public OrderHeader GetOrder(int orderHeaderId, string includeProperties)
+        {
+            OrderHeader orderHeader = unitOfWork.OrderHeaderRepository.GetRecordByExpression((order => order.OrderHeaderId == orderHeaderId), includeProperties);
+            return orderHeader;
+        }
+
+        public IEnumerable<OrderDetails> GetOrderDetails(int orderHeaderId, string includeProperties)
+        {
+            IEnumerable<OrderDetails> orderDetails = unitOfWork.OrderDetailsRepository.GetAllRecords(includeProperties, (order => order.OrderHeaderId == orderHeaderId)).ToList();
+            return orderDetails;
+        }
     }
 }
