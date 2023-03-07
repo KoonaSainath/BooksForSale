@@ -30,9 +30,9 @@ function loadOrdersDataTable(status) {
                 {
                     "data": "orderHeaderId",
                     "width": "5%",
-                    "render": function () {
+                    "render": function (data) {
                         return `
-                        <a class="btn btn-info"><i class="bi bi-info-circle"></i></a>
+                        <a class="btn btn-info" href="ManageOrders/GetOrder?orderHeaderId=${data}"><i class="bi bi-info-circle"></i></a>
                     `;
                     }
                 }
@@ -53,9 +53,9 @@ function loadOrdersDataTable(status) {
                 {
                     "data": "orderHeaderId",
                     "width": "5%",
-                    "render": function () {
+                    "render": function (data) {
                         return `
-                        <a class="btn btn-info"><i class="bi bi-info-circle"></i></a>
+                        <a class="btn btn-info" href="ManageOrders/GetOrder?orderHeaderId=${data}"><i class="bi bi-info-circle"></i></a>
                     `;
                     }
                 }
@@ -63,5 +63,5 @@ function loadOrdersDataTable(status) {
             "order": []
         });
     }
-    
+
 }
