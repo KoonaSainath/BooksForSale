@@ -67,7 +67,8 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Customer
 
         public OrderHeader GetOrder(int orderHeaderId, string includeProperties)
         {
-            OrderHeader orderHeader = unitOfWork.OrderHeaderRepository.GetRecordByExpression((order => order.OrderHeaderId == orderHeaderId), includeProperties);
+            bool restrictTracking = true;
+            OrderHeader orderHeader = unitOfWork.OrderHeaderRepository.GetRecordByExpression((order => order.OrderHeaderId == orderHeaderId), includeProperties, restrictTracking: restrictTracking);
             return orderHeader;
         }
 
@@ -75,6 +76,12 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Customer
         {
             IEnumerable<OrderDetails> orderDetails = unitOfWork.OrderDetailsRepository.GetAllRecords(includeProperties, (order => order.OrderHeaderId == orderHeaderId)).ToList();
             return orderDetails;
+        }
+
+        public void UpdateOrder(OrderHeader orderHeader)
+        {
+            unitOfWork.OrderHeaderRepository.Update(orderHeader);
+            unitOfWork.Save();
         }
     }
 }

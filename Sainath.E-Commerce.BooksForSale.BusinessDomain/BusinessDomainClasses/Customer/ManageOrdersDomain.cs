@@ -28,5 +28,9 @@ namespace Sainath.E_Commerce.BooksForSale.BusinessDomain.BusinessDomainClasses.C
         {
             return manageOrdersData.GetOrderDetails(orderHeaderId, includeProperties);
         }
+        public void UpdateOrder(OrderHeader orderHeader)
+        {
+            manageOrdersData.UpdateOrder(orderHeader);
+        }
     }
 }

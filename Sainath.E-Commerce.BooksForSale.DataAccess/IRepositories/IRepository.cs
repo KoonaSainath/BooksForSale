@@ -14,6 +14,6 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories
         void InsertRecord(T record);
         void RemoveRecord(T record);
         void RemoveRecords(IEnumerable<T> records);
-        T GetRecordByExpression(Expression<Func<T, bool>> expression, string includeProperties = null);
+        T GetRecordByExpression(Expression<Func<T, bool>> expression, string includeProperties = null, bool restrictTracking = false);
     }
 }

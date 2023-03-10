@@ -58,9 +58,19 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.Repositories
             dbSet.RemoveRange(records);
         }
 
-        public T GetRecordByExpression(Expression<Func<T, bool>> expression, string includeProperties = null)
+        public T GetRecordByExpression(Expression<Func<T, bool>> expression, string includeProperties = null, bool restrictTracking = false)
         {
-            IQueryable<T> query = dbSet;
+            IQueryable<T> query;
+
+            if (restrictTracking)
+            {
+                query = dbSet.AsNoTracking();
+            }
+            else
+            {
+                query = dbSet;
+            }
+
             if(includeProperties != null)
             {
                 string[] includePropertiesList = includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries);

@@ -39,5 +39,13 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Customer
             IEnumerable<OrderDetails> orderDetails = manageOrdersDomain.GetOrderDetails(orderHeaderId, includeProperties);
             return Ok(orderDetails);
         }
+
+        [HttpPut]
+        [Route(template: "PUT/UpdateOrder", Name = "UpdateOrder")]
+        public IActionResult UpdateOrder(OrderHeader orderHeader)
+        {
+            manageOrdersDomain.UpdateOrder(orderHeader);
+            return Ok("Order updated successfully!");
+        }
     }
 }

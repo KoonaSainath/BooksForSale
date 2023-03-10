@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Sainath.E_Commerce.BooksForSale.Models.Models.Customer;
 using Sainath.E_Commerce.BooksForSale.Models.ViewModels.Customer;
 using Sainath.E_Commerce.BooksForSale.Utility.Constants;
+using Sainath.E_Commerce.BooksForSale.Utility.Extensions;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
 using System.Net.Http.Headers;
 using System.Security.Claims;
@@ -49,6 +50,47 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
                 ListOfOrderDetails = orderDetails
             };
             return View(OrderVM);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateOrderDetails()
+        {
+            if (ModelState.IsValid)
+            {
+                HttpClient httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Accept.Clear();
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+                string requestUrl = $"api/ManageOrders/GET/GetOrder/{OrderVM.OrderHeader.OrderHeaderId}";
+                OrderHeader orderHeaderFromDb = await httpClient.GetFromJsonAsync<OrderHeader>(requestUrl);
+
+                orderHeaderFromDb.Name = OrderVM.OrderHeader.Name.NullCheckTrim();
+                orderHeaderFromDb.PhoneNumber = OrderVM.OrderHeader.PhoneNumber.NullCheckTrim();
+                orderHeaderFromDb.StreetAddress = OrderVM.OrderHeader.StreetAddress.NullCheckTrim();
+                orderHeaderFromDb.City = OrderVM.OrderHeader.City.NullCheckTrim();
+                orderHeaderFromDb.State = OrderVM.OrderHeader.State.NullCheckTrim();
+                orderHeaderFromDb.PostalCode = OrderVM.OrderHeader.PostalCode.NullCheckTrim();
+
+                if (OrderVM.OrderHeader.Carrier != null)
+                {
+                    orderHeaderFromDb.Carrier = OrderVM.OrderHeader.Carrier.NullCheckTrim();
+                }
+                if (OrderVM.OrderHeader.TrackingNumber != null)
+                {
+                    orderHeaderFromDb.TrackingNumber = OrderVM.OrderHeader.TrackingNumber.NullCheckTrim();
+                }
+
+                requestUrl = $"api/ManageOrders/PUT/UpdateOrder";
+                HttpResponseMessage response = await httpClient.PutAsJsonAsync<OrderHeader>(requestUrl, orderHeaderFromDb);
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] = "Order details are updated successfully!";
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            
+            return View(nameof(GetOrder), new { orderHeaderId = OrderVM.OrderHeader.OrderHeaderId });
         }
 
         #region API ENDPOINTS

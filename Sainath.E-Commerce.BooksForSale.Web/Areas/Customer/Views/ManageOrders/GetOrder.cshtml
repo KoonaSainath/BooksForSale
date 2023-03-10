@@ -15,6 +15,7 @@
         </div>
     </div>
     <form method="post">
+        <input asp-for="@Model.OrderHeader.OrderHeaderId" hidden />
         <div class="mt-4 row">
             <div class="col-7">
                 <h6>Pick up details:</h6>
@@ -218,7 +219,7 @@
                 <div class="mt-4">
                     @if (User.IsInRole(GenericConstants.ROLE_ADMIN) || User.IsInRole(GenericConstants.ROLE_EMPLOYEE))
                     {
-                        <button type="submit" class="btn btn-info" asp-area="Customer" asp-controller="ManageOrders" asp-action="UpdateOrderSummary">Update order details</button>
+                        <button type="submit" class="btn btn-info" asp-area="Customer" asp-controller="ManageOrders" asp-action="UpdateOrderDetails">Update order details</button>
                     }
                 </div>
             </div>
