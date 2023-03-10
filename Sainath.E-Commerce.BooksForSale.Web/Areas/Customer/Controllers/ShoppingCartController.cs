@@ -206,7 +206,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
                         orderDetails.OrderHeaderId = orderHeader.OrderHeaderId;
                         orderDetails.BookId = cart.BookId;
                         orderDetails.Count = (int)cart.CartItemCount;
-                        orderDetails.OrderPrice = (double)(cart.Price * cart.CartItemCount);
+                        orderDetails.OrderPrice = cart.Price;
                         response = await httpClient.PostAsJsonAsync<OrderDetails>(requestUrl, orderDetails);
                     }
                 }
