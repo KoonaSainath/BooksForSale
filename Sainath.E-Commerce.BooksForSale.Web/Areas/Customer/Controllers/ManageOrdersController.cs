@@ -120,6 +120,28 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
             return RedirectToAction(nameof(GetOrder), new { orderHeaderId = OrderVM.OrderHeader.OrderHeaderId });
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{GenericConstants.ROLE_ADMIN},{GenericConstants.ROLE_EMPLOYEE}")]
+        public async Task<IActionResult> ShipOrder()
+        {
+            HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Accept.Clear();
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+            OrderVM.OrderHeader.OrderStatus = OrderStatus.STATUS_SHIPPED;
+            OrderVM.OrderHeader.ShippingDate = DateTime.Now;
+            if(OrderVM.OrderHeader.BooksForSaleUser.CompanyId.GetValueOrDefault() != 0)
+            {
+                OrderVM.OrderHeader.PaymentDueDate = DateTime.Now.AddDays(30);
+            }
+            string requestUrl = $"api/ManageOrders/PUT/ShipOrder";
+            HttpResponseMessage response = await httpClient.PutAsJsonAsync<OrderHeader>(requestUrl, OrderVM.OrderHeader);
+            string responseMessage = response.Content.ReadAsStringAsync().Result.NullCheckTrim();
+            TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] = responseMessage;
+            return RedirectToAction(nameof(GetOrder), new { orderHeaderId = OrderVM.OrderHeader.OrderHeaderId });
+        }
+
         #region API ENDPOINTS
 
         [HttpGet]

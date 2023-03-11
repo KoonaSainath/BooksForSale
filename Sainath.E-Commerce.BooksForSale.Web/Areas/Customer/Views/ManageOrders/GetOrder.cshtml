@@ -17,6 +17,7 @@
     <form method="post">
         <input asp-for="@Model.OrderHeader.OrderHeaderId" hidden />
         <input asp-for="@Model.OrderHeader.UserId" hidden />
+        <input asp-for="@Model.OrderHeader.BooksForSaleUser.CompanyId" hidden />
         <div class="mt-4 row">
             <div class="col-7">
                 <h6>Pick up details:</h6>
@@ -268,7 +269,7 @@
                             }
                             @if (Model.OrderHeader.OrderStatus.NullCheckTrim() == OrderStatus.STATUS_PROCESSING)
                             {
-                                <button class="btn bg-white text-black w-100 mt-1">Ship order</button>
+                                <button class="btn bg-white text-black w-100 mt-1" type="submit" asp-area="Customer" asp-controller="ManageOrders" asp-action="ShipOrder" onclick="return ValidateCarrierAndTrackingNumber()">Ship order</button>
                             }
                             @if (Model.OrderHeader.PaymentStatus.NullCheckTrim() == OrderStatus.PAYMENT_STATUS_DELAYED_PAYMENT && Model.OrderHeader.OrderStatus.NullCheckTrim() == OrderStatus.STATUS_SHIPPED)
                             {
@@ -288,5 +289,6 @@
 
 @section Scripts{
     <partial name="_ValidationScriptsPartial"></partial>
+    <script src="~/js/ManageOrders.js"></script>
 }
 

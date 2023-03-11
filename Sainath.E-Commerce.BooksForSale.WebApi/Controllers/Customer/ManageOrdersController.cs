@@ -55,5 +55,13 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Customer
             manageOrdersDomain.StartOrderProcessing(orderHeader.OrderHeaderId);
             return Ok("Order processing started successfully!");
         }
+
+        [HttpPut]
+        [Route(template: "PUT/ShipOrder", Name = "ShipOrder")]
+        public IActionResult ShipOrder(OrderHeader orderHeader)
+        {
+            manageOrdersDomain.ShipOrder(orderHeader);
+            return Ok("Order shipped successfully!");
+        }
     }
 }

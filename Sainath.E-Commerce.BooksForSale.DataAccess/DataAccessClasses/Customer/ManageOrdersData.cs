@@ -89,5 +89,11 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Customer
             unitOfWork.OrderHeaderRepository.UpdateStatus(orderHeaderId, OrderStatus.STATUS_PROCESSING);
             unitOfWork.Save();
         }
+
+        public void ShipOrder(OrderHeader orderHeader)
+        {
+            unitOfWork.OrderHeaderRepository.Update(orderHeader);
+            unitOfWork.Save();
+        }
     }
 }

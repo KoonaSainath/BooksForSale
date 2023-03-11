@@ -1,6 +1,7 @@
 ﻿using Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Customer;
 using Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories;
 using Sainath.E_Commerce.BooksForSale.Models.Models.Customer;
+using Sainath.E_Commerce.BooksForSale.Utility.Constants;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,6 +36,28 @@ namespace Sainath.E_Commerce.BooksForSale.BusinessDomain.BusinessDomainClasses.C
         public void StartOrderProcessing(int orderHeaderId)
         {
             manageOrdersData.StartProcessingOrder(orderHeaderId);
+        }
+        public void ShipOrder(OrderHeader orderHeader)
+        {
+            OrderHeader orderHeaderFromDb = manageOrdersData.GetOrder(orderHeader.OrderHeaderId, null);
+            if(orderHeaderFromDb != null)
+            {
+                orderHeaderFromDb.OrderStatus = orderHeader.OrderStatus;
+                orderHeaderFromDb.ShippingDate = orderHeader.ShippingDate;
+                if(orderHeader.PaymentDueDate != null)
+                {
+                    orderHeaderFromDb.PaymentDueDate = orderHeader.PaymentDueDate;
+                }
+                if(orderHeader.Carrier != null)
+                {
+                    orderHeaderFromDb.Carrier = orderHeader.Carrier;
+                }
+                if (orderHeader.TrackingNumber != null)
+                {
+                    orderHeaderFromDb.TrackingNumber = orderHeader.TrackingNumber;
+                }
+                manageOrdersData.ShipOrder(orderHeaderFromDb);
+            }
         }
     }
 }

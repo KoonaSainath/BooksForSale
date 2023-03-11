@@ -65,3 +65,23 @@ function loadOrdersDataTable(status) {
     }
 
 }
+
+function ValidateCarrierAndTrackingNumber() {
+    if ($('#carrier').val() == '' || typeof $('#carrier').val() == undefined || typeof $('#carrier').val() == null) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Alert',
+            text: 'Please provide carrier details to ship this order'
+        });
+        return false;
+    } else if ($('#trackingNumber').val() == '' || typeof $('#trackingNumber').val() == undefined || typeof $('#trackingNumber').val() == null) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Alert',
+            text: 'Please provide tracking number to ship this order'
+        });
+        return false;
+    } else {
+        return true;
+    }
+}
