@@ -242,7 +242,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
                     SessionService service = new SessionService();
                     Session session = service.Create(options);
 
-                    session.PaymentIntentId = "test. will fix this later";
+                    session.PaymentIntentId = "Will be updated on order confirmation";
                     requestUrl = $"api/ShoppingCart/PUT/UpdateStripeStatus/{orderHeader.OrderHeaderId}/{session.Id}/{session.PaymentIntentId}";
                     response = await httpClient.PutAsJsonAsync<OrderHeader>(requestUrl, ShoppingCartVM.OrderHeader);
 
@@ -275,6 +275,9 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
                 Session session = sessionService.Get(orderHeader.StripeSessionId);
                 if (session.PaymentStatus.NullCheckTrim().ToLower() == OrderStatus.PAYMENT_STATUS_PAID.ToLower())
                 {
+                    requestUrl = $"api/ShoppingCart/PUT/UpdateStripeStatus/{orderHeaderId}/{orderHeader.StripeSessionId}/{session.PaymentIntentId}";
+                    await httpClient.PutAsJsonAsync<OrderHeader>(requestUrl, orderHeader);
+
                     requestUrl = $"api/ShoppingCart/PUT/UpdateOrderHeaderStatus/{orderHeaderId}/{OrderStatus.STATUS_APPROVED}/{OrderStatus.PAYMENT_STATUS_APPROVED}";
                     await httpClient.PutAsJsonAsync<OrderHeader>(requestUrl, orderHeader);
                 }
