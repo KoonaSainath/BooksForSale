@@ -5,6 +5,7 @@ using Sainath.E_Commerce.BooksForSale.Models.ViewModels.Customer;
 using Sainath.E_Commerce.BooksForSale.Utility.Constants;
 using Sainath.E_Commerce.BooksForSale.Utility.Extensions;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
+using Stripe.Checkout;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
@@ -140,6 +141,82 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
             string responseMessage = response.Content.ReadAsStringAsync().Result.NullCheckTrim();
             TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] = responseMessage;
             return RedirectToAction(nameof(GetOrder), new { orderHeaderId = OrderVM.OrderHeader.OrderHeaderId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{GenericConstants.ROLE_ADMIN},{GenericConstants.ROLE_EMPLOYEE}")]
+        public async Task<IActionResult> MakePayment()
+        {
+            HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Accept.Clear();
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+            string includeProperties = "Book,Book.Category,Book.CoverType";
+            string requestUrl = $"api/ManageOrders/GET/GetOrderDetails/{OrderVM.OrderHeader.OrderHeaderId}/{includeProperties}";
+            OrderVM.ListOfOrderDetails = await httpClient.GetFromJsonAsync<IEnumerable<OrderDetails>>(requestUrl);
+
+            var options = new SessionCreateOptions
+            {
+                LineItems = new List<SessionLineItemOptions>(),
+                Mode = "payment",
+                SuccessUrl = configuration.BaseAddressForWebApplication + $"Customer/ManageOrders/PaymentConfirmation?orderHeaderId={OrderVM.OrderHeader.OrderHeaderId}",
+                CancelUrl = configuration.BaseAddressForWebApplication + $"Customer/ManageOrders/GetOrder?orderHeaderId={OrderVM.OrderHeader.OrderHeaderId}",
+            };
+
+            foreach (OrderDetails orderDetails in OrderVM.ListOfOrderDetails)
+            {
+                options.LineItems.Add(new SessionLineItemOptions()
+                {
+                    Quantity = orderDetails.Count,
+                    PriceData = new SessionLineItemPriceDataOptions()
+                    {
+                        Currency = "inr",
+                        UnitAmount = (long)(orderDetails.OrderPrice * 100),
+                        ProductData = new SessionLineItemPriceDataProductDataOptions()
+                        {
+                            Name = orderDetails.Book.Title
+                        }
+                    },
+                });
+            }
+
+            SessionService service = new SessionService();
+            Session session = service.Create(options);
+
+            session.PaymentIntentId = "Will be updated on order confirmation";
+            requestUrl = $"api/ShoppingCart/PUT/UpdateStripeStatus/{OrderVM.OrderHeader.OrderHeaderId}/{session.Id}/{session.PaymentIntentId}";
+            HttpResponseMessage response = await httpClient.PutAsJsonAsync<OrderHeader>(requestUrl, OrderVM.OrderHeader);
+
+            Response.Headers.Add("Location", session.Url);
+            return new StatusCodeResult(303);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = $"{GenericConstants.ROLE_ADMIN},{GenericConstants.ROLE_EMPLOYEE}")]
+        public async Task<IActionResult> PaymentConfirmation(int orderHeaderId)
+        {
+            HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Accept.Clear();
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+            string requestUrl = $"api/ManageOrders/GET/GetOrder/{orderHeaderId}";
+            OrderHeader orderHeader = await httpClient.GetFromJsonAsync<OrderHeader>(requestUrl);
+            if(orderHeader != null)
+            {
+                SessionService sessionService = new SessionService();
+                Session session = sessionService.Get(orderHeader.StripeSessionId);
+
+                if(session.PaymentStatus.NullCheckTrim().ToLower() == OrderStatus.PAYMENT_STATUS_PAID.ToLower())
+                {
+                    requestUrl = $"api/ShoppingCart/PUT/UpdateStripeStatus/{orderHeaderId}/{orderHeader.StripeSessionId}/{session.PaymentIntentId}";
+                    await httpClient.PutAsJsonAsync<OrderHeader>(requestUrl, orderHeader);
+
+                    requestUrl = $"api/ShoppingCart/PUT/UpdateOrderHeaderStatus/{orderHeaderId}/{orderHeader.OrderStatus}/{OrderStatus.PAYMENT_STATUS_APPROVED}";
+                    await httpClient.PutAsJsonAsync<OrderHeader>(requestUrl, orderHeader);
+                }
+            }
+            return View(orderHeaderId);
         }
 
         #region API ENDPOINTS
