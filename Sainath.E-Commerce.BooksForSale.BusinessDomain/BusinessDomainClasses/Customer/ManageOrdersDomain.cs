@@ -32,5 +32,9 @@ namespace Sainath.E_Commerce.BooksForSale.BusinessDomain.BusinessDomainClasses.C
         {
             manageOrdersData.UpdateOrder(orderHeader);
         }
+        public void StartOrderProcessing(int orderHeaderId)
+        {
+            manageOrdersData.StartProcessingOrder(orderHeaderId);
+        }
     }
 }

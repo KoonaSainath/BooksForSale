@@ -7,6 +7,7 @@ using Sainath.E_Commerce.BooksForSale.Utility.Extensions;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
 using System.Net.Http.Headers;
 using System.Security.Claims;
+using System.Text;
 
 namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
 {
@@ -100,6 +101,23 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
                 TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] = "Failed to update as you didn't enter information for one or more mandatory fields";
                 return RedirectToAction(nameof(GetOrder), new { orderHeaderId = OrderVM.OrderHeader.OrderHeaderId });
             }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{GenericConstants.ROLE_ADMIN},{GenericConstants.ROLE_EMPLOYEE}")]
+        public async Task<IActionResult> StartProcessingOrder()
+        {
+            HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Accept.Clear();
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+            string requestUrl = $"api/ManageOrders/PUT/StartProcessingOrder";
+            HttpResponseMessage response = await httpClient.PutAsJsonAsync<OrderHeader>(requestUrl, OrderVM.OrderHeader);
+            string responseMessage = response.Content.ReadAsStringAsync().Result.NullCheckTrim();
+            responseMessage = responseMessage.TrimStart('"').TrimEnd('"');
+            TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] = responseMessage;
+            return RedirectToAction(nameof(GetOrder), new { orderHeaderId = OrderVM.OrderHeader.OrderHeaderId });
         }
 
         #region API ENDPOINTS
