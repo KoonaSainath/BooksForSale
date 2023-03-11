@@ -54,6 +54,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{GenericConstants.ROLE_ADMIN},{GenericConstants.ROLE_EMPLOYEE}")]
         public async Task<IActionResult> UpdateOrderDetails()
         {
             if (ModelState.IsValid)
