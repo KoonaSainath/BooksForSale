@@ -16,6 +16,7 @@
     </div>
     <form method="post">
         <input asp-for="@Model.OrderHeader.OrderHeaderId" hidden />
+        <input asp-for="@Model.OrderHeader.UserId" hidden />
         <div class="mt-4 row">
             <div class="col-7">
                 <h6>Pick up details:</h6>
@@ -27,7 +28,7 @@
                         @if (User.IsInRole(GenericConstants.ROLE_ADMIN) || User.IsInRole(GenericConstants.ROLE_EMPLOYEE))
                         {
                             <input asp-for="@Model.OrderHeader.Name" class="form-control" />
-                            <span asp-validation-for="@Model.OrderHeader" class="text-danger"></span>
+                            <span asp-validation-for="@Model.OrderHeader.Name" class="text-danger"></span>
                         }
                         else
                         {
@@ -284,4 +285,8 @@
         </div>
     </form>
 </div>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial"></partial>
+}
 

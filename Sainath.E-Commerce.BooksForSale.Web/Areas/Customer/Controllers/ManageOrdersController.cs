@@ -88,9 +88,17 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
                     TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] = "Order details are updated successfully!";
                     return RedirectToAction(nameof(Index));
                 }
+                else
+                {
+                    TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] = "Failed to update order details!";
+                    return RedirectToAction(nameof(Index));
+                }
             }
-            
-            return View(nameof(GetOrder), new { orderHeaderId = OrderVM.OrderHeader.OrderHeaderId });
+            else
+            {
+                TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] = "Failed to update as you didn't enter information for one or more mandatory fields";
+                return RedirectToAction(nameof(GetOrder), new { orderHeaderId = OrderVM.OrderHeader.OrderHeaderId });
+            }
         }
 
         #region API ENDPOINTS

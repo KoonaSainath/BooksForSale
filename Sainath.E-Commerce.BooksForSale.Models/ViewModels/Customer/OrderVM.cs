@@ -1,4 +1,5 @@
-﻿using Sainath.E_Commerce.BooksForSale.Models.Models.Customer;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Sainath.E_Commerce.BooksForSale.Models.Models.Customer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace Sainath.E_Commerce.BooksForSale.Models.ViewModels.Customer
     public class OrderVM
     {
         public OrderHeader OrderHeader { get; set; }
+        [ValidateNever]
         public IEnumerable<OrderDetails> ListOfOrderDetails { get; set; }
     }
 }

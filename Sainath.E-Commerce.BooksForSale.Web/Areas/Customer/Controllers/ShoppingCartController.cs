@@ -182,6 +182,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
                 {
                     ShoppingCartVM.OrderHeader.OrderStatus = OrderStatus.STATUS_APPROVED;
                     ShoppingCartVM.OrderHeader.PaymentStatus = OrderStatus.PAYMENT_STATUS_DELAYED_PAYMENT;
+                    ShoppingCartVM.OrderHeader.PaymentDueDate = DateTime.Now.AddDays(30);
                 }
                 
                 string includeProperties = "Book,BooksForSaleUser,Book.Category,Book.CoverType";
