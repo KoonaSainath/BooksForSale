@@ -95,5 +95,18 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Customer
             unitOfWork.OrderHeaderRepository.Update(orderHeader);
             unitOfWork.Save();
         }
+
+        public void CancelOrder(int orderHeaderId, bool isRefundProcessed)
+        {
+            if (isRefundProcessed)
+            {
+                unitOfWork.OrderHeaderRepository.UpdateStatus(orderHeaderId, OrderStatus.STATUS_CANCELLED, OrderStatus.STATUS_REFUNDED);
+            }
+            else
+            {
+                unitOfWork.OrderHeaderRepository.UpdateStatus(orderHeaderId, OrderStatus.STATUS_CANCELLED, OrderStatus.STATUS_CANCELLED);
+            }
+            unitOfWork.Save();
+        }
     }
 }

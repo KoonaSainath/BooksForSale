@@ -5,6 +5,7 @@ using Sainath.E_Commerce.BooksForSale.Models.ViewModels.Customer;
 using Sainath.E_Commerce.BooksForSale.Utility.Constants;
 using Sainath.E_Commerce.BooksForSale.Utility.Extensions;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
+using Stripe;
 using Stripe.Checkout;
 using System.Net.Http.Headers;
 using System.Security.Claims;
@@ -132,7 +133,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
             httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
             OrderVM.OrderHeader.OrderStatus = OrderStatus.STATUS_SHIPPED;
             OrderVM.OrderHeader.ShippingDate = DateTime.Now;
-            if(OrderVM.OrderHeader.BooksForSaleUser.CompanyId.GetValueOrDefault() != 0)
+            if (OrderVM.OrderHeader.BooksForSaleUser.CompanyId.GetValueOrDefault() != 0)
             {
                 OrderVM.OrderHeader.PaymentDueDate = DateTime.Now.AddDays(30);
             }
@@ -202,12 +203,12 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
             httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
             string requestUrl = $"api/ManageOrders/GET/GetOrder/{orderHeaderId}";
             OrderHeader orderHeader = await httpClient.GetFromJsonAsync<OrderHeader>(requestUrl);
-            if(orderHeader != null)
+            if (orderHeader != null)
             {
                 SessionService sessionService = new SessionService();
                 Session session = sessionService.Get(orderHeader.StripeSessionId);
 
-                if(session.PaymentStatus.NullCheckTrim().ToLower() == OrderStatus.PAYMENT_STATUS_PAID.ToLower())
+                if (session.PaymentStatus.NullCheckTrim().ToLower() == OrderStatus.PAYMENT_STATUS_PAID.ToLower())
                 {
                     requestUrl = $"api/ShoppingCart/PUT/UpdateStripeStatus/{orderHeaderId}/{orderHeader.StripeSessionId}/{session.PaymentIntentId}";
                     await httpClient.PutAsJsonAsync<OrderHeader>(requestUrl, orderHeader);
@@ -217,6 +218,50 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
                 }
             }
             return View(orderHeaderId);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{GenericConstants.ROLE_ADMIN},{GenericConstants.ROLE_EMPLOYEE}")]
+        public async Task<IActionResult> CancelOrder()
+        {
+            HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Accept.Clear();
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+
+            string requestUrl = string.Empty;
+            HttpResponseMessage response = new HttpResponseMessage();
+            bool isRefundProcessed = false;
+
+            if (OrderVM.OrderHeader.PaymentStatus.NullCheckTrim().ToLower() == OrderStatus.PAYMENT_STATUS_APPROVED.ToLower())
+            {
+                var options = new RefundCreateOptions()
+                {
+                    PaymentIntent = OrderVM.OrderHeader.StripePaymentIntentId,
+                    Reason = RefundReasons.RequestedByCustomer
+                };
+                RefundService refundService = new RefundService();
+                Refund refund = refundService.Create(options);
+
+                isRefundProcessed = true;
+                requestUrl = $"api/ManageOrders/PUT/CancelOrder/{isRefundProcessed}";
+
+            }
+            else
+            {
+                requestUrl = $"api/ManageOrders/PUT/CancelOrder/{isRefundProcessed}";
+            }
+            response = await httpClient.PutAsJsonAsync<OrderHeader>(requestUrl, OrderVM.OrderHeader);
+            if (response.IsSuccessStatusCode)
+            {
+                TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] = response.Content.ReadAsStringAsync().Result.NullCheckTrim().TrimStart('"').TrimEnd('"');
+            }
+            else
+            {
+                TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] = "Failed to cancel the order. Please try again after sometime.";
+            }
+            return RedirectToAction(nameof(GetOrder), new { OrderVM.OrderHeader.OrderHeaderId });
         }
 
         #region API ENDPOINTS
@@ -234,7 +279,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
             string userId = claim.Value;
 
             bool isUserAdminOrEmployee = false;
-            if(User.IsInRole(GenericConstants.ROLE_ADMIN) || User.IsInRole(GenericConstants.ROLE_EMPLOYEE))
+            if (User.IsInRole(GenericConstants.ROLE_ADMIN) || User.IsInRole(GenericConstants.ROLE_EMPLOYEE))
             {
                 isUserAdminOrEmployee = true;
             }

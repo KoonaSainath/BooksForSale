@@ -59,5 +59,9 @@ namespace Sainath.E_Commerce.BooksForSale.BusinessDomain.BusinessDomainClasses.C
                 manageOrdersData.ShipOrder(orderHeaderFromDb);
             }
         }
+        public void CancelOrder(int orderHeaderId, bool isRefundProcessed)
+        {
+            manageOrdersData.CancelOrder(orderHeaderId, isRefundProcessed);
+        }
     }
 }

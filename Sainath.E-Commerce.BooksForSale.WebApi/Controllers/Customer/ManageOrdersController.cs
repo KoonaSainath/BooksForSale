@@ -63,5 +63,13 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Customer
             manageOrdersDomain.ShipOrder(orderHeader);
             return Ok("Order shipped successfully!");
         }
+
+        [HttpPut]
+        [Route(template: "PUT/CancelOrder/{isRefundProcessed}", Name = "CancelOrder")]
+        public IActionResult CancelOrder(OrderHeader orderHeader, bool isRefundProcessed)
+        {
+            manageOrdersDomain.CancelOrder(orderHeader.OrderHeaderId, isRefundProcessed);
+            return Ok("Order cancelled successfully!");
+        }
     }
 }
