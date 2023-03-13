@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Localization;
 using Sainath.E_Commerce.BooksForSale.Models.Models.Admin;
 using Sainath.E_Commerce.BooksForSale.Utility.Constants;
@@ -10,6 +11,7 @@ using System.Runtime.CompilerServices;
 namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = $"{GenericConstants.ROLE_ADMIN}")]
     public class CategoryController : Controller
     {
         private readonly IBooksForSaleConfiguration configuration;
