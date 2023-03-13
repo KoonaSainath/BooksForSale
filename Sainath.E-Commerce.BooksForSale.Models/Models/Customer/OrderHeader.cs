@@ -21,17 +21,25 @@ namespace Sainath.E_Commerce.BooksForSale.Models.Models.Customer
         public BooksForSaleUser BooksForSaleUser { get; set; }
         [Required]
         [ValidateNever]
+        [Display(Name = "Ordered date")]
         public DateTime? OrderDate { get; set; }
+        [Display(Name = "Shipping date")]
         public DateTime? ShippingDate { get; set; }
         [Required]
         public double TotalOrderAmount { get; set; }
         public string? OrderStatus { get; set; }
+        [Display(Name = "Payment status")]
         public string? PaymentStatus { get; set; }
+        [Display(Name = "Tracking number")]
         public string? TrackingNumber { get; set; }
         public string? Carrier { get; set; }
+        [Display(Name = "Payment date")]
         public DateTime? PaymentDate { get; set; }
+        [Display(Name = "Payment due date")]
         public DateTime? PaymentDueDate { get; set; }
+        [Display(Name = "Stripe session id")]
         public string? StripeSessionId { get; set; }
+        [Display(Name = "Payment intent id")]
         public string? StripePaymentIntentId { get; set; }
         [Required]
         public DateTime EstimatedFromDate { get; set; }

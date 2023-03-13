@@ -2,6 +2,7 @@
 using Sainath.E_Commerce.BooksForSale.DataAccess.DbContextClasses;
 using Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories.Customer;
 using Sainath.E_Commerce.BooksForSale.Models.Models.Customer;
+using Sainath.E_Commerce.BooksForSale.Utility.Constants;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,10 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.Repositories.Customer
                 if(paymentStatus != null)
                 {
                     orderHeader.PaymentStatus = paymentStatus;
+                    if(paymentStatus == OrderStatus.PAYMENT_STATUS_APPROVED)
+                    {
+                        orderHeader.PaymentDate = DateTime.Now;
+                    }
                 }
             }
         }
