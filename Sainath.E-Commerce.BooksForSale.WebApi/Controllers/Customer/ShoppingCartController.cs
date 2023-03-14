@@ -121,10 +121,10 @@ namespace Sainath.E_Commerce.BooksForSale.WebApi.Controllers.Customer
         }
 
         [HttpGet]
-        [Route(template: "GET/GetOrderHeader/{orderHeaderId}", Name = "GetOrderHeader")]
-        public IActionResult GetOrderHeader(int orderHeaderId)
+        [Route(template: "GET/GetOrderHeader/{orderHeaderId}/{includeProperties?}", Name = "GetOrderHeader")]
+        public IActionResult GetOrderHeader(int orderHeaderId, string? includeProperties = null)
         {
-            OrderHeader orderHeader = shoppingCartDomain.GetOrderHeader(orderHeaderId);
+            OrderHeader orderHeader = shoppingCartDomain.GetOrderHeader(orderHeaderId, includeProperties);
             return Ok(orderHeader);
         }
     }

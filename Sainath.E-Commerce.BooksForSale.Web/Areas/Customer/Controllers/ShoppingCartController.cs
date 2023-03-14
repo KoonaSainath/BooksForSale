@@ -2,12 +2,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Sainath.E_Commerce.BooksForSale.Models.Models.Customer;
 using Sainath.E_Commerce.BooksForSale.Models.ViewModels.Customer;
+using Sainath.E_Commerce.BooksForSale.Utility;
 using Sainath.E_Commerce.BooksForSale.Utility.Constants;
 using Sainath.E_Commerce.BooksForSale.Utility.Extensions;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
 using Stripe.Checkout;
 using System.Net.Http.Headers;
 using System.Security.Claims;
+using System.Text;
 
 namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
 {
@@ -266,7 +268,8 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
 
-            string requestUrl = $"api/ShoppingCart/GET/GetOrderHeader/{orderHeaderId}";
+            string includeProperties = "BooksForSaleUser";
+            string requestUrl = $"api/ShoppingCart/GET/GetOrderHeader/{orderHeaderId}/{includeProperties}";
             OrderHeader orderHeader = await httpClient.GetFromJsonAsync<OrderHeader>(requestUrl);
 
             if(orderHeader.PaymentStatus.NullCheckTrim().ToLower() != OrderStatus.PAYMENT_STATUS_DELAYED_PAYMENT.ToLower())
@@ -282,6 +285,8 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
                     await httpClient.PutAsJsonAsync<OrderHeader>(requestUrl, orderHeader);
                 }
             }
+
+            SendMail(orderHeader);
 
             requestUrl = $"api/ShoppingCart/GET/GetAllShoppingCarts/{orderHeader.UserId}";
             IEnumerable<ShoppingCart> shoppingCarts = await httpClient.GetFromJsonAsync<IEnumerable<ShoppingCart>>(requestUrl);
@@ -307,6 +312,56 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
             {
                 return (double)price100;
             }
+        }
+
+        private async Task<bool> SendMail(OrderHeader orderHeader)
+        {
+            HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Accept.Clear();
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+            string includeProperties = "Book,Book.Category,Book.CoverType";
+            string requestUrl = $"api/ManageOrders/GET/GetOrderDetails/{orderHeader.OrderHeaderId}/{includeProperties}";
+            IEnumerable<OrderDetails> orderDetails = await httpClient.GetFromJsonAsync<IEnumerable<OrderDetails>>(requestUrl);
+
+            string emailTo = orderHeader.BooksForSaleUser.Email;
+            string subject = "BooksForSale: Order placed successfully!";
+            StringBuilder body = new StringBuilder();
+
+            body.Append("<h1>Good day!</h1><br><h3>Your order is placed successfully with below books in it.</h3><br><br>");
+            body.Append("<table border='1'><thead><tr><th>Order id</th><th>Book title</th><th>Price</th><th>Count</th></tr></thead>");
+            body.Append("<tbody>");
+
+            foreach(OrderDetails orderDetail in orderDetails)
+            {
+                body.Append("<tr>");
+                body.Append($"<td>{orderHeader.OrderHeaderId}</td>");
+                body.Append($"<td>{orderDetail.Book.Title}</td>");
+                body.Append($"<td>{orderDetail.OrderPrice}</td>");
+                body.Append($"<td>{orderDetail.Count}</td>");
+                body.Append("</tr>");
+            }
+
+            body.Append("</tbody>");
+            body.Append("</table><br><br>");
+
+            body.Append("<h4>Address:</h4><br>");
+            body.Append($"<p>{orderHeader.Name}</p>");
+            body.Append($"<p>{orderHeader.PhoneNumber}</p>");
+            body.Append($"<p>{orderHeader.StreetAddress}</p>");
+            body.Append($"<p>{orderHeader.City}</p>");
+            body.Append($"<p>{orderHeader.State}</p>");
+            body.Append($"<p>{orderHeader.PostalCode}</p><br><br><br>");
+
+            body.Append("<h6>Thank you for shopping with us!</h6><br><br>");
+            body.Append("<p>Thanks and regards</p><br>");
+            body.Append("<p>Team BooksForSale</p>");
+
+            
+
+            EmailSender emailSender = new EmailSender();
+            emailSender.SendEmailAsync(emailTo, subject, body.ToString());
+            return true;
         }
     }
 }
