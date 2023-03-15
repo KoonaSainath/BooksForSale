@@ -20,6 +20,17 @@ builder.Services.AddDbContext<BooksForSaleDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString(connectionStringKey));
 });
 
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.Cookie.Name = "BooksForSaleSession";
+    options.IdleTimeout = TimeSpan.FromSeconds(10);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.IsEssential = true;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+});
+
 builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddDefaultTokenProviders()
     .AddEntityFrameworkStores<BooksForSaleDbContext>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -50,11 +61,13 @@ app.UseRouting();
 
 StripeConfiguration.ApiKey = builder.Configuration.GetSection("StripeKeys:StripeSecretKey").Get<string>();
     
-app.UseAuthentication();;
+app.UseAuthentication();
 
 app.UseAuthorization();
 
 app.MapRazorPages();
+
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
