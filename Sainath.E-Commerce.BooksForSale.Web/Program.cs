@@ -36,6 +36,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddDefaultTokenProvid
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IBooksForSaleConfiguration, BooksForSaleConfiguration>();
 builder.Services.AddSingleton<IEmailSender, EmailSender>();
+builder.Services.AddSingleton<HttpContextAccessor>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {

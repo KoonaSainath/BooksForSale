@@ -92,6 +92,8 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
             {
                 requestUrl = "api/ShoppingCart/DELETE/RemoveShoppingCart";
                 HttpResponseMessage response = await httpClient.PostAsJsonAsync<ShoppingCart>(requestUrl, shoppingCart);
+                int cartCount = GetCartCount((ClaimsIdentity)User.Identity).Result;
+                HttpContext.Session.SetInt32(GenericConstants.CartCountKey, cartCount);
             }
             return RedirectToAction(nameof(Index));
         }
@@ -111,6 +113,9 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
                 requestUrl = "api/ShoppingCart/DELETE/RemoveShoppingCart";
                 HttpResponseMessage response = await httpClient.PostAsJsonAsync<ShoppingCart>(requestUrl, shoppingCart);
             }
+            int cartCount = GetCartCount((ClaimsIdentity) User.Identity).Result;
+            HttpContext.Session.SetInt32(GenericConstants.CartCountKey, cartCount);
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -294,6 +299,9 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
             requestUrl = $"api/ShoppingCart/DELETE/RemoveShoppingCarts";
             await httpClient.PostAsJsonAsync<IEnumerable<ShoppingCart>>(requestUrl, shoppingCarts);
 
+            int cartCount = GetCartCount((ClaimsIdentity)User.Identity).Result;
+            HttpContext.Session.SetInt32(GenericConstants.CartCountKey, cartCount);
+
             return View(orderHeaderId);
         }
 
@@ -362,6 +370,21 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
             EmailSender emailSender = new EmailSender();
             emailSender.SendEmailAsync(emailTo, subject, body.ToString());
             return true;
+        }
+
+        [Authorize]
+        public async Task<int> GetCartCount(ClaimsIdentity claimsIdentity)
+        {
+            Claim claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            string userId = claim.Value;
+
+            HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Accept.Clear();
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
+            string requestUrl = $"api/ShoppingCart/GET/GetAllShoppingCarts/{userId}";
+            IEnumerable<ShoppingCart> shoppingCarts = await httpClient.GetFromJsonAsync<IEnumerable<ShoppingCart>>(requestUrl);
+            return shoppingCarts.Count();
         }
     }
 }
