@@ -24,6 +24,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Sainath.E_Commerce.BooksForSale.DataAccess.IRepositories;
 using Sainath.E_Commerce.BooksForSale.Models.Models.Customer;
+using Sainath.E_Commerce.BooksForSale.Utility.Constants;
 
 namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Identity.Pages.Account
 {
@@ -186,10 +187,15 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            if(Input.RoleName != Utility.Constants.GenericConstants.ROLE_COMPANY_CUSTOMER)
+            if(Input.RoleName != GenericConstants.ROLE_COMPANY_CUSTOMER)
             {
                 ModelState.ClearValidationState("Input.CompanyId");
                 ModelState.MarkFieldValid("Input.CompanyId");
+            }
+            if (!User.IsInRole(GenericConstants.ROLE_ADMIN))
+            {
+                ModelState.ClearValidationState("Input.RoleName");
+                ModelState.MarkFieldValid("Input.RoleName");
             }
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
@@ -221,7 +227,14 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Identity.Pages.Account
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 
-                    _userManager.AddToRoleAsync(user, Input.RoleName).GetAwaiter().GetResult();
+                    if (User.IsInRole(GenericConstants.ROLE_ADMIN))
+                    {
+                        _userManager.AddToRoleAsync(user, Input.RoleName).GetAwaiter().GetResult();
+                    }
+                    else
+                    {
+                        _userManager.AddToRoleAsync(user, GenericConstants.ROLE_CUSTOMER).GetAwaiter().GetResult();
+                    }
 
                     var callbackUrl = Url.Page(
                         "/Account/ConfirmEmail",
@@ -232,15 +245,24 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Identity.Pages.Account
                     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                    if (!User.IsInRole(GenericConstants.ROLE_ADMIN))
                     {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                        if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                        {
+                            return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                        }
+                        else
+                        {
+                            await _signInManager.SignInAsync(user, isPersistent: false);
+                            return LocalRedirect(returnUrl);
+                        }
                     }
                     else
                     {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+                        TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] = "User created successfully!";
+                        return RedirectToPage("/Account/Register");
                     }
+                    
                 }
                 foreach (IdentityError error in result.Errors)
                 {
