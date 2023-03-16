@@ -1,12 +1,4 @@
-﻿@inject HttpContextAccessor httpContextAccessorInjection
-@{
-    string cartCount = "";
-    if(User.Identity != null)
-    {
-        cartCount = httpContextAccessorInjection.HttpContext.Session.GetInt32(GenericConstants.CartCountKey).GetValueOrDefault().ToString();
-    }
-}
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -54,8 +46,9 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.7.0/dist/sweetalert2.min.css
                             </li>
                         }
                         <li class="nav-item">
-                            <a class="nav-link active" asp-area="Customer" asp-controller="ShoppingCart" asp-action="Index"><i class="bi bi-cart"></i>&nbsp;(@cartCount)
-                                </a>
+                            <a class="nav-link active" asp-area="Customer" asp-controller="ShoppingCart" asp-action="Index">
+                                @await Component.InvokeAsync("CartCount")
+                            </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link active" asp-area="Customer" asp-controller="ManageOrders" asp-action="Index">Manage orders</a>
