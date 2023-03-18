@@ -8,6 +8,7 @@ using Sainath.E_Commerce.BooksForSale.Models.ViewModels.Customer;
 using Sainath.E_Commerce.BooksForSale.Utility.Constants;
 using Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
+using Sainath.E_Commerce.BooksForSale.Web.HelperClasses;
 using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Security.Claims;
@@ -29,13 +30,11 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Customer
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            HttpClient httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Accept.Clear();
-            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
             string includeProperties = "Category,CoverType";
             string requestUrl = $"api/Book/GET/GetAllBooks/{includeProperties}";
-            IEnumerable<Book> books = await httpClient.GetFromJsonAsync<IEnumerable<Book>>(requestUrl);
+            InvokeApi<IEnumerable<Book>> invokeApi = new InvokeApi<IEnumerable<Book>>(configuration);
+            ApiVM<IEnumerable<Book>> apiVm = await invokeApi.Invoke(requestUrl, HttpMethod.Get);
+            IEnumerable<Book> books = apiVm.TObject;
             return View(books);
         }
 
@@ -45,22 +44,18 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Customer
         {
             if(bookId != 0)
             {
-                HttpClient httpClient = new HttpClient();
-                httpClient.DefaultRequestHeaders.Accept.Clear();
-                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
                 string requestUrl = $"api/Book/GET/GetBook/{bookId}";
-                Book book = await httpClient.GetFromJsonAsync<Book>(requestUrl);
-
+                InvokeApi<Book> invokeApiBook = new InvokeApi<Book>(configuration);
+                ApiVM<Book> apiVmBook = await invokeApiBook.Invoke(requestUrl, HttpMethod.Get);
+                Book book = apiVmBook.TObject;
                 ClaimsIdentity claimsIdentity = (ClaimsIdentity) User.Identity;
                 Claim claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
                 string userId = claim.Value;
-
-                ShoppingCart shoppingCart = null;
                 string includeProperties = "Book,BooksForSaleUser,Book.Category,Book.CoverType";
                 requestUrl = $"api/ShoppingCart/GET/GetShoppingCart/{bookId}/{userId}/0/{includeProperties}";
-                shoppingCart = await httpClient.GetFromJsonAsync<ShoppingCart>(requestUrl);
-
+                InvokeApi<ShoppingCart> invokeApiShoppingCart = new InvokeApi<ShoppingCart>(configuration);
+                ApiVM<ShoppingCart> apiVm = await invokeApiShoppingCart.Invoke(requestUrl, HttpMethod.Get);
+                ShoppingCart shoppingCart = apiVm.TObject;
                 if(shoppingCart == null || (shoppingCart != null && shoppingCart.ShoppingCartId == 0))
                 {
                     shoppingCart = new ShoppingCart();
@@ -80,19 +75,16 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Customer
         {
             if (ModelState.IsValid)
             {
-                HttpClient httpClient = new HttpClient();
-                httpClient.DefaultRequestHeaders.Accept.Clear();
-                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
                 ShoppingCartController shoppingCartController = new ShoppingCartController(configuration);
-
+                InvokeApi<ShoppingCart> invokeApi = new InvokeApi<ShoppingCart>(configuration);
                 if (cart.ShoppingCartId == 0)
                 {
                     string requestUrl = "api/ShoppingCart/POST/InsertShoppingCart";
-                    HttpResponseMessage response = await httpClient.PostAsJsonAsync<ShoppingCart>(requestUrl, cart);
+                    ApiVM<ShoppingCart> apiVm = await invokeApi.Invoke(requestUrl, HttpMethod.Post, cart);
+                    HttpResponseMessage response = apiVm.Response;
                     if (response.IsSuccessStatusCode)
                     {
-                        TempData[Utility.Constants.GenericConstants.NOTIFICATION_MESSAGE_KEY] = "Shopping cart is inserted successfully!";
+                        TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] = "Shopping cart is inserted successfully!";
                         int cartCount = shoppingCartController.GetCartCount((ClaimsIdentity)User.Identity).Result;
                         HttpContext.Session.SetInt32(GenericConstants.CartCountKey, cartCount);
                         return RedirectToAction(nameof(Index));
@@ -105,10 +97,11 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Customer
                 else
                 {
                     string requestUrl = "api/ShoppingCart/PUT/UpdateShoppingCart";
-                    HttpResponseMessage response = await httpClient.PutAsJsonAsync<ShoppingCart>(requestUrl, cart);
+                    ApiVM<ShoppingCart> apiVm = await invokeApi.Invoke(requestUrl, HttpMethod.Put, cart);
+                    HttpResponseMessage response = apiVm.Response;
                     if (response.IsSuccessStatusCode)
                     {
-                        TempData[Utility.Constants.GenericConstants.NOTIFICATION_MESSAGE_KEY] = "Shopping cart is updated successfully";
+                        TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] = "Shopping cart is updated successfully";
                         return RedirectToAction(nameof(Index));
                     }
                     else
