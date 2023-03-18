@@ -145,14 +145,6 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Identity.Pages.Account
 
         public async Task OnGetAsync(string returnUrl = null)
         {
-            if (!_roleManager.RoleExistsAsync(Utility.Constants.GenericConstants.ROLE_ADMIN).GetAwaiter().GetResult())
-            {
-                await _roleManager.CreateAsync(new IdentityRole(Utility.Constants.GenericConstants.ROLE_ADMIN));
-                await _roleManager.CreateAsync(new IdentityRole(Utility.Constants.GenericConstants.ROLE_EMPLOYEE));
-                await _roleManager.CreateAsync(new IdentityRole(Utility.Constants.GenericConstants.ROLE_COMPANY_CUSTOMER));
-                await _roleManager.CreateAsync(new IdentityRole(Utility.Constants.GenericConstants.ROLE_CUSTOMER));
-            }
-
             IEnumerable<IdentityRole> allRoles = _roleManager.Roles.ToList();
             Input = new InputModel();
 

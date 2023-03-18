@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Sainath.E_Commerce.BooksForSale.Utility;
 using Stripe;
+using Sainath.E_Commerce.BooksForSale.Web.DbInitializer;
 
 string connectionStringKey = "BooksForSaleConnectionString";
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -37,6 +38,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IBooksForSaleConfiguration, BooksForSaleConfiguration>();
 builder.Services.AddSingleton<IEmailSender, EmailSender>();
 builder.Services.AddSingleton<HttpContextAccessor>();
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
@@ -61,6 +63,8 @@ app.UseStaticFiles();
 app.UseRouting();
 
 StripeConfiguration.ApiKey = builder.Configuration.GetSection("StripeKeys:StripeSecretKey").Get<string>();
+
+InitializeDatabase();
     
 app.UseAuthentication();
 
@@ -75,3 +79,12 @@ app.MapControllerRoute(
     pattern: "{area=Customer}/{controller=Home}/{action=Index}");
 
 app.Run();
+
+void InitializeDatabase()
+{
+    using (IServiceScope scope = app.Services.CreateScope())
+    {
+        IDbInitializer dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+        dbInitializer.Initialize();
+    }
+}
