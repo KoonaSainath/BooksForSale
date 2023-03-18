@@ -5,6 +5,7 @@ using Sainath.E_Commerce.BooksForSale.Models.ViewModels.Customer;
 using Sainath.E_Commerce.BooksForSale.Utility.Constants;
 using Sainath.E_Commerce.BooksForSale.Utility.Extensions;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
+using Sainath.E_Commerce.BooksForSale.Web.HelperClasses;
 using Stripe;
 using Stripe.Checkout;
 using System.Net.Http.Headers;
@@ -34,19 +35,17 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
         [HttpGet]
         public async Task<IActionResult> GetOrder(int orderHeaderId)
         {
-            HttpClient httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Accept.Clear();
-            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
-
             string includeProperties = "BooksForSaleUser";
             string requestUrl = $"api/ManageOrders/GET/GetOrder/{orderHeaderId}/{includeProperties}";
-            OrderHeader orderHeader = await httpClient.GetFromJsonAsync<OrderHeader>(requestUrl);
-
+            InvokeApi<OrderHeader> invokeApiOrderHeader = new InvokeApi<OrderHeader>(configuration);
+            ApiVM<OrderHeader> apiVmOrderHeader = await invokeApiOrderHeader.Invoke(requestUrl, HttpMethod.Get);
+            OrderHeader orderHeader = apiVmOrderHeader.TObject;
             includeProperties = "Book,Book.Category,Book.CoverType";
             requestUrl = $"api/ManageOrders/GET/GetOrderDetails/{orderHeaderId}/{includeProperties}";
-            IEnumerable<OrderDetails> orderDetails = await httpClient.GetFromJsonAsync<IEnumerable<OrderDetails>>(requestUrl);
 
+            InvokeApi<IEnumerable<OrderDetails>> invokeApiOrderDetails = new InvokeApi<IEnumerable<OrderDetails>>(configuration);
+            ApiVM<IEnumerable<OrderDetails>> apiVmOrderDetails = await invokeApiOrderDetails.Invoke(requestUrl, HttpMethod.Get);
+            IEnumerable<OrderDetails> orderDetails = apiVmOrderDetails.TObject;
             OrderVM = new OrderVM()
             {
                 OrderHeader = orderHeader,
@@ -62,20 +61,17 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
         {
             if (ModelState.IsValid)
             {
-                HttpClient httpClient = new HttpClient();
-                httpClient.DefaultRequestHeaders.Accept.Clear();
-                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
                 string requestUrl = $"api/ManageOrders/GET/GetOrder/{OrderVM.OrderHeader.OrderHeaderId}";
-                OrderHeader orderHeaderFromDb = await httpClient.GetFromJsonAsync<OrderHeader>(requestUrl);
 
+                InvokeApi<OrderHeader> invokeApiOrderHeader = new InvokeApi<OrderHeader>(configuration);
+                ApiVM<OrderHeader> apiVmOrderHeader = await invokeApiOrderHeader.Invoke(requestUrl, HttpMethod.Get);
+                OrderHeader orderHeaderFromDb = apiVmOrderHeader.TObject;
                 orderHeaderFromDb.Name = OrderVM.OrderHeader.Name.NullCheckTrim();
                 orderHeaderFromDb.PhoneNumber = OrderVM.OrderHeader.PhoneNumber.NullCheckTrim();
                 orderHeaderFromDb.StreetAddress = OrderVM.OrderHeader.StreetAddress.NullCheckTrim();
                 orderHeaderFromDb.City = OrderVM.OrderHeader.City.NullCheckTrim();
                 orderHeaderFromDb.State = OrderVM.OrderHeader.State.NullCheckTrim();
                 orderHeaderFromDb.PostalCode = OrderVM.OrderHeader.PostalCode.NullCheckTrim();
-
                 if (OrderVM.OrderHeader.Carrier != null)
                 {
                     orderHeaderFromDb.Carrier = OrderVM.OrderHeader.Carrier.NullCheckTrim();
@@ -84,9 +80,9 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
                 {
                     orderHeaderFromDb.TrackingNumber = OrderVM.OrderHeader.TrackingNumber.NullCheckTrim();
                 }
-
                 requestUrl = $"api/ManageOrders/PUT/UpdateOrder";
-                HttpResponseMessage response = await httpClient.PutAsJsonAsync<OrderHeader>(requestUrl, orderHeaderFromDb);
+                apiVmOrderHeader = await invokeApiOrderHeader.Invoke(requestUrl, HttpMethod.Put, orderHeaderFromDb);
+                HttpResponseMessage response = apiVmOrderHeader.Response;
                 if (response.IsSuccessStatusCode)
                 {
                     TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] = "Order details are updated successfully!";
@@ -110,12 +106,10 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
         [Authorize(Roles = $"{GenericConstants.ROLE_ADMIN},{GenericConstants.ROLE_EMPLOYEE}")]
         public async Task<IActionResult> StartProcessingOrder()
         {
-            HttpClient httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Accept.Clear();
-            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
             string requestUrl = $"api/ManageOrders/PUT/StartProcessingOrder";
-            HttpResponseMessage response = await httpClient.PutAsJsonAsync<OrderHeader>(requestUrl, OrderVM.OrderHeader);
+            InvokeApi<OrderHeader> invokeApiOrderHeader = new InvokeApi<OrderHeader>(configuration);
+            ApiVM<OrderHeader> apiVmOrderHeader = await invokeApiOrderHeader.Invoke(requestUrl, HttpMethod.Put, OrderVM.OrderHeader);
+            HttpResponseMessage response = apiVmOrderHeader.Response;
             string responseMessage = response.Content.ReadAsStringAsync().Result.NullCheckTrim();
             responseMessage = responseMessage.TrimStart('"').TrimEnd('"');
             TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] = responseMessage;
@@ -127,10 +121,6 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
         [Authorize(Roles = $"{GenericConstants.ROLE_ADMIN},{GenericConstants.ROLE_EMPLOYEE}")]
         public async Task<IActionResult> ShipOrder()
         {
-            HttpClient httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Accept.Clear();
-            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
             OrderVM.OrderHeader.OrderStatus = OrderStatus.STATUS_SHIPPED;
             OrderVM.OrderHeader.ShippingDate = DateTime.Now;
             if (OrderVM.OrderHeader.BooksForSaleUser.CompanyId.GetValueOrDefault() != 0)
@@ -138,25 +128,25 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
                 OrderVM.OrderHeader.PaymentDueDate = DateTime.Now.AddDays(30);
             }
             string requestUrl = $"api/ManageOrders/PUT/ShipOrder";
-            HttpResponseMessage response = await httpClient.PutAsJsonAsync<OrderHeader>(requestUrl, OrderVM.OrderHeader);
+            InvokeApi<OrderHeader> invokeApiOrderHeader = new InvokeApi<OrderHeader>(configuration);
+            ApiVM<OrderHeader> apiVmOrderHeader = await invokeApiOrderHeader.Invoke(requestUrl, HttpMethod.Put, OrderVM.OrderHeader);
+            HttpResponseMessage response = apiVmOrderHeader.Response;
             string responseMessage = response.Content.ReadAsStringAsync().Result.NullCheckTrim();
+            responseMessage = responseMessage.TrimStart('"').TrimEnd('"');
             TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] = responseMessage;
             return RedirectToAction(nameof(GetOrder), new { orderHeaderId = OrderVM.OrderHeader.OrderHeaderId });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = $"{GenericConstants.ROLE_ADMIN},{GenericConstants.ROLE_EMPLOYEE}")]
+        [Authorize(Roles = $"{GenericConstants.ROLE_ADMIN},{GenericConstants.ROLE_EMPLOYEE},{GenericConstants.ROLE_COMPANY_CUSTOMER}")]
         public async Task<IActionResult> MakePayment()
         {
-            HttpClient httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Accept.Clear();
-            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
             string includeProperties = "Book,Book.Category,Book.CoverType";
             string requestUrl = $"api/ManageOrders/GET/GetOrderDetails/{OrderVM.OrderHeader.OrderHeaderId}/{includeProperties}";
-            OrderVM.ListOfOrderDetails = await httpClient.GetFromJsonAsync<IEnumerable<OrderDetails>>(requestUrl);
-
+            InvokeApi<IEnumerable<OrderDetails>> invokeApiOrderDetails = new InvokeApi<IEnumerable<OrderDetails>>(configuration);
+            ApiVM<IEnumerable<OrderDetails>> apiVmOrderDetails = await invokeApiOrderDetails.Invoke(requestUrl, HttpMethod.Get);
+            OrderVM.ListOfOrderDetails = apiVmOrderDetails.TObject;
             var options = new SessionCreateOptions
             {
                 LineItems = new List<SessionLineItemOptions>(),
@@ -164,7 +154,6 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
                 SuccessUrl = configuration.BaseAddressForWebApplication + $"Customer/ManageOrders/PaymentConfirmation?orderHeaderId={OrderVM.OrderHeader.OrderHeaderId}",
                 CancelUrl = configuration.BaseAddressForWebApplication + $"Customer/ManageOrders/GetOrder?orderHeaderId={OrderVM.OrderHeader.OrderHeaderId}",
             };
-
             foreach (OrderDetails orderDetails in OrderVM.ListOfOrderDetails)
             {
                 options.LineItems.Add(new SessionLineItemOptions()
@@ -181,40 +170,37 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
                     },
                 });
             }
-
             SessionService service = new SessionService();
             Session session = service.Create(options);
-
             session.PaymentIntentId = "Will be updated on order confirmation";
             requestUrl = $"api/ShoppingCart/PUT/UpdateStripeStatus/{OrderVM.OrderHeader.OrderHeaderId}/{session.Id}/{session.PaymentIntentId}";
-            HttpResponseMessage response = await httpClient.PutAsJsonAsync<OrderHeader>(requestUrl, OrderVM.OrderHeader);
-
+            InvokeApi<OrderHeader> invokeApiOrderHeader = new InvokeApi<OrderHeader>(configuration);
+            ApiVM<OrderHeader> apiVmOrderHeader = await invokeApiOrderHeader.Invoke(requestUrl, HttpMethod.Put, OrderVM.OrderHeader);
+            HttpResponseMessage response = apiVmOrderHeader.Response;
             Response.Headers.Add("Location", session.Url);
             return new StatusCodeResult(303);
         }
 
         [HttpGet]
-        [Authorize(Roles = $"{GenericConstants.ROLE_ADMIN},{GenericConstants.ROLE_EMPLOYEE}")]
+        [Authorize(Roles = $"{GenericConstants.ROLE_ADMIN},{GenericConstants.ROLE_EMPLOYEE},{GenericConstants.ROLE_COMPANY_CUSTOMER}")]
         public async Task<IActionResult> PaymentConfirmation(int orderHeaderId)
         {
-            HttpClient httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Accept.Clear();
-            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
             string requestUrl = $"api/ManageOrders/GET/GetOrder/{orderHeaderId}";
-            OrderHeader orderHeader = await httpClient.GetFromJsonAsync<OrderHeader>(requestUrl);
+            InvokeApi<OrderHeader> invokeApiOrderHeader = new InvokeApi<OrderHeader>(configuration);
+            ApiVM<OrderHeader> apiVmOrderHeader = await invokeApiOrderHeader.Invoke(requestUrl, HttpMethod.Get);
+            OrderHeader orderHeader = apiVmOrderHeader.TObject;
             if (orderHeader != null)
             {
                 SessionService sessionService = new SessionService();
                 Session session = sessionService.Get(orderHeader.StripeSessionId);
-
                 if (session.PaymentStatus.NullCheckTrim().ToLower() == OrderStatus.PAYMENT_STATUS_PAID.ToLower())
                 {
                     requestUrl = $"api/ShoppingCart/PUT/UpdateStripeStatus/{orderHeaderId}/{orderHeader.StripeSessionId}/{session.PaymentIntentId}";
-                    await httpClient.PutAsJsonAsync<OrderHeader>(requestUrl, orderHeader);
-
+                    invokeApiOrderHeader = new InvokeApi<OrderHeader>(configuration);
+                    await invokeApiOrderHeader.Invoke(requestUrl, HttpMethod.Put, orderHeader);
                     requestUrl = $"api/ShoppingCart/PUT/UpdateOrderHeaderStatus/{orderHeaderId}/{orderHeader.OrderStatus}/{OrderStatus.PAYMENT_STATUS_APPROVED}";
-                    await httpClient.PutAsJsonAsync<OrderHeader>(requestUrl, orderHeader);
+                    invokeApiOrderHeader = new InvokeApi<OrderHeader>(configuration);
+                    await invokeApiOrderHeader.Invoke(requestUrl, HttpMethod.Put, orderHeader);
                 }
             }
             return View(orderHeaderId);
@@ -225,15 +211,9 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
         [Authorize(Roles = $"{GenericConstants.ROLE_ADMIN},{GenericConstants.ROLE_EMPLOYEE}")]
         public async Task<IActionResult> CancelOrder()
         {
-            HttpClient httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Accept.Clear();
-            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
-
             string requestUrl = string.Empty;
             HttpResponseMessage response = new HttpResponseMessage();
             bool isRefundProcessed = false;
-
             if (OrderVM.OrderHeader.PaymentStatus.NullCheckTrim().ToLower() == OrderStatus.PAYMENT_STATUS_APPROVED.ToLower())
             {
                 var options = new RefundCreateOptions()
@@ -243,16 +223,16 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
                 };
                 RefundService refundService = new RefundService();
                 Refund refund = refundService.Create(options);
-
                 isRefundProcessed = true;
                 requestUrl = $"api/ManageOrders/PUT/CancelOrder/{isRefundProcessed}";
-
             }
             else
             {
                 requestUrl = $"api/ManageOrders/PUT/CancelOrder/{isRefundProcessed}";
             }
-            response = await httpClient.PutAsJsonAsync<OrderHeader>(requestUrl, OrderVM.OrderHeader);
+            InvokeApi<OrderHeader> invokeApiOrderHeader = new InvokeApi<OrderHeader>(configuration);
+            ApiVM<OrderHeader> apiVmOrderHeader = await invokeApiOrderHeader.Invoke(requestUrl, HttpMethod.Put, OrderVM.OrderHeader);
+            response = apiVmOrderHeader.Response;
             if (response.IsSuccessStatusCode)
             {
                 TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] = response.Content.ReadAsStringAsync().Result.NullCheckTrim().TrimStart('"').TrimEnd('"');
@@ -269,15 +249,9 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllOrders(string status)
         {
-            HttpClient httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Accept.Clear();
-            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
-
             ClaimsIdentity claimsIdentity = (ClaimsIdentity)User.Identity;
             Claim claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
             string userId = claim.Value;
-
             bool isUserAdminOrEmployee = false;
             if (User.IsInRole(GenericConstants.ROLE_ADMIN) || User.IsInRole(GenericConstants.ROLE_EMPLOYEE))
             {
@@ -285,11 +259,11 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
             }
             string includeProperties = "BooksForSaleUser";
             string requestUrl = $"api/ManageOrders/GET/GetAllOrders/{userId}/{isUserAdminOrEmployee}/{status}/{includeProperties}";
-            IEnumerable<OrderHeader> orders = await httpClient.GetFromJsonAsync<IEnumerable<OrderHeader>>(requestUrl);
-
+            InvokeApi<IEnumerable<OrderHeader>> invokeApi = new InvokeApi<IEnumerable<OrderHeader>>(configuration);
+            ApiVM<IEnumerable<OrderHeader>> apiVm = await invokeApi.Invoke(requestUrl, HttpMethod.Get);
+            IEnumerable<OrderHeader> orders = apiVm.TObject;
             return Json(new { data = orders });
         }
-
         #endregion
     }
 }
