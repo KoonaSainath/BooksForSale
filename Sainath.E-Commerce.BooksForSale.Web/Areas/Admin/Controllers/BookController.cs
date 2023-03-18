@@ -5,7 +5,7 @@ using Sainath.E_Commerce.BooksForSale.Models.Models.Admin;
 using Sainath.E_Commerce.BooksForSale.Models.ViewModels.Admin;
 using Sainath.E_Commerce.BooksForSale.Utility.Constants;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
-using System.Net.Http.Headers;
+using Sainath.E_Commerce.BooksForSale.Web.HelperClasses;
 
 namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
 {
@@ -30,39 +30,33 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         {
             BookVM bookVm = new BookVM();
             bookVm.Book = new Book();
-
-            // fill bookVm.Categories with list of all categories 
-
-            HttpClient httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Accept.Clear();
-            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            httpClient.BaseAddress = new Uri(booksForSaleConfiguration.BaseAddressForWebApi);
             string requestUrl = $"api/Category/GET/GetAllCategories";
-            IEnumerable<Category> categories = await httpClient.GetFromJsonAsync<IEnumerable<Category>>(requestUrl);
+            InvokeApi<IEnumerable<Category>> invokeApiCategory = new InvokeApi<IEnumerable<Category>>(booksForSaleConfiguration);
+            ApiVM<IEnumerable<Category>> apiVmCategory = await invokeApiCategory.Invoke(requestUrl, HttpMethod.Get);
+            IEnumerable<Category> categories = apiVmCategory.TObject;
             IEnumerable<SelectListItem> categoriesSelectList = from c in categories
                                                                select new SelectListItem
                                                                {
                                                                    Text = c.CategoryName,
                                                                    Value = c.CategoryId.ToString()
                                                                };
-
-            // fill bookVm.CoverTypes with list of all covertypes
             requestUrl = $"api/CoverType/GET/GetAllCoverTypes";
-            IEnumerable<CoverType> coverTypes = await httpClient.GetFromJsonAsync<IEnumerable<CoverType>>(requestUrl);
+            InvokeApi<IEnumerable<CoverType>> invokeApiCoverType = new InvokeApi<IEnumerable<CoverType>>(booksForSaleConfiguration);
+            ApiVM<IEnumerable<CoverType>> apiVmCoverType = await invokeApiCoverType.Invoke(requestUrl, HttpMethod.Get);
+            IEnumerable<CoverType> coverTypes = apiVmCoverType.TObject;
             IEnumerable<SelectListItem> coverTypesSelectList = coverTypes.Select(c => new SelectListItem()
             {
                 Text = c.CoverTypeName,
                 Value = c.CoverTypeId.ToString()
             }) ;
-
             bookVm.Categories = categoriesSelectList;
             bookVm.CoverTypes = coverTypesSelectList;
-
-            //In case of update, bookId will be an existing book's id
             if (bookId != 0)
             {
                 requestUrl = $"api/Book/GET/GetBook/{bookId}";
-                Book book = await httpClient.GetFromJsonAsync<Book>(requestUrl);
+                InvokeApi<Book> invokeApiBook = new InvokeApi<Book>(booksForSaleConfiguration);
+                ApiVM<Book> apiVmBook = await invokeApiBook.Invoke(requestUrl, HttpMethod.Get);
+                Book book = apiVmBook.TObject;
                 bookVm.Book = book;
             }
             return View(bookVm);
@@ -75,7 +69,6 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 Book book = bookVm.Book;
-
                 if(imageFile != null)
                 {
                     string fileName = imageFile.FileName;
@@ -89,7 +82,6 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
                     {
                         imageFile.CopyTo(fileStream);
                     }
-                    //already an image exists. so its an update
                     if(book.ImageUrl != null)
                     {
                         string pathToDelete = Path.Combine(wwwRootPath, book.ImageUrl.TrimStart('\\'));
@@ -98,20 +90,17 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
                             System.IO.File.Delete(pathToDelete);
                         }
                     }
-
                     book.ImageUrl = $"\\images\\ImagesOfBooks\\{uniqueFileName}";
-                    
                 }
-                HttpClient httpClient = new HttpClient();
-                httpClient.DefaultRequestHeaders.Accept.Clear();
-                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                httpClient.BaseAddress = new Uri(booksForSaleConfiguration.BaseAddressForWebApi);
                 string requestUrl = "";
+                InvokeApi<Book> invokeApi = new InvokeApi<Book>(booksForSaleConfiguration);
+               
                 if (book.BookId != 0)
                 {
                     book.UpdatedDateTime = DateTime.Now;
                     requestUrl = "api/Book/PUT/UpdateBook";
-                    HttpResponseMessage response = await httpClient.PutAsJsonAsync<Book>(requestUrl, book);
+                    ApiVM<Book> apiVm = await invokeApi.Invoke(requestUrl, HttpMethod.Put, book);
+                    HttpResponseMessage response = apiVm.Response;
                     if (response.IsSuccessStatusCode)
                     {
                         TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] = "Book updated successfully";
@@ -121,8 +110,8 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
                 else
                 {
                     requestUrl = "api/Book/POST/InsertBook";
-                    HttpResponseMessage response = await httpClient.PostAsJsonAsync<Book>(requestUrl, book);
-                    
+                    ApiVM<Book> apiVm = await invokeApi.Invoke(requestUrl, HttpMethod.Post, book);
+                    HttpResponseMessage response = apiVm.Response;
                     if (response.IsSuccessStatusCode)
                     {
                         TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] = "Book created successfully";
@@ -137,32 +126,26 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllBooksApiEndPoint()
         {
-            HttpClient httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Accept.Clear();
-            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            httpClient.BaseAddress = new Uri(booksForSaleConfiguration.BaseAddressForWebApi);
             string includeProperties = "Category,CoverType";
             string requestUrl = $"api/Book/GET/GetAllBooks/{includeProperties}";
-            List<Book> books = await httpClient.GetFromJsonAsync<List<Book>>(requestUrl);
+            InvokeApi<List<Book>> invokeApi = new InvokeApi<List<Book>>(booksForSaleConfiguration);
+            ApiVM<List<Book>> apiVm = await invokeApi.Invoke(requestUrl, HttpMethod.Get);
+            List<Book> books = apiVm.TObject;
             return Json(new { data = books });
         }
 
-        
         [HttpDelete]
         public async Task<IActionResult> RemoveBookApiEndPoint(int bookId)
         {
-            HttpClient httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Accept.Clear();
-            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            httpClient.BaseAddress = new Uri(booksForSaleConfiguration.BaseAddressForWebApi);
-
             string requestUrl = $"api/Book/GET/GetBook/{bookId}";
-            Book book = await httpClient.GetFromJsonAsync<Book>(requestUrl);
-
+            InvokeApi<Book> invokeApi = new InvokeApi<Book>(booksForSaleConfiguration);
+            ApiVM<Book> apiVmGet = await invokeApi.Invoke(requestUrl, HttpMethod.Get);
+            Book book = apiVmGet.TObject;
             if(book != null)
             {
                 requestUrl = "api/Book/DELETE/RemoveBook";
-                HttpResponseMessage response = await httpClient.PostAsJsonAsync<Book>(requestUrl, book);
+                ApiVM<Book> apiVmDelete = await invokeApi.Invoke(requestUrl, HttpMethod.Delete, book);
+                HttpResponseMessage response = apiVmDelete.Response;
                 if (response.IsSuccessStatusCode)
                 {
                     string bookImagePathToDelete = Path.Combine(webHostEnvironment.WebRootPath, book.ImageUrl.TrimStart('\\'));
@@ -179,7 +162,6 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
             }
             return Json(new { success = false, message = "Error occured while removing the book!" });
         }
-
         #endregion
     }
 }
