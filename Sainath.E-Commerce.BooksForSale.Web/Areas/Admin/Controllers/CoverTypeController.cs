@@ -4,8 +4,6 @@ using Sainath.E_Commerce.BooksForSale.Models.Models.Admin;
 using Sainath.E_Commerce.BooksForSale.Utility.Constants;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
 using Sainath.E_Commerce.BooksForSale.Web.HelperClasses;
-using System.Collections.Generic;
-using System.Net.Http.Headers;
 
 namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
 {
