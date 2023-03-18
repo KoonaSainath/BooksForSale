@@ -281,6 +281,13 @@
                             }
                         </div>
                     }
+                    @if(User.IsInRole(GenericConstants.ROLE_COMPANY_CUSTOMER))
+                    {
+                        @if (Model.OrderHeader.PaymentStatus.NullCheckTrim() == OrderStatus.PAYMENT_STATUS_DELAYED_PAYMENT && Model.OrderHeader.OrderStatus.NullCheckTrim() == OrderStatus.STATUS_SHIPPED)
+                        {
+                            <button class="btn w-100 mt-1" style="background-color: green; color: white;" type="submit" asp-area="Customer" asp-asp-controller="ManageOrders" asp-action="MakePayment">Pay now</button>
+                        }
+                    }
                 </div>
             </div>
         </div>

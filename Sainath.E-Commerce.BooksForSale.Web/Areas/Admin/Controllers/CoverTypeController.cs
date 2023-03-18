@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Sainath.E_Commerce.BooksForSale.Models.Models.Admin;
 using Sainath.E_Commerce.BooksForSale.Utility.Constants;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
-using System.Net.Http.Headers;
+using Sainath.E_Commerce.BooksForSale.Web.HelperClasses;
 
 namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
 {
@@ -20,12 +19,10 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            HttpClient httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Accept.Clear();
-            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
             string requestUrl = "api/CoverType/GET/GetAllCoverTypes";
-            IEnumerable<CoverType> coverTypes = await httpClient.GetFromJsonAsync<IEnumerable<CoverType>>(requestUrl);
+            InvokeApi<IEnumerable<CoverType>> invokeApi = new InvokeApi<IEnumerable<CoverType>>(configuration);
+            ApiVM<IEnumerable<CoverType>> apiVm = await invokeApi.Invoke(requestUrl, HttpMethod.Get);
+            IEnumerable<CoverType> coverTypes = apiVm.TObject;
             return View(coverTypes);
         }
         [HttpGet]
@@ -39,15 +36,11 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                HttpClient httpClient = new HttpClient();
-                httpClient.DefaultRequestHeaders.Accept.Clear();
-                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
                 string requestUrl = "api/CoverType/POST/InsertCoverType";
-                HttpResponseMessage response = await httpClient.PostAsJsonAsync<CoverType>(requestUrl, coverType);
-                Task<CoverType> insertedCoverTypeTask = response.Content.ReadFromJsonAsync<CoverType>();
-                CoverType insertedCoverType = insertedCoverTypeTask.Result;
-                if(insertedCoverType != null && response.IsSuccessStatusCode)
+                InvokeApi<CoverType> invokeApi = new InvokeApi<CoverType>(configuration);
+                ApiVM<CoverType> apiVm = await invokeApi.Invoke(requestUrl, HttpMethod.Post, coverType);
+                HttpResponseMessage response = apiVm.Response;
+                if(response.IsSuccessStatusCode)
                 {
                     ShowNotification("Cover type is created successfully!");
                     return RedirectToAction("Index", "CoverType");
@@ -60,12 +53,10 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         {
             if(coverTypeId != 0 && coverTypeId != null)
             {
-                HttpClient httpClient = new HttpClient();
-                httpClient.DefaultRequestHeaders.Accept.Clear();
-                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
                 string requestUrl = $"api/CoverType/GET/GetCoverType/{coverTypeId}";
-                CoverType coverType = await httpClient.GetFromJsonAsync<CoverType>(requestUrl);
+                InvokeApi<CoverType> invokeApi = new InvokeApi<CoverType>(configuration);
+                ApiVM<CoverType> apiVm = await invokeApi.Invoke(requestUrl, HttpMethod.Get);
+                CoverType coverType = apiVm.TObject;
                 return View(coverType);
             }
             return NotFound();
@@ -76,15 +67,12 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                HttpClient httpClient = new HttpClient();
-                httpClient.DefaultRequestHeaders.Accept.Clear();
-                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
                 string requestUrl = "api/CoverType/PUT/UpdateCoverType";
                 coverType.UpdatedDateTime = DateTime.Now;
-                HttpResponseMessage response = await httpClient.PutAsJsonAsync<CoverType>(requestUrl, coverType);
-                CoverType updatedCoverType = response.Content.ReadFromJsonAsync<CoverType>().Result;
-                if(response.IsSuccessStatusCode && updatedCoverType != null)
+                InvokeApi<CoverType> invokeApi = new InvokeApi<CoverType>(configuration);
+                ApiVM<CoverType> apiVm = await invokeApi.Invoke(requestUrl, HttpMethod.Put, coverType);
+                HttpResponseMessage response = apiVm.Response;
+                if(response.IsSuccessStatusCode)
                 {
                     ShowNotification("Cover type is updated successfully!");
                     return RedirectToAction("Index", "CoverType");
@@ -97,12 +85,10 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         {
             if(coverTypeId != 0 && coverTypeId != null)
             {
-                HttpClient httpClient = new HttpClient();
-                httpClient.DefaultRequestHeaders.Accept.Clear();
-                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
                 string requestUrl = $"api/CoverType/GET/GetCoverType/{coverTypeId}";
-                CoverType coverType = await httpClient.GetFromJsonAsync<CoverType>(requestUrl);
+                InvokeApi<CoverType> invokeApi = new InvokeApi<CoverType>(configuration);
+                ApiVM<CoverType> apiVm = await invokeApi.Invoke(requestUrl, HttpMethod.Get);
+                CoverType coverType = apiVm.TObject;
                 return View(coverType);
             }
             return NotFound();
@@ -113,12 +99,10 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                HttpClient httpClient = new HttpClient();
-                httpClient.DefaultRequestHeaders.Accept.Clear();
-                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
                 string requestUrl = "api/CoverType/DELETE/RemoveCoverType";
-                HttpResponseMessage response = await httpClient.PostAsJsonAsync<CoverType>(requestUrl, coverType);
+                InvokeApi<CoverType> invokeApi = new InvokeApi<CoverType>(configuration);
+                ApiVM<CoverType> apiVm = await invokeApi.Invoke(requestUrl, HttpMethod.Delete, coverType);
+                HttpResponseMessage response = apiVm.Response;
                 if (response.IsSuccessStatusCode)
                 {
                     ShowNotification("Cover type is deleted successfully!");
@@ -136,27 +120,23 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<ActionResult> GetAllCoverTypesApiEndPoint()
         {
-            HttpClient httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Accept.Clear();
-            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
             string requestUrl = "api/CoverType/GET/GetAllCoverTypes";
-            IEnumerable<CoverType> coverTypes = await httpClient.GetFromJsonAsync<IEnumerable<CoverType>>(requestUrl);
+            InvokeApi<IEnumerable<CoverType>> invokeApi = new InvokeApi<IEnumerable<CoverType>>(configuration);
+            ApiVM<IEnumerable<CoverType>> apiVm = await invokeApi.Invoke(requestUrl, HttpMethod.Get);
+            IEnumerable<CoverType> coverTypes = apiVm.TObject;
             return Json(new { data = coverTypes });
         }
         [HttpDelete]
-        //[ValidateAntiForgeryToken]
         public async Task<ActionResult> RemoveCoverTypeApiEndPoint(int coverTypeId)
         {
-            HttpClient httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Accept.Clear();
-            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
             string requestUrl = $"api/CoverType/GET/GetCoverType/{coverTypeId}";
-            CoverType coverType = await httpClient.GetFromJsonAsync<CoverType>(requestUrl);
-
+            InvokeApi<CoverType> invokeApiGet = new InvokeApi<CoverType>(configuration);
+            ApiVM<CoverType> apiVmGet = await invokeApiGet.Invoke(requestUrl, HttpMethod.Get);
+            CoverType coverType = apiVmGet.TObject;
             requestUrl = "api/CoverType/DELETE/RemoveCoverType";
-            HttpResponseMessage response = await httpClient.PostAsJsonAsync<CoverType>(requestUrl, coverType);
+            InvokeApi<CoverType> invokeApiDelete = new InvokeApi<CoverType>(configuration);
+            ApiVM<CoverType> apiVmDelete = await invokeApiGet.Invoke(requestUrl, HttpMethod.Delete, coverType);
+            HttpResponseMessage response = apiVmDelete.Response;
             if (response.IsSuccessStatusCode)
             {
                 return Json(new { success = true, message = "Cover type removed successfully!" });

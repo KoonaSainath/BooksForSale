@@ -2,6 +2,7 @@
 using Sainath.E_Commerce.BooksForSale.Models.Models.Customer;
 using Sainath.E_Commerce.BooksForSale.Utility.Constants;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
+using Sainath.E_Commerce.BooksForSale.Web.HelperClasses;
 using System.ComponentModel;
 using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
@@ -23,13 +24,11 @@ namespace Sainath.E_Commerce.BooksForSale.Web.ViewComponents
 
             if (claim != null)
             {
-                HttpClient httpClient = new HttpClient();
-                httpClient.DefaultRequestHeaders.Accept.Clear();
-                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
                 string userId = claim.Value;
                 string requestUrl = $"api/ShoppingCart/GET/GetAllShoppingCarts/{userId}";
-                IEnumerable<ShoppingCart> shoppingCarts = await httpClient.GetFromJsonAsync<IEnumerable<ShoppingCart>>(requestUrl);
+                InvokeApi<IEnumerable<ShoppingCart>> invokeApi = new InvokeApi<IEnumerable<ShoppingCart>>(configuration);
+                ApiVM<IEnumerable<ShoppingCart>> apiVm = await invokeApi.Invoke(requestUrl, HttpMethod.Get);
+                IEnumerable<ShoppingCart> shoppingCarts = apiVm.TObject;
                 if(HttpContext.Session.GetInt32(GenericConstants.CartCountKey).GetValueOrDefault() == 0)
                 {
                     HttpContext.Session.SetInt32(GenericConstants.CartCountKey, shoppingCarts.Count());

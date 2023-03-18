@@ -1,12 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Localization;
 using Sainath.E_Commerce.BooksForSale.Models.Models.Admin;
 using Sainath.E_Commerce.BooksForSale.Utility.Constants;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
-using System.Linq.Expressions;
-using System.Net.Http.Headers;
-using System.Runtime.CompilerServices;
+using Sainath.E_Commerce.BooksForSale.Web.HelperClasses;
 
 namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
 {
@@ -22,14 +19,9 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             string requestUrl = "api/Category/GET/GetAllCategories";
-            string baseAddress = configuration.BaseAddressForWebApi;
-            HttpClient httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Accept.Clear();
-            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            httpClient.BaseAddress = new Uri(baseAddress);
-            HttpResponseMessage response = await httpClient.GetAsync(requestUrl);
-            Task<IEnumerable<Category>> categoriesTask = response.Content.ReadFromJsonAsync<IEnumerable<Category>>();
-            IEnumerable<Category> categories = categoriesTask.Result;
+            InvokeApi<IEnumerable<Category>> invokeApi = new InvokeApi<IEnumerable<Category>>(configuration);
+            ApiVM<IEnumerable<Category>> apiVm = await invokeApi.Invoke(requestUrl, HttpMethod.Get);
+            IEnumerable<Category> categories = apiVm.TObject;
             return View(categories);
         }
         [HttpGet]
@@ -44,11 +36,9 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 string requestUrl = "api/Category/POST/InsertCategory";
-                HttpClient httpClient = new HttpClient();
-                httpClient.DefaultRequestHeaders.Accept.Clear();
-                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
-                HttpResponseMessage response = await httpClient.PostAsJsonAsync<Category>(requestUrl, category);
+                InvokeApi<Category> invokeApi = new InvokeApi<Category>(configuration);
+                ApiVM<Category> apiVm = await invokeApi.Invoke(requestUrl, HttpMethod.Post, category);
+                HttpResponseMessage response = apiVm.Response;
                 if (response.IsSuccessStatusCode)
                 {
                     ShowNotification("Category is created successfully!");
@@ -62,21 +52,11 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         {
             if (categoryId != 0 && categoryId != null)
             {
-                HttpClient httpClient = new HttpClient();
-                httpClient.DefaultRequestHeaders.Accept.Clear();
-                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
                 string requestUrl = $"api/Category/GET/GetCategoryById/{categoryId}";
-                HttpResponseMessage response = await httpClient.GetAsync(requestUrl);
-                if (response.IsSuccessStatusCode)
-                {
-                    Task<Category> categoryTask = response.Content.ReadFromJsonAsync<Category>();
-                    Category category = categoryTask.Result;
-                    if (category != null)
-                    {
-                        return View(category);
-                    }
-                }
+                InvokeApi<Category> invokeApi = new InvokeApi<Category>(configuration);
+                ApiVM<Category> apiVm = await invokeApi.Invoke(requestUrl, HttpMethod.Get);
+                Category category = apiVm.TObject;
+                return View(category);
             }
             return NotFound();
         }
@@ -86,13 +66,11 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                HttpClient httpClient = new HttpClient();
-                httpClient.DefaultRequestHeaders.Accept.Clear();
-                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
                 string requestUrl = "api/Category/PUT/UpdateCategory";
                 category.UpdatedDateTime = DateTime.Now;
-                HttpResponseMessage response = await httpClient.PutAsJsonAsync<Category>(requestUrl, category);
+                InvokeApi<Category> invokeApi = new InvokeApi<Category>(configuration);
+                ApiVM<Category> apiVm = await invokeApi.Invoke(requestUrl, HttpMethod.Put, category);
+                HttpResponseMessage response = apiVm.Response;
                 if (response.IsSuccessStatusCode)
                 {
                     ShowNotification("Category is updated successfully!");
@@ -111,28 +89,26 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllCategoriesApiEndPoint()
         {
-            HttpClient httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Accept.Clear();
-            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
             string requestUrl = "api/Category/GET/GetAllCategories";
-            IEnumerable<Category> categories = await httpClient.GetFromJsonAsync<IEnumerable<Category>>(requestUrl);
+            InvokeApi<IEnumerable<Category>> invokeApi = new InvokeApi<IEnumerable<Category>>(configuration);
+            ApiVM<IEnumerable<Category>> apiVm = await invokeApi.Invoke(requestUrl, HttpMethod.Get);
+            IEnumerable<Category> categories = apiVm.TObject;
             return Json(new { data = categories });
         }
 
         [HttpDelete]
         public async Task<IActionResult> RemoveCategoryApiEndPoint(int categoryId)
         {
-            HttpClient httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Accept.Clear();
-            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
             string requestUrl = $"api/Category/GET/GetCategoryById/{categoryId}";
-            Category category = await httpClient.GetFromJsonAsync<Category>(requestUrl);
+            InvokeApi<Category> invokeApi = new InvokeApi<Category>(configuration);
+            ApiVM<Category> apiVm = await invokeApi.Invoke(requestUrl, HttpMethod.Get);
+            Category category = apiVm.TObject;
             if (category != null)
             {
                 requestUrl = "api/Category/DELETE/RemoveCategory";
-                HttpResponseMessage response = await httpClient.PostAsJsonAsync<Category>(requestUrl, category);
+                InvokeApi<Category> invokeApiDelete = new InvokeApi<Category>(configuration);
+                ApiVM<Category> apiVmDelete = await invokeApiDelete.Invoke(requestUrl, HttpMethod.Delete, category);
+                HttpResponseMessage response = apiVmDelete.Response;
                 if (response.IsSuccessStatusCode)
                 {
                     return Json(new { success = true, message = "Category removed successfully!" });
