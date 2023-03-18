@@ -1,4 +1,5 @@
 ﻿@page
+@using Sainath.E_Commerce.BooksForSale.Utility.Constants;
 @model RegisterModel
 @{
     ViewData["Title"] = "Register";
@@ -46,20 +47,23 @@
                 <input asp-for="Input.ConfirmPassword" class="form-control" />
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
-            <div class="mt-4 col-6">
-                <label asp-for="Input.RoleName" class="form-label"></label>
-                <select asp-for="Input.RoleName" asp-items="@Model.Input.AllRoles" class="form-control" id="roleDropDown">
-                    <option selected disabled>--Select--</option>
-                </select>
-                <span asp-validation-for="Input.RoleName" class="text-danger"></span>
-            </div>
-            <div class="mt-4 col-6" id="companyDiv">
-                <label asp-for="Input.CompanyId" class="form-label"></label>
-                <select asp-for="Input.CompanyId" asp-items="@Model.Input.Companies" class="form-control" id="companyDropDown">
-                    <option selected disabled>--Select--</option>
-                </select>
-                <span asp-validation-for="Input.CompanyId" class="text-danger"></span>
-            </div>
+            @if (User.IsInRole(GenericConstants.ROLE_ADMIN))
+            {
+                <div class="mt-4 col-6">
+                    <label asp-for="Input.RoleName" class="form-label"></label>
+                    <select asp-for="Input.RoleName" asp-items="@Model.Input.AllRoles" class="form-control" id="roleDropDown">
+                        <option selected disabled>--Select--</option>
+                    </select>
+                    <span asp-validation-for="Input.RoleName" class="text-danger"></span>
+                </div>
+                <div class="mt-4 col-6" id="companyDiv">
+                    <label asp-for="Input.CompanyId" class="form-label"></label>
+                    <select asp-for="Input.CompanyId" asp-items="@Model.Input.Companies" class="form-control" id="companyDropDown">
+                        <option selected disabled>--Select--</option>
+                    </select>
+                    <span asp-validation-for="Input.CompanyId" class="text-danger"></span>
+                </div>
+            }
             <div class="mt-4 col-12">
                 <button id="registerSubmit" type="submit" class="btn btn-info">Register</button>
             </div>

@@ -83,9 +83,9 @@ namespace Sainath.E_Commerce.BooksForSale.BusinessDomain.BusinessDomainClasses.C
             shoppingCartData.UpdateStripeStatus(orderHeaderId, stripeSessionId, stripePaymentIntentId);
         }
 
-        public OrderHeader GetOrderHeader(int orderHeaderId)
+        public OrderHeader GetOrderHeader(int orderHeaderId, string includeProperties)
         {
-            return shoppingCartData.GetOrderHeader(orderHeaderId);
+            return shoppingCartData.GetOrderHeader(orderHeaderId, includeProperties);
         }
     }
 }

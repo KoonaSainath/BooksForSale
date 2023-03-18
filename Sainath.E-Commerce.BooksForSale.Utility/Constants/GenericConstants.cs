@@ -8,5 +8,6 @@
         public const string ROLE_COMPANY_CUSTOMER = "Company customer";
         public const string ROLE_CUSTOMER = "Customer";
         public const string ALL = "All";
+        public const string CartCountKey = "CartCount";
     }
 }

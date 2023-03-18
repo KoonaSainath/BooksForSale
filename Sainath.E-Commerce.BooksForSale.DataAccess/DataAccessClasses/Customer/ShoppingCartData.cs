@@ -109,9 +109,9 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Customer
             unitOfWork.Save();
         }
 
-        public OrderHeader GetOrderHeader(int orderHeaderId)
+        public OrderHeader GetOrderHeader(int orderHeaderId, string includeProperties)
         {
-            OrderHeader orderHeader = unitOfWork.OrderHeaderRepository.GetRecordByExpression((orderHeader => orderHeader.OrderHeaderId == orderHeaderId));
+            OrderHeader orderHeader = unitOfWork.OrderHeaderRepository.GetRecordByExpression((orderHeader => orderHeader.OrderHeaderId == orderHeaderId), includeProperties: includeProperties);
             return orderHeader;
         }
     }

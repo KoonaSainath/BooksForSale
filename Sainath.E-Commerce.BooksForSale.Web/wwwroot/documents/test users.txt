@@ -17,3 +17,12 @@ password: Sai4@test7
 
 email: sainath5@test.com
 password: Sai5@test7
+
+email: sainath6@test.com
+password: Sai6@test7
+
+email: sainathwnp@gmail.com
+password: Sai@test7
+
+"Email": "admin@test.com" -DEFAULT ADMIN ACCOUNT 
+"Password": "Admin@123"

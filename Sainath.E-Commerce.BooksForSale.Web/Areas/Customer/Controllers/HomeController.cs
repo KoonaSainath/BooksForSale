@@ -5,6 +5,8 @@ using Sainath.E_Commerce.BooksForSale.Models.Models.Admin;
 using Sainath.E_Commerce.BooksForSale.Models.Models.Customer;
 using Sainath.E_Commerce.BooksForSale.Models.ViewModels;
 using Sainath.E_Commerce.BooksForSale.Models.ViewModels.Customer;
+using Sainath.E_Commerce.BooksForSale.Utility.Constants;
+using Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
 using System.Diagnostics;
 using System.Net.Http.Headers;
@@ -82,13 +84,17 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Customer
                 httpClient.DefaultRequestHeaders.Accept.Clear();
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 httpClient.BaseAddress = new Uri(configuration.BaseAddressForWebApi);
-                if(cart.ShoppingCartId == 0)
+                ShoppingCartController shoppingCartController = new ShoppingCartController(configuration);
+
+                if (cart.ShoppingCartId == 0)
                 {
                     string requestUrl = "api/ShoppingCart/POST/InsertShoppingCart";
                     HttpResponseMessage response = await httpClient.PostAsJsonAsync<ShoppingCart>(requestUrl, cart);
                     if (response.IsSuccessStatusCode)
                     {
                         TempData[Utility.Constants.GenericConstants.NOTIFICATION_MESSAGE_KEY] = "Shopping cart is inserted successfully!";
+                        int cartCount = shoppingCartController.GetCartCount((ClaimsIdentity)User.Identity).Result;
+                        HttpContext.Session.SetInt32(GenericConstants.CartCountKey, cartCount);
                         return RedirectToAction(nameof(Index));
                     }
                     else
