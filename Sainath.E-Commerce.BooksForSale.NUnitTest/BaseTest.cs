@@ -1,13 +1,18 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Castle.Core.Logging;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Sainath.E_Commerce.BooksForSale.Web;
 using Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
+using Sainath.E_Commerce.BooksForSale.Web.Customer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,8 +22,10 @@ namespace Sainath.E_Commerce.BooksForSale.NUnitTest
     {
         public Mock<IBooksForSaleConfiguration> mockBooksForSaleConfiguration { get; set; }
         public Mock<IWebHostEnvironment> mockWebHostEnvironment { get; set; }
+        public Mock<ILogger<T>> mockLogger { get; set; }
         public IBooksForSaleConfiguration booksForSaleConfiguration { get; set; }
         public IWebHostEnvironment webHostEnvironment { get; set; }
+        public ILogger<T> logger { get; set; }
         public T UtControllerInstance 
         {
             get
@@ -30,6 +37,9 @@ namespace Sainath.E_Commerce.BooksForSale.NUnitTest
 
                 mockWebHostEnvironment = new Mock<IWebHostEnvironment>();
                 this.webHostEnvironment = mockWebHostEnvironment.Object;
+
+                mockLogger = new Mock<ILogger<T>>();
+                logger = mockLogger.Object;
                 T t = null;
                 if (typeof(T) == typeof(BookController))
                 {
@@ -38,6 +48,10 @@ namespace Sainath.E_Commerce.BooksForSale.NUnitTest
                 else if(typeof(T) == typeof(CategoryController) || typeof(T) == typeof(CompanyController) || typeof(T) == typeof(CoverTypeController))
                 {
                     t = (T)Activator.CreateInstance(typeof(T), booksForSaleConfiguration);
+                }
+                else if(typeof(T) == typeof(HomeController))
+                {
+                    t = (T)Activator.CreateInstance(typeof(T), logger, booksForSaleConfiguration);
                 }
                 else
                 {

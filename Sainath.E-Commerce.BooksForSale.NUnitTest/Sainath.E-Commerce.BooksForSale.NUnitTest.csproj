@@ -19,10 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Customer\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Sainath.E-Commerce.BooksForSale.Web\Sainath.E-Commerce.BooksForSale.Web.csproj" />
   </ItemGroup>
 
