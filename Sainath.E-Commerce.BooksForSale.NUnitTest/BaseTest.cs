@@ -35,7 +35,7 @@ namespace Sainath.E_Commerce.BooksForSale.NUnitTest
                 {
                     t = (T) Activator.CreateInstance(typeof(T), booksForSaleConfiguration, webHostEnvironment);
                 }
-                else if(typeof(T) == typeof(CategoryController) || typeof(T) == typeof(CompanyController))
+                else if(typeof(T) == typeof(CategoryController) || typeof(T) == typeof(CompanyController) || typeof(T) == typeof(CoverTypeController))
                 {
                     t = (T)Activator.CreateInstance(typeof(T), booksForSaleConfiguration);
                 }
