@@ -8,6 +8,7 @@ using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
 using Sainath.E_Commerce.BooksForSale.Web.HelperClasses;
 using Stripe;
 using Stripe.Checkout;
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
@@ -57,6 +58,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = $"{GenericConstants.ROLE_ADMIN},{GenericConstants.ROLE_EMPLOYEE}")]
+        [ExcludeFromCodeCoverage]
         public async Task<IActionResult> UpdateOrderDetails()
         {
             if (ModelState.IsValid)
@@ -119,6 +121,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = $"{GenericConstants.ROLE_ADMIN},{GenericConstants.ROLE_EMPLOYEE}")]
+        [ExcludeFromCodeCoverage]
         public async Task<IActionResult> ShipOrder()
         {
             OrderVM.OrderHeader.OrderStatus = OrderStatus.STATUS_SHIPPED;
@@ -140,6 +143,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = $"{GenericConstants.ROLE_ADMIN},{GenericConstants.ROLE_EMPLOYEE},{GenericConstants.ROLE_COMPANY_CUSTOMER}")]
+        [ExcludeFromCodeCoverage]
         public async Task<IActionResult> MakePayment()
         {
             string includeProperties = "Book,Book.Category,Book.CoverType";
@@ -183,6 +187,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
 
         [HttpGet]
         [Authorize(Roles = $"{GenericConstants.ROLE_ADMIN},{GenericConstants.ROLE_EMPLOYEE},{GenericConstants.ROLE_COMPANY_CUSTOMER}")]
+        [ExcludeFromCodeCoverage]
         public async Task<IActionResult> PaymentConfirmation(int orderHeaderId)
         {
             string requestUrl = $"api/ManageOrders/GET/GetOrder/{orderHeaderId}";
@@ -209,6 +214,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = $"{GenericConstants.ROLE_ADMIN},{GenericConstants.ROLE_EMPLOYEE}")]
+        [ExcludeFromCodeCoverage]
         public async Task<IActionResult> CancelOrder()
         {
             string requestUrl = string.Empty;

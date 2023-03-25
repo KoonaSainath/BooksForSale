@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Sainath.E_Commerce.BooksForSale.Web;
 using Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers;
+using Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
 using Sainath.E_Commerce.BooksForSale.Web.Customer;
@@ -45,7 +46,7 @@ namespace Sainath.E_Commerce.BooksForSale.NUnitTest
                 {
                     t = (T) Activator.CreateInstance(typeof(T), booksForSaleConfiguration, webHostEnvironment);
                 }
-                else if(typeof(T) == typeof(CategoryController) || typeof(T) == typeof(CompanyController) || typeof(T) == typeof(CoverTypeController))
+                else if(typeof(T) == typeof(CategoryController) || typeof(T) == typeof(CompanyController) || typeof(T) == typeof(CoverTypeController) || typeof(T) == typeof(ManageOrdersController))
                 {
                     t = (T)Activator.CreateInstance(typeof(T), booksForSaleConfiguration);
                 }
