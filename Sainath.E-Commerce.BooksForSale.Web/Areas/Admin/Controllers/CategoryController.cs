@@ -4,6 +4,7 @@ using Sainath.E_Commerce.BooksForSale.Models.Models.Admin;
 using Sainath.E_Commerce.BooksForSale.Utility.Constants;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
 using Sainath.E_Commerce.BooksForSale.Web.HelperClasses;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
 {
@@ -31,6 +32,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ExcludeFromCodeCoverage]
         public async Task<IActionResult> InsertCategory(Category category)
         {
             if (ModelState.IsValid)
@@ -62,6 +64,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ExcludeFromCodeCoverage]
         public async Task<IActionResult> UpdateCategory(Category category)
         {
             if (ModelState.IsValid)
@@ -79,6 +82,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
             }
             return View();
         }
+        [ExcludeFromCodeCoverage]
         private void ShowNotification(string message)
         {
             TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] = message;
@@ -97,6 +101,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         }
 
         [HttpDelete]
+        [ExcludeFromCodeCoverage]
         public async Task<IActionResult> RemoveCategoryApiEndPoint(int categoryId)
         {
             string requestUrl = $"api/Category/GET/GetCategoryById/{categoryId}";

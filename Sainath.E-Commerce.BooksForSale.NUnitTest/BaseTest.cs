@@ -30,16 +30,20 @@ namespace Sainath.E_Commerce.BooksForSale.NUnitTest
 
                 mockWebHostEnvironment = new Mock<IWebHostEnvironment>();
                 this.webHostEnvironment = mockWebHostEnvironment.Object;
+                T t = null;
                 if (typeof(T) == typeof(BookController))
                 {
-                    T t = (T) Activator.CreateInstance(typeof(T), booksForSaleConfiguration, webHostEnvironment);
-                    return t;
+                    t = (T) Activator.CreateInstance(typeof(T), booksForSaleConfiguration, webHostEnvironment);
+                }
+                else if(typeof(T) == typeof(CategoryController))
+                {
+                    t = (T)Activator.CreateInstance(typeof(T), booksForSaleConfiguration);
                 }
                 else
                 {
-                    T t = (T)Activator.CreateInstance(typeof(T));
-                    return t;
+                    t = (T)Activator.CreateInstance(typeof(T));
                 }
+                return t;
             }
         }
     }
