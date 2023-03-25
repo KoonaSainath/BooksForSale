@@ -44,7 +44,7 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Customer
             {
                 if(status.NullCheckTrim().ToLower() == GenericConstants.ALL.ToLower())
                 {
-                    orders = unitOfWork.OrderHeaderRepository.GetAllRecords(includeProperties).OrderByDescending(order => order.OrderHeaderId);
+                    orders = unitOfWork.OrderHeaderRepository.GetAllRecords(includeProperties);
                 }
                 else
                 {
@@ -62,7 +62,7 @@ namespace Sainath.E_Commerce.BooksForSale.DataAccess.DataAccessClasses.Customer
                     orders = unitOfWork.OrderHeaderRepository.GetAllRecords(includeProperties, userIdAndStatusFilter);
                 }
             }
-            return orders;
+            return orders.OrderByDescending(order => order.OrderHeaderId);
         }
 
         public OrderHeader GetOrder(int orderHeaderId, string includeProperties)

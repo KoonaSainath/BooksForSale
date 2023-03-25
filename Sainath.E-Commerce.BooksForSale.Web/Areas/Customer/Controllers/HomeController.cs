@@ -10,6 +10,7 @@ using Sainath.E_Commerce.BooksForSale.Web.Areas.Customer.Controllers;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
 using Sainath.E_Commerce.BooksForSale.Web.HelperClasses;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 
@@ -40,6 +41,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Customer
 
         [HttpGet]
         [Authorize]
+        [ExcludeFromCodeCoverage]
         public async Task<IActionResult> Details(int bookId)
         {
             if(bookId != 0)
@@ -71,6 +73,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Customer
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
+        [ExcludeFromCodeCoverage]
         public async Task<IActionResult> Details(ShoppingCart cart)
         {
             if (ModelState.IsValid)
@@ -120,6 +123,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Customer
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [ExcludeFromCodeCoverage]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

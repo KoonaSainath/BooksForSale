@@ -5,6 +5,7 @@ using Sainath.E_Commerce.BooksForSale.Models.Models.Admin;
 using Sainath.E_Commerce.BooksForSale.Utility.Constants;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
 using Sainath.E_Commerce.BooksForSale.Web.HelperClasses;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
 {
@@ -51,6 +52,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ExcludeFromCodeCoverage]
         public async Task<IActionResult> UpsertCompany(Company company)
         {
             if (ModelState.IsValid)
@@ -100,6 +102,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         }
 
         [HttpDelete]
+        [ExcludeFromCodeCoverage]
         public async Task<IActionResult> DeleteCompanyApiEndPoint(int? companyId)
         {
             if(companyId != null)

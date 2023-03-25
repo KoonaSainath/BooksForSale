@@ -6,6 +6,7 @@ using Sainath.E_Commerce.BooksForSale.Models.ViewModels.Admin;
 using Sainath.E_Commerce.BooksForSale.Utility.Constants;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
 using Sainath.E_Commerce.BooksForSale.Web.HelperClasses;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
 {
@@ -26,6 +27,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
             return View();
         }
         [HttpGet]
+        [ExcludeFromCodeCoverage]
         public async Task<IActionResult> UpsertBook(int bookId = 0)
         {
             BookVM bookVm = new BookVM();
@@ -63,6 +65,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ExcludeFromCodeCoverage]
         public async Task<IActionResult> UpsertBook(BookVM bookVm, IFormFile imageFile)
         {
             ModelState.Remove("imageFile");
@@ -135,6 +138,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         }
 
         [HttpDelete]
+        [ExcludeFromCodeCoverage]
         public async Task<IActionResult> RemoveBookApiEndPoint(int bookId)
         {
             string requestUrl = $"api/Book/GET/GetBook/{bookId}";

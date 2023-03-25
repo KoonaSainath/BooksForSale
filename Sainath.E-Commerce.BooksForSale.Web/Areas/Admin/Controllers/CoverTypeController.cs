@@ -4,6 +4,7 @@ using Sainath.E_Commerce.BooksForSale.Models.Models.Admin;
 using Sainath.E_Commerce.BooksForSale.Utility.Constants;
 using Sainath.E_Commerce.BooksForSale.Web.Configurations.IConfigurations;
 using Sainath.E_Commerce.BooksForSale.Web.HelperClasses;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
 {
@@ -32,6 +33,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ExcludeFromCodeCoverage]
         public async Task<IActionResult> InsertCoverType(CoverType coverType)
         {
             if (ModelState.IsValid)
@@ -63,6 +65,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ExcludeFromCodeCoverage]
         public async Task<IActionResult> UpdateCoverType(CoverType coverType)
         {
             if (ModelState.IsValid)
@@ -95,6 +98,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ExcludeFromCodeCoverage]
         public async Task<IActionResult> RemoveCoverType(CoverType coverType)
         {
             if (ModelState.IsValid)
@@ -111,6 +115,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
             }
             return View();
         }
+        [ExcludeFromCodeCoverage]
         private void ShowNotification(string message)
         {
             TempData[GenericConstants.NOTIFICATION_MESSAGE_KEY] = message;
@@ -127,6 +132,7 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Areas.Admin.Controllers
             return Json(new { data = coverTypes });
         }
         [HttpDelete]
+        [ExcludeFromCodeCoverage]
         public async Task<ActionResult> RemoveCoverTypeApiEndPoint(int coverTypeId)
         {
             string requestUrl = $"api/CoverType/GET/GetCoverType/{coverTypeId}";

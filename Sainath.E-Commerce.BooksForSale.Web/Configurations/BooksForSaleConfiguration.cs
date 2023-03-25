@@ -10,6 +10,10 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Configurations
             {
                 return configuration["BaseAddresses:BaseAddressForWebApi"];
             }
+            set
+            {
+                BaseAddressForWebApi = value;
+            }
         }
         public string StripePublishableKey
         {
@@ -30,6 +34,10 @@ namespace Sainath.E_Commerce.BooksForSale.Web.Configurations
             get
             {
                 return configuration["BaseAddresses:BaseAddressForWebApplication"];
+            }
+            set
+            {
+                BaseAddressForWebApplication = value;
             }
         }
         private readonly IConfiguration configuration;
